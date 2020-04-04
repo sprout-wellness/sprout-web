@@ -32,7 +32,7 @@ export class TreePage extends Component<{}, TreePageState> {
   // render will know everything!
   render() {
     return (
-      <div className="container">
+      <div className="tree-page">
         <h1 className="title">
           This is the page with the tree and 5 big leaves.
         </h1>
