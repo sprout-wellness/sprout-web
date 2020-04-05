@@ -10,12 +10,10 @@ export const APP = function App() {
     <Router>
       <div>
         <Switch>
-          <Route path="/room/:id" component={RoomPage} />
-          <Route path="/room" component={RoomPage} />
+          <Route exact path="/" component={TreePage} />
           <Route exact path="/activities/:tenet" component={ActivityPage} />
-          <Route path="/">
-            <TreePage />
-          </Route>
+          <Route exact path="/room" component={RoomPage} />
+          <Route exact path="/room/:id" component={RoomPage} />
         </Switch>
       </div>
     </Router>
