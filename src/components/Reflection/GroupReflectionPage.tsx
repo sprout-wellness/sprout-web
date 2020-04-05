@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Reflection } from './Reflection';
 import { firebase } from '../../FirebaseSetup';
-import 'firebase/firestore';
+import { Redirect, Link, Route } from 'react-router-dom';
+
 
 export { GroupReflectionPage };
 
@@ -21,8 +22,11 @@ type ReflectionEntry = {
 
 class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupReflectionPageState> {
 
+    _unsubscribe:any = undefined;
+
     constructor(props: GroupReflectionPageProps) {
         super(props);
+        this.homeButtonClickedHandler = this.homeButtonClickedHandler.bind(this);
         this.state = {roomId: "1mIMXIziHIrPrx4M5Soo", reflections: []};
     }
 
@@ -32,6 +36,7 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
 
         // update state to represent all relevant reflections
         this._fetchReflectionsAndUpdateState();
+        //this._addReflectionDBListener();
     }
 
     componentDidUpdate(prevProps: GroupReflectionPageProps) {
@@ -41,6 +46,7 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
 
     componentWillUnmount() {
         // where you put cleanup stuff. You can't modify component state in this lifecycle!
+        //this._unsubscribe();
     }
 
     private _fetchReflectionsAndUpdateState() {
@@ -58,8 +64,25 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
             });
     }
 
+    /** not working */
+    private _addReflectionDBListener() {
+        this._unsubscribe = firebase
+            .firestore()
+            .collection('reflections')
+            .where('roomId', '==', this.state.roomId)
+            .onSnapshot( (doc: firebase.firestore.DocumentData) => {
+                const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+                console.log(source, " data: ", doc.data());
+            });
+    }
+
     private _createReflection(reflection: string) {
         return <Reflection reflectionText={reflection}></Reflection>;
+    }
+
+    homeButtonClickedHandler() {
+        console.log("homeButtonClickedHandler()");
+        return <Redirect to={`/activities/:tenet`}/>
     }
 
     render() {
@@ -71,6 +94,11 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
             <div>
                 <h1>Group Reflections</h1>
                 {reflections}
+                <nav>
+                    <Link to="/">
+                        <button>Complete Practice</button>
+                    </Link>
+                </nav>
             </div>
         )
     }
