@@ -1,5 +1,6 @@
 import React, { Component } from 'react'; // let's also import Component
 import './TreePage.scss';
+import { Link } from 'react-router-dom';
 
 // the clock's state has one field: The current time, based upon the
 // JavaScript class Date
@@ -36,7 +37,21 @@ export class TreePage extends Component<{}, TreePageState> {
         <h1 className="title">
           This is the page with the tree and 5 big leaves.
         </h1>
-        <p>The current time is {this.state.time.toLocaleTimeString()}</p>
+        <Link to="/activities/gratitude">
+          <button>Gratitude</button>
+        </Link>
+        <Link to="/activities/kindness">
+          <button>Kindness</button>
+        </Link>
+        <Link to="/activities/compassion">
+          <button>Compassion</button>
+        </Link>
+        <Link to="/activities/mindfulness">
+          <button>Mindfulness</button>
+        </Link>
+        <Link to="/activities/resilience">
+          <button>Resilience</button>
+        </Link>
       </div>
     );
   }

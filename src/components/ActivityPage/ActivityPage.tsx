@@ -1,35 +1,42 @@
-import React, { Component } from 'react'; // let's also import Component
+import React, { Component } from 'react';
+import { match } from 'react-router-dom';
 
-// the clock's state has one field: The current time, based upon the
-// JavaScript class Date
-interface ActivityPageState {
-  time: Date;
+interface DetailParams {
+  tenet: string;
 }
 
-// Clock has no properties, but the current state is of type ClockState
-// The generic parameters in the Component typing allow to pass props
-// and state. Since we don't have props, we pass an empty object.
-export class ActivityPage extends Component<{}, ActivityPageState> {
-  // The tick function sets the current state. TypeScript will let us know
-  // which ones we are allowed to set.
-  tick() {
-    this.setState({
-      time: new Date(),
-    });
+interface ActivityPageProps {
+  match?: match<DetailParams>;
+}
+
+type ActivityPageState = {
+  tenet: string;
+};
+
+export class ActivityPage extends Component<
+  ActivityPageProps,
+  ActivityPageState
+> {
+  constructor(props: ActivityPageProps) {
+    super(props);
+
+    // Getting wellness tenet from the url.
+    const match = this.props.match;
+    var currentTenet: string = match
+      ? match.params.tenet
+      : "This wellness tenet doesn't exist!";
+    this.state = {
+      tenet: currentTenet,
+    };
   }
 
-  // Before the component mounts, we initialise our state
-  componentWillMount() {
-    this.tick();
-  }
+  componentDidMount() {}
 
-  // After the component did mount, we set the state each second.
-  componentDidMount() {
-    setInterval(() => this.tick(), 1000);
-  }
-
-  // render will know everything!
   render() {
-    return <p>The current time is {this.state.time.toLocaleTimeString()}</p>;
+    return (
+      <div>
+        <h1>{this.state.tenet}</h1>
+      </div>
+    );
   }
 }
