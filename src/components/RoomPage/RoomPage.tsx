@@ -26,6 +26,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     id: 'Creating new room...',
     activity: {
       name: 'Loading...',
+      motivation: '',
+      time: 0,
+      category: '',
     },
     errors: [] as string[],
   };
@@ -49,7 +52,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       .collection('rooms')
       .doc(roomId)
       .get()
-      .then(roomSnap => {
+      .then((roomSnap) => {
         if (!roomSnap.exists) {
           this.appendErrorMsg(`Room ${roomId} not found.`);
           return;
@@ -59,7 +62,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           .firestore()
           .doc(activityId)
           .get()
-          .then(activitySnap => {
+          .then((activitySnap) => {
             if (!activitySnap.exists) {
               this.appendErrorMsg(
                 `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
@@ -91,13 +94,24 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     }
     return (
       <div id="room-page">
-        <h1 className="title">Room</h1>
+        <div className="activity-container" id={this.state.activity!.category}>
+          <div>
+            <h1 className="title">{this.state.activity!.name}</h1>
+            <div className="row">
+              <p>
+                <b>Room link</b>: sproutwellness.com/room/{this.state.id}
+              </p>
+              <button>Copy room link</button>
+            </div>
+          </div>
+          <div className="participant-container">
+            <h4>Tao Ong</h4>
+          </div>
+        </div>
         <p>
-          <b>Room ID</b>: {this.state.id}
+          <b>Duration</b>: {this.state.activity!.time} minutes
         </p>
-        <p>
-          <b>Activity</b>: {this.state.activity!.name}
-        </p>
+        <p>{this.state.activity!.motivation}</p>
         {/* <p><b>Attendees</b>: {this.state.activity}</p> */}
       </div>
     );
