@@ -81,9 +81,6 @@ export class RoomReflectionPage extends Component<
               };
             });
           }
-          if (change.type === 'modified') {
-            console.log('Modified reflection: ', change.doc.data());
-          }
           if (change.type === 'removed') {
             this.setState({
               reflections: this.state.reflections.filter((reflection) => {
