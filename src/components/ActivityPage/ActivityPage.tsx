@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { match } from 'react-router-dom';
+import { match, Redirect } from 'react-router-dom';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
+import './ActivityPage.scss';
 
 interface DetailParams {
   tenet: string;
@@ -12,6 +13,7 @@ interface ActivityPageProps {
 }
 
 interface Activity {
+  id: number;
   category: string;
   instructions: string;
   motivation: string;
@@ -22,6 +24,7 @@ interface Activity {
 interface ActivityPageState {
   tenet: string;
   activities: Activity[];
+  redirectToRoom: string;
 }
 
 export class ActivityPage extends Component<
@@ -39,6 +42,7 @@ export class ActivityPage extends Component<
     this.state = {
       tenet: currentTenet,
       activities: [],
+      redirectToRoom: '',
     };
   }
 
@@ -54,22 +58,61 @@ export class ActivityPage extends Component<
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
+          const activity: Activity = doc.data();
+          activity.id = doc.id;
           this.setState((prevState: ActivityPageState) => {
             return {
-              activities: [...prevState.activities, doc.data()],
+              activities: [...prevState.activities, activity],
             };
           });
         });
       });
   }
 
+  createRoom(activity: Activity) {
+    const roomRef = firebase.firestore().collection('rooms').doc();
+    roomRef
+      .set({
+        activity: `activities/${activity.id}`,
+      })
+      .then(() => {
+        this.setState({
+          redirectToRoom: roomRef.id,
+        });
+      });
+  }
+
+  capitalizeFirstLetter(s: string) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
   render() {
+    if (this.state.redirectToRoom) {
+      return <Redirect to={`/room/${this.state.redirectToRoom}`} />;
+    }
     return (
-      <div>
-        <h1>{this.state.tenet}</h1>
-        {this.state.activities.map((item, key) => {
-          return <li key={key}>{item.name}</li>;
-        })}
+      <div id="activity-page">
+        <h1 className="title">
+          {this.capitalizeFirstLetter(this.state.tenet)}
+        </h1>
+        <div className="card-container">
+          {this.state.activities.map((item, key) => {
+            return (
+              <div
+                className="card"
+                key={key}
+                onClick={this.createRoom.bind(this, item)}
+              >
+                <img
+                  className="card-image"
+                  src="../../images/tree.png"
+                  alt=""
+                />
+                <h3 className="card-title">{item.name}</h3>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
