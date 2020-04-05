@@ -1,64 +1,143 @@
-import React, { Component } from 'react'; // let's also import Component
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import './RoomPage.scss';
 
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
-import { v4 as uuidv4 } from 'uuid';
 import { parse as parseQueryParams } from 'query-string';
 
 interface RoomPageProps {
+  match: {
+    params: {
+      id: string;
+    };
+  };
   location: {
     search: string;
   };
 }
 
 interface RoomPageState {
+  toRoom: string;
   id: string;
-  time: Date;
+  activity?: firebase.firestore.DocumentData;
+  errors: string[];
 }
 
-// Clock has no properties, but the current state is of type ClockState
-// The generic parameters in the Component typing allow to pass props
-// and state. Since we don't have props, we pass an empty object.
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   state = {
+    toRoom: '',
     id: 'Creating new room...',
-    time: new Date(),
+    activity: {
+      name: 'Loading...',
+    },
+    errors: [] as string[],
   };
 
-  tick() {
+  componentDidMount() {
+    const query = parseQueryParams(this.props.location.search);
+    if ('create' in query && query.create && !isNaN(Number(query.create))) {
+      return this.createRoom(Number(query.create));
+    }
+    if (this.props.match.params.id) {
+      return this.loadRoom(this.props.match.params.id);
+    }
+    this.appendErrorMsg('Invalid request.');
+  }
+
+  appendErrorMsg(msg: string) {
     this.setState({
-      time: new Date(),
+      errors: [...this.state.errors, msg],
     });
   }
 
-  // After the component did mount, we set the state each second.
-  componentDidMount() {
-    const query = parseQueryParams(this.props.location.search);
-    if ('create' in query) {
-      console.log(query.create);
-    }
-    setInterval(() => this.tick(), 1000);
-    const randomId = uuidv4();
+  createRoom(activityId: number) {
+    firebase
+      .firestore()
+      .collection('activities')
+      .doc(activityId.toString())
+      .get()
+      .then(activitySnap => {
+        if (!activitySnap.exists) {
+          this.appendErrorMsg(`Activity ${activityId} not found.`);
+          return;
+        }
+        const roomRef = firebase
+          .firestore()
+          .collection('rooms')
+          .doc();
+        roomRef
+          .set({
+            activity: activitySnap.ref.path,
+          })
+          .then(() => {
+            this.setState({
+              toRoom: roomRef.id,
+              errors: [],
+            });
+          });
+      });
+  }
+
+  loadRoom(roomId: string) {
     firebase
       .firestore()
       .collection('rooms')
-      .add({
-        id: randomId,
+      .doc(roomId)
+      .get()
+      .then(roomSnap => {
+        if (!roomSnap.exists) {
+          this.appendErrorMsg(`Room ${roomId} not found.`);
+          return;
+        }
+        const activityId = roomSnap.data()!.activity;
+        firebase
+          .firestore()
+          .doc(activityId)
+          .get()
+          .then(activitySnap => {
+            if (!activitySnap.exists) {
+              this.appendErrorMsg(
+                `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
+              );
+              return;
+            }
+            this.setState({
+              id: roomSnap.id,
+              activity: activitySnap.data()! as RoomPageState['activity'],
+              errors: [],
+            });
+          });
       });
-    this.setState({
-      id: randomId,
-    });
   }
 
-  // render will know everything!
   render() {
+    if (this.state.errors.length) {
+      return (
+        <div className="container">
+          {this.state.errors.map((errorMsg, i) => {
+            return (
+              <p className="error" key={i}>
+                {errorMsg}
+              </p>
+            );
+          })}
+        </div>
+      );
+    }
+    if (this.state.toRoom) {
+      return <Redirect to={`/room/${this.state.toRoom}`} />;
+    }
     return (
       <div className="container">
         <h1 className="title">Room</h1>
-        <p>Time: {this.state.time.toLocaleTimeString()}</p>
-        <p>Room ID: {this.state.id}</p>
-        <p>Activity: ABC</p>
+        <p>
+          <b>Room ID</b>: {this.state.id}
+        </p>
+        <p>
+          <b>Activity</b>: {this.state.activity!.name}
+        </p>
+        {/* <p><b>Attendees</b>: {this.state.activity}</p> */}
       </div>
     );
   }

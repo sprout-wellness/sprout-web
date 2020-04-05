@@ -9,9 +9,9 @@ interface ActivityPageProps {
   match?: match<DetailParams>;
 }
 
-type ActivityPageState = {
+interface ActivityPageState {
   tenet: string;
-};
+}
 
 export class ActivityPage extends Component<
   ActivityPageProps,
@@ -22,7 +22,7 @@ export class ActivityPage extends Component<
 
     // Getting wellness tenet from the url.
     const match = this.props.match;
-    var currentTenet: string = match
+    const currentTenet: string = match
       ? match.params.tenet
       : "This wellness tenet doesn't exist!";
     this.state = {
