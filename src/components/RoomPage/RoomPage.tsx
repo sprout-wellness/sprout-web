@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, MouseEvent } from 'react';
 import './RoomPage.scss';
 
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
+import copy from 'clipboard-copy';
 
 interface RoomPageProps {
   match: {
@@ -78,6 +79,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       });
   }
 
+  handleCopy(event: MouseEvent) {
+    event.preventDefault();
+    copy('sproutwellness.com/room/' + this.state.id);
+  }
+
   render() {
     if (this.state.errors.length) {
       return (
@@ -101,7 +107,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               <p>
                 <b>Room link</b>: sproutwellness.com/room/{this.state.id}
               </p>
-              <button>Copy room link</button>
+              <button onClick={this.handleCopy.bind(this)}>
+                Copy room link
+              </button>
             </div>
           </div>
           <div className="participant-container">
