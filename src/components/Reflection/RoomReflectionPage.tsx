@@ -24,7 +24,6 @@ export class RoomReflectionPage extends Component<RoomReflectionPageProps, RoomR
 
     constructor(props: RoomReflectionPageProps) {
         super(props);
-        this.homeButtonClickedHandler = this.homeButtonClickedHandler.bind(this);
         this.state = {roomId: "1mIMXIziHIrPrx4M5Soo", reflections: []};
     }
 
@@ -77,7 +76,7 @@ export class RoomReflectionPage extends Component<RoomReflectionPageProps, RoomR
     private _createReflection(reflection: string) {
         return <Reflection reflectionText={reflection}></Reflection>;
     }
-    
+
     render() {
         const reflections = [];
         for (const reflection of this.state.reflections) {
