@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { match, Link } from 'react-router-dom';
+import { match, Redirect } from 'react-router-dom';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
 import './ActivityPage.scss';
@@ -24,6 +24,7 @@ interface Activity {
 interface ActivityPageState {
   tenet: string;
   activities: Activity[];
+  redirectToRoom: string;
 }
 
 export class ActivityPage extends Component<
@@ -41,6 +42,7 @@ export class ActivityPage extends Component<
     this.state = {
       tenet: currentTenet,
       activities: [],
+      redirectToRoom: '',
     };
   }
 
@@ -54,9 +56,9 @@ export class ActivityPage extends Component<
       .collection('activities')
       .where('category', '==', this.state.tenet)
       .get()
-      .then((snapshot) => {
+      .then(snapshot => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          var activity: Activity = doc.data();
+          const activity: Activity = doc.data();
           activity.id = doc.id;
           this.setState((prevState: ActivityPageState) => {
             return {
@@ -67,11 +69,30 @@ export class ActivityPage extends Component<
       });
   }
 
+  createRoom(activity: Activity) {
+    const roomRef = firebase
+      .firestore()
+      .collection('rooms')
+      .doc();
+    roomRef
+      .set({
+        activity: `activities/${activity.id}`,
+      })
+      .then(() => {
+        this.setState({
+          redirectToRoom: roomRef.id,
+        });
+      });
+  }
+
   capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
   render() {
+    if (this.state.redirectToRoom) {
+      return <Redirect to={`/room/${this.state.redirectToRoom}`} />;
+    }
     return (
       <div id="activity-page">
         <h1 className="title">
@@ -80,11 +101,7 @@ export class ActivityPage extends Component<
         <div className="card-container">
           {this.state.activities.map((item, key) => {
             return (
-              <Link
-                key={key}
-                to={`/room?create=` + item.id}
-                style={{ textDecoration: 'none' }}
-              >
+              <button key={key} onClick={this.createRoom.bind(this, item)}>
                 <div className="card">
                   <img
                     className="card-image"
@@ -93,7 +110,7 @@ export class ActivityPage extends Component<
                   />
                   <h3 className="card-title">{item.name}</h3>
                 </div>
-              </Link>
+              </button>
             );
           })}
         </div>

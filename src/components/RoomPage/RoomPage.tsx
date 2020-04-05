@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import './RoomPage.scss';
 
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
-import { parse as parseQueryParams } from 'query-string';
 
 interface RoomPageProps {
   match: {
@@ -18,7 +16,6 @@ interface RoomPageProps {
 }
 
 interface RoomPageState {
-  toRoom: string;
   id: string;
   activity?: firebase.firestore.DocumentData;
   errors: string[];
@@ -26,7 +23,6 @@ interface RoomPageState {
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   state = {
-    toRoom: '',
     id: 'Creating new room...',
     activity: {
       name: 'Loading...',
@@ -35,10 +31,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   };
 
   componentDidMount() {
-    const query = parseQueryParams(this.props.location.search);
-    if ('create' in query && query.create && !isNaN(Number(query.create))) {
-      return this.createRoom(Number(query.create));
-    }
     if (this.props.match.params.id) {
       return this.loadRoom(this.props.match.params.id);
     }
@@ -51,38 +43,13 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     });
   }
 
-  createRoom(activityId: number) {
-    firebase
-      .firestore()
-      .collection('activities')
-      .doc(activityId.toString())
-      .get()
-      .then((activitySnap) => {
-        if (!activitySnap.exists) {
-          this.appendErrorMsg(`Activity ${activityId} not found.`);
-          return;
-        }
-        const roomRef = firebase.firestore().collection('rooms').doc();
-        roomRef
-          .set({
-            activity: activitySnap.ref.path,
-          })
-          .then(() => {
-            this.setState({
-              toRoom: roomRef.id,
-              errors: [],
-            });
-          });
-      });
-  }
-
   loadRoom(roomId: string) {
     firebase
       .firestore()
       .collection('rooms')
       .doc(roomId)
       .get()
-      .then((roomSnap) => {
+      .then(roomSnap => {
         if (!roomSnap.exists) {
           this.appendErrorMsg(`Room ${roomId} not found.`);
           return;
@@ -92,7 +59,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           .firestore()
           .doc(activityId)
           .get()
-          .then((activitySnap) => {
+          .then(activitySnap => {
             if (!activitySnap.exists) {
               this.appendErrorMsg(
                 `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
@@ -121,9 +88,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           })}
         </div>
       );
-    }
-    if (this.state.toRoom) {
-      return <Redirect to={`/room/${this.state.toRoom}`} />;
     }
     return (
       <div id="room-page">
