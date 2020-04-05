@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
-export { Reflection };
 
 interface ReflectionProps {
     reflectionText: string;
     userId?: string;
+    roomId?: string;
     activityId?: string;
 }
 
@@ -14,7 +14,7 @@ class Reflection extends Component<ReflectionProps, {}> {
         super(props);
         this.state = {};
     }
-
+    
     render() {
         return  (
             <div>
@@ -23,5 +23,7 @@ class Reflection extends Component<ReflectionProps, {}> {
              </div>
         )
     }
-
+    
 }
+
+export { Reflection };
