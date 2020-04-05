@@ -56,7 +56,7 @@ export class ActivityPage extends Component<
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          var activity: Activity = doc.data();
+          const activity: Activity = doc.data();
           activity.id = doc.id;
           this.setState((prevState: ActivityPageState) => {
             return {
