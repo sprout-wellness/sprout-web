@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Reflection } from './Reflection';
 import { firebase } from '../../FirebaseSetup';
-import { Redirect, Link, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 interface RoomReflectionPageProps {
