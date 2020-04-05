@@ -1,23 +1,10 @@
 import React, { Component } from "react"; // let's also import Component
 import "./RoomPage.scss";
 
-// Firebase App (the core Firebase SDK) is always required and
-// must be listed before other Firebase SDKs
-import * as firebase from "firebase/app";
+import firebase from "../../FirebaseSetup";
 import "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { parse as parseQueryParams } from "query-string";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBgKAC5vrSSFfZsCxi1wpVdwk3ZbNlYuIo",
-  authDomain: "sprout-wellness.firebaseapp.com",
-  databaseURL: "https://sprout-wellness.firebaseio.com",
-  projectId: "sprout-wellness",
-  storageBucket: "sprout-wellness.appspot.com",
-  messagingSenderId: "658431260118",
-  appId: "1:658431260118:web:9513c73b085c8eadd22077",
-  measurementId: "G-MYV1VZM8G9"
-};
 
 interface RoomPageProps {
   location: {
@@ -53,7 +40,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     }
     setInterval(() => this.tick(), 1000);
     var random_id = uuidv4();
-    firebase.initializeApp(firebaseConfig).firestore().collection('rooms').add({
+    firebase.firestore().collection('rooms').add({
       id: random_id,
     }).catch(function(error) {
       console.error('Error writing new room to database.', error);
