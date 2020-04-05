@@ -21,8 +21,13 @@
     }
 
     .copy-tooltip {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
       opacity: 1;
-      transition: all 0.2 ease-out;
+      transition: all 0.2s ease-out;
 
       &.hidden {
         opacity: 0;

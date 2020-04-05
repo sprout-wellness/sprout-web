@@ -121,7 +121,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
                     this.state.showTooltip ? '' : 'hidden'
                   }`}
                 >
-                  Copied!
+                  Copied to clipboard!
                 </span>
               </div>
             </div>
