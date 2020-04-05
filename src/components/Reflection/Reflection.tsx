@@ -8,7 +8,7 @@ interface ReflectionProps {
     activityId?: string;
 }
 
-class Reflection extends Component<ReflectionProps, {}> {
+export class Reflection extends Component<ReflectionProps, {}> {
     
     constructor(props: ReflectionProps) {
         super(props);
@@ -25,5 +25,3 @@ class Reflection extends Component<ReflectionProps, {}> {
     }
     
 }
-
-export { Reflection };

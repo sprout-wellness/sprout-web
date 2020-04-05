@@ -4,13 +4,14 @@ interface ReflectionPageProps {
 }
 
 interface ReflectionPageState {
+    roomId: string
 }
 
-class ReflectionPageComponent extends Component<ReflectionPageProps, ReflectionPageState> {
+export class ReflectionPage extends Component<ReflectionPageProps, ReflectionPageState> {
     
     constructor(props: ReflectionPageProps) {
         super(props);
-        this.state = {};
+        this.state = {roomId: "1mIMXIziHIrPrx4M5Soo"};
     }
 
 

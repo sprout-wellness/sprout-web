@@ -4,13 +4,11 @@ import { firebase } from '../../FirebaseSetup';
 import { Redirect, Link, Route } from 'react-router-dom';
 
 
-export { GroupReflectionPage };
-
-interface GroupReflectionPageProps {
+interface RoomReflectionPageProps {
 
 }
 
-interface GroupReflectionPageState {
+interface RoomReflectionPageState {
     roomId: string,
     reflections: ReflectionEntry[]
 }
@@ -20,11 +18,11 @@ type ReflectionEntry = {
     userId: string
 }
 
-class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupReflectionPageState> {
+export class RoomReflectionPage extends Component<RoomReflectionPageProps, RoomReflectionPageState> {
 
     _unsubscribe:any = undefined;
 
-    constructor(props: GroupReflectionPageProps) {
+    constructor(props: RoomReflectionPageProps) {
         super(props);
         this.homeButtonClickedHandler = this.homeButtonClickedHandler.bind(this);
         this.state = {roomId: "1mIMXIziHIrPrx4M5Soo", reflections: []};
@@ -39,7 +37,7 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
         //this._addReflectionDBListener();
     }
 
-    componentDidUpdate(prevProps: GroupReflectionPageProps) {
+    componentDidUpdate(prevProps: RoomReflectionPageProps) {
         // can call setState(), but should wrap in condition to check for state or pop changes from previous state.
         // otherwise, can result in infinite loop
     }
@@ -57,7 +55,7 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
             .get()
             .then((snapshot) => {
                 snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-                    this.setState((prevState: GroupReflectionPageState) => {
+                    this.setState((prevState: RoomReflectionPageState) => {
                         return {roomId: prevState.roomId, reflections: [...prevState.reflections, doc.data()]}
                     })
                 });
@@ -79,12 +77,7 @@ class GroupReflectionPage extends Component<GroupReflectionPageProps, GroupRefle
     private _createReflection(reflection: string) {
         return <Reflection reflectionText={reflection}></Reflection>;
     }
-
-    homeButtonClickedHandler() {
-        console.log("homeButtonClickedHandler()");
-        return <Redirect to={`/activities/:tenet`}/>
-    }
-
+    
     render() {
         const reflections = [];
         for (const reflection of this.state.reflections) {
