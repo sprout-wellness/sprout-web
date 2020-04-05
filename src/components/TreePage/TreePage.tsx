@@ -8,49 +8,41 @@ interface TreePageState {
   time: Date;
 }
 
-// Clock has no properties, but the current state is of type ClockState
-// The generic parameters in the Component typing allow to pass props
-// and state. Since we don't have props, we pass an empty object.
 export class TreePage extends Component<{}, TreePageState> {
-  // The tick function sets the current state. TypeScript will let us know
-  // which ones we are allowed to set.
-  tick() {
-    this.setState({
-      time: new Date(),
-    });
-  }
+  componentDidMount() {}
 
-  // Before the component mounts, we initialise our state
-  componentWillMount() {
-    this.tick();
-  }
-
-  // After the component did mount, we set the state each second.
-  componentDidMount() {
-    setInterval(() => this.tick(), 1000);
-  }
-
-  // render will know everything!
   render() {
     return (
       <div className="tree-page">
-        <h1 className="title">
-          This is the page with the tree and 5 big leaves.
-        </h1>
-        <Link to="/activities/gratitude">
-          <button>Gratitude</button>
+        <Link to="/activities/compassion" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img className="tenet-image" src="../../images/tree.png" alt="" />
+            <h3 className="tenet">Compassion</h3>
+          </div>
         </Link>
-        <Link to="/activities/kindness">
-          <button>Kindness</button>
+        <Link to="/activities/gratitude" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img className="tenet-image" src="../../images/tree.png" alt="" />
+            <h3 className="tenet">Gratitude</h3>
+          </div>
         </Link>
-        <Link to="/activities/compassion">
-          <button>Compassion</button>
+        <Link to="/activities/kindness" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img className="tenet-image" src="../../images/tree.png" alt="" />
+            <h3 className="tenet">Kindness</h3>
+          </div>
         </Link>
-        <Link to="/activities/mindfulness">
-          <button>Mindfulness</button>
+        <Link to="/activities/mindfulness" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img className="tenet-image" src="../../images/tree.png" alt="" />
+            <h3 className="tenet">Mindfulness</h3>
+          </div>
         </Link>
-        <Link to="/activities/resilience">
-          <button>Resilience</button>
+        <Link to="/activities/resilience" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img className="tenet-image" src="../../images/tree.png" alt="" />
+            <h3 className="tenet">Resilience</h3>
+          </div>
         </Link>
       </div>
     );
