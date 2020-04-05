@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { match } from 'react-router-dom';
+import { match, Link } from 'react-router-dom';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
+import './ActivityPage.scss';
 
 interface DetailParams {
   tenet: string;
@@ -12,6 +13,7 @@ interface ActivityPageProps {
 }
 
 interface Activity {
+  id: number;
   category: string;
   instructions: string;
   motivation: string;
@@ -54,22 +56,47 @@ export class ActivityPage extends Component<
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
+          var activity: Activity = doc.data();
+          activity.id = doc.id;
           this.setState((prevState: ActivityPageState) => {
             return {
-              activities: [...prevState.activities, doc.data()],
+              activities: [...prevState.activities, activity],
             };
           });
         });
       });
   }
 
+  capitalizeFirstLetter(s: string) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
   render() {
     return (
-      <div>
-        <h1>{this.state.tenet}</h1>
-        {this.state.activities.map((item, key) => {
-          return <li key={key}>{item.name}</li>;
-        })}
+      <div id="activity-page">
+        <h1 className="title">
+          {this.capitalizeFirstLetter(this.state.tenet)}
+        </h1>
+        <div className="card-container">
+          {this.state.activities.map((item, key) => {
+            return (
+              <Link
+                key={key}
+                to={`/room?create=` + item.id}
+                style={{ textDecoration: 'none' }}
+              >
+                <div className="card">
+                  <img
+                    className="card-image"
+                    src="../../images/tree.png"
+                    alt=""
+                  />
+                  <h3 className="card-title">{item.name}</h3>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     );
   }
