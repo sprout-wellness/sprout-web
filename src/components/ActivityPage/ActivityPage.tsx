@@ -33,7 +33,7 @@ export class ActivityPage extends Component<
 
     // Getting wellness tenet from the url.
     const match = this.props.match;
-    var currentTenet: string = match
+    const currentTenet: string = match
       ? match.params.tenet
       : "This wellness tenet doesn't exist!";
     this.state = {
