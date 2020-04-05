@@ -73,11 +73,11 @@ export class ActivityPage extends Component<
             return (
               <div key={key} className="card">
                 <img
-                  className="activity-image"
+                  className="card-image"
                   src="../../images/tree.png"
                   alt=""
                 />
-                <h3 className="activity-title">{item.name}</h3>
+                <h3 className="card-title">{item.name}</h3>
               </div>
             );
           })}
