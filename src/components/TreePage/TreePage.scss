@@ -5,4 +5,24 @@
   .title {
     text-align: center;
   }
+
+  #compassion-card:hover {
+    border-color: rgba(191, 137, 245, 0.9);
+  }
+
+  #gratitude-card:hover {
+    border-color: rgba(255, 190, 92, 0.9);
+  }
+
+  #kindness-card:hover {
+    border-color: rgba(255, 241, 77, 0.9);
+  }
+
+  #mindfulness-card:hover {
+    border-color: rgba(53, 88, 230, 0.9);
+  }
+
+  #resilience-card:hover {
+    border-color: rgba(209, 55, 38, 0.9);
+  }
 }
