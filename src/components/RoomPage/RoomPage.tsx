@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './RoomPage.scss';
-
-import { firebase } from '../../FirebaseSetup';
-import 'firebase/firestore';
+import { Room } from '../../storage/Room';
 
 interface RoomPageProps {
   match: {
@@ -10,23 +8,16 @@ interface RoomPageProps {
       id: string;
     };
   };
-  location: {
-    search: string;
-  };
 }
 
 interface RoomPageState {
-  id: string;
-  activity?: firebase.firestore.DocumentData;
+  room: Room | undefined;
   errors: string[];
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   state = {
-    id: 'Creating new room...',
-    activity: {
-      name: 'Loading...',
-    },
+    room: undefined,
     errors: [] as string[],
   };
 
@@ -44,35 +35,16 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   loadRoom(roomId: string) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(roomId)
-      .get()
-      .then(roomSnap => {
-        if (!roomSnap.exists) {
-          this.appendErrorMsg(`Room ${roomId} not found.`);
-          return;
-        }
-        const activityId = roomSnap.data()!.activity;
-        firebase
-          .firestore()
-          .doc(activityId)
-          .get()
-          .then(activitySnap => {
-            if (!activitySnap.exists) {
-              this.appendErrorMsg(
-                `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
-              );
-              return;
-            }
-            this.setState({
-              id: roomSnap.id,
-              activity: activitySnap.data()! as RoomPageState['activity'],
-              errors: [],
-            });
-          });
+    Room.Load(roomId, (room?) => {
+      if (!room) {
+        this.appendErrorMsg(`Room ${roomId} not found.`);
+        return;
+      }
+      this.setState({
+        room,
+        errors: [],
       });
+    });
   }
 
   render() {
@@ -89,14 +61,18 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
         </div>
       );
     }
+    if (!this.state.room) {
+      return <div id="room-page">Loading...</div>;
+    }
+    const room: Room = this.state.room!;
     return (
       <div id="room-page">
         <h1 className="title">Room</h1>
         <p>
-          <b>Room ID</b>: {this.state.id}
+          <b>Room ID</b>: {room.id}
         </p>
         <p>
-          <b>Activity</b>: {this.state.activity!.name}
+          <b>Activity</b>: {room.activity.name}
         </p>
         {/* <p><b>Attendees</b>: {this.state.activity}</p> */}
       </div>
