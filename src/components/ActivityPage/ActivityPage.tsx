@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { match } from 'react-router-dom';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
+import './ActivityPage.scss';
 
 interface DetailParams {
   tenet: string;
@@ -65,11 +66,22 @@ export class ActivityPage extends Component<
 
   render() {
     return (
-      <div>
-        <h1>{this.state.tenet}</h1>
-        {this.state.activities.map((item, key) => {
-          return <li key={key}>{item.name}</li>;
-        })}
+      <div className="activity-page">
+        <h1 className="title">{this.state.tenet}</h1>
+        <div className="card-container">
+          {this.state.activities.map((item, key) => {
+            return (
+              <div key={key} className="card">
+                <img
+                  className="activity-image"
+                  src="../../images/tree.png"
+                  alt=""
+                />
+                <h3 className="activity-title">{item.name}</h3>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
