@@ -57,15 +57,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       .collection('activities')
       .doc(activityId.toString())
       .get()
-      .then(activitySnap => {
+      .then((activitySnap) => {
         if (!activitySnap.exists) {
           this.appendErrorMsg(`Activity ${activityId} not found.`);
           return;
         }
-        const roomRef = firebase
-          .firestore()
-          .collection('rooms')
-          .doc();
+        const roomRef = firebase.firestore().collection('rooms').doc();
         roomRef
           .set({
             activity: activitySnap.ref.path,
@@ -85,7 +82,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       .collection('rooms')
       .doc(roomId)
       .get()
-      .then(roomSnap => {
+      .then((roomSnap) => {
         if (!roomSnap.exists) {
           this.appendErrorMsg(`Room ${roomId} not found.`);
           return;
@@ -95,7 +92,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           .firestore()
           .doc(activityId)
           .get()
-          .then(activitySnap => {
+          .then((activitySnap) => {
             if (!activitySnap.exists) {
               this.appendErrorMsg(
                 `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
@@ -114,7 +111,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   render() {
     if (this.state.errors.length) {
       return (
-        <div className="container">
+        <div id="room-page">
           {this.state.errors.map((errorMsg, i) => {
             return (
               <p className="error" key={i}>
@@ -129,7 +126,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return <Redirect to={`/room/${this.state.toRoom}`} />;
     }
     return (
-      <div className="container">
+      <div id="room-page">
         <h1 className="title">Room</h1>
         <p>
           <b>Room ID</b>: {this.state.id}

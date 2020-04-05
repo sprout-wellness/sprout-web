@@ -66,7 +66,7 @@ export class ActivityPage extends Component<
 
   render() {
     return (
-      <div className="activity-page">
+      <div id="activity-page">
         <h1 className="title">{this.state.tenet}</h1>
         <div className="card-container">
           {this.state.activities.map((item, key) => {

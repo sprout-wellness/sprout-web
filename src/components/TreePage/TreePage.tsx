@@ -13,7 +13,7 @@ export class TreePage extends Component<{}, TreePageState> {
 
   render() {
     return (
-      <div className="tree-page">
+      <div id="tree-page">
         <h1 className="title">What will you grow today?</h1>
         <div className="card-container">
           <Link to="/activities/compassion" style={{ textDecoration: 'none' }}>
