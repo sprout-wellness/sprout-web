@@ -14,7 +14,7 @@ export class TreePage extends Component<{}, TreePageState> {
   render() {
     return (
       <div id="tree-page">
-        <h1 className="title">What will you grow today?</h1>
+        <h1 className="title">What will you practice today?</h1>
         <div className="card-container">
           <Link to="/activities/compassion" style={{ textDecoration: 'none' }}>
             <div className="card" id="compassion-card">

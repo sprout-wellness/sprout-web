@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@400;700&display=swap');
+
 body {
   height: 100%;
   width: 100%;
-  font-family: "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+  font-family: Quattrocento, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
 }
 
 .card-container {
@@ -11,8 +13,6 @@ body {
   flex-wrap: wrap;
   align-items: center;
   margin: auto;
-  height: 100%;
-  width: 100%;
 
   .card {
     display: flex;
