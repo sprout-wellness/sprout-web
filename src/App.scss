@@ -3,7 +3,7 @@
 body {
   height: 100%;
   width: 100%;
-  font-family: Quattrocento, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+  font-family: "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
 }
 
 .card-container {
@@ -22,6 +22,7 @@ body {
     width: 17vw;
     min-height: 250px;
     min-width: 170px;
+    font-family: Quattrocento;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 30px;
     transform-style: preserve-3d;
