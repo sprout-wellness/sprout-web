@@ -1,6 +1,5 @@
 import React, { Component, MouseEvent } from 'react';
 import './RoomPage.scss';
-
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
 import copy from 'clipboard-copy';
@@ -20,6 +19,7 @@ interface RoomPageState {
   id: string;
   activity?: firebase.firestore.DocumentData;
   errors: string[];
+  showTooltip: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
@@ -32,6 +32,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       category: '',
     },
     errors: [] as string[],
+    showTooltip: false,
   };
 
   componentDidMount() {
@@ -82,6 +83,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   handleCopy(event: MouseEvent) {
     event.preventDefault();
     copy('sproutwellness.com/room/' + this.state.id);
+    this.setState({ showTooltip: true });
+    setTimeout(() => {
+      this.setState({ showTooltip: false });
+    }, 2000);
   }
 
   render() {
@@ -107,9 +112,18 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               <p>
                 <b>Room link</b>: sproutwellness.com/room/{this.state.id}
               </p>
-              <button onClick={this.handleCopy.bind(this)}>
-                Copy room link
-              </button>
+              <div>
+                <button onClick={this.handleCopy.bind(this)}>
+                  Copy room link
+                </button>
+                <span
+                  className={`copy-tooltip ${
+                    this.state.showTooltip ? '' : 'hidden'
+                  }`}
+                >
+                  Copied!
+                </span>
+              </div>
             </div>
           </div>
           <div className="participant-container">

@@ -1,38 +1,47 @@
 #room-page {
-    margin: 10% 10%;
+  margin: 10% 10%;
 
-    .activity-container {
-        display: flex;
-        flex-direction: row;
-        border-radius: 30px;
-        animation: all 0.2s ease-out;
-        padding: 8px 32px;
-        margin: 15vh 0 10vh;
+  .activity-container {
+    display: flex;
+    flex-direction: row;
+    border-radius: 30px;
+    animation: all 0.2s ease-out;
+    padding: 8px 32px;
+    margin: 15vh 0 10vh;
 
-        .row {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .participant-container {
-            margin-left: auto;
-            background-color: rgba(255, 255, 255, 1);
-            height: 100%;
-        }
+    .row {
+      display: flex;
+      flex-direction: row;
     }
 
-    #gratitude {
-        background-color: rgba(255, 190, 92, 0.4);
+    .participant-container {
+      margin-left: auto;
+      background-color: rgba(255, 255, 255, 1);
+      height: 100%;
     }
 
-    .title {
-        font-family: Quattrocento;
-        font-weight: 600;
-        text-align: left;
-        letter-spacing: 0.02em;
-    }
+    .copy-tooltip {
+      opacity: 1;
+      transition: all 0.2 ease-out;
 
-    .error {
-        color: rgba(230, 40, 50, 1);
+      &.hidden {
+        opacity: 0;
+      }
     }
+  }
+
+  #gratitude {
+    background-color: rgba(255, 190, 92, 0.4);
+  }
+
+  .title {
+    font-family: Quattrocento;
+    font-weight: 600;
+    text-align: left;
+    letter-spacing: 0.02em;
+  }
+
+  .error {
+    color: rgba(230, 40, 50, 1);
+  }
 }
