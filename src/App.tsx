@@ -1,11 +1,11 @@
-import React from "react";
-import "./App.scss";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { TreePage } from "./components/TreePage/TreePage";
-import { ActivityPage } from "./components/ActivityPage/ActivityPage";
-import { RoomPage } from "./components/RoomPage/RoomPage";
+import React from 'react';
+import './App.scss';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { TreePage } from './components/TreePage/TreePage';
+import { ActivityPage } from './components/ActivityPage/ActivityPage';
+import { RoomPage } from './components/RoomPage/RoomPage';
 
-function App() {
+export const APP = function App() {
   return (
     <Router>
       <div>
@@ -21,6 +21,4 @@ function App() {
       </div>
     </Router>
   );
-}
-
-export default App;
+};

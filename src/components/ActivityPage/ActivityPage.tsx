@@ -1,10 +1,10 @@
-import React, { Component } from "react"; // let's also import Component
+import React, { Component } from 'react'; // let's also import Component
 
 // the clock's state has one field: The current time, based upon the
 // JavaScript class Date
-type ActivityPageState = {
+interface ActivityPageState {
   time: Date;
-};
+}
 
 // Clock has no properties, but the current state is of type ClockState
 // The generic parameters in the Component typing allow to pass props
