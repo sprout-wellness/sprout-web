@@ -1,12 +1,12 @@
-import React, { Component } from "react"; // let's also import Component
-import "./TreePage.scss";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react'; // let's also import Component
+import './TreePage.scss';
+import { Link } from 'react-router-dom';
 
 // the clock's state has one field: The current time, based upon the
 // JavaScript class Date
-type TreePageState = {
+interface TreePageState {
   time: Date;
-};
+}
 
 // Clock has no properties, but the current state is of type ClockState
 // The generic parameters in the Component typing allow to pass props
