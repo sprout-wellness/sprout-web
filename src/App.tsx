@@ -11,9 +11,11 @@ function App() {
       <div>
         <Switch>
           <Route path="/room" component={RoomPage} />
-          <Route path="/activities">
-            <ActivityPage />
-          </Route>
+          <Route
+            exact
+            path="/activities/:tenet"
+            component={(props: any) => <ActivityPage {...props} />}
+          />
           <Route path="/">
             <TreePage />
           </Route>
