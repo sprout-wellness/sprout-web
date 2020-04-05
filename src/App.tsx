@@ -10,9 +10,7 @@ function App() {
     <Router>
       <div>
         <Switch>
-          <Route path="/room">
-            <RoomPage />
-          </Route>
+          <Route path="/room" component={RoomPage} />
           <Route path="/activities">
             <ActivityPage />
           </Route>
