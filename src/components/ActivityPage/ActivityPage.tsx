@@ -11,18 +11,18 @@ interface ActivityPageProps {
   match?: match<DetailParams>;
 }
 
-type Activity = {
+interface Activity {
   category: string;
   instructions: string;
   motivation: string;
   name: string;
   time: number;
-};
+}
 
-type ActivityPageState = {
+interface ActivityPageState {
   tenet: string;
   activities: Activity[];
-};
+}
 
 export class ActivityPage extends Component<
   ActivityPageProps,
@@ -53,8 +53,8 @@ export class ActivityPage extends Component<
       .where('category', '==', this.state.tenet)
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc: any) => {
-          this.setState((prevState: any) => {
+        snapshot.forEach((doc: firebase.firestore.DocumentData) => {
+          this.setState((prevState: ActivityPageState) => {
             return {
               activities: [...prevState.activities, doc.data()],
             };
