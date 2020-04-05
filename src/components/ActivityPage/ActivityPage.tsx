@@ -56,7 +56,7 @@ export class ActivityPage extends Component<
       .collection('activities')
       .where('category', '==', this.state.tenet)
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
           const activity: Activity = doc.data();
           activity.id = doc.id;
@@ -70,10 +70,7 @@ export class ActivityPage extends Component<
   }
 
   createRoom(activity: Activity) {
-    const roomRef = firebase
-      .firestore()
-      .collection('rooms')
-      .doc();
+    const roomRef = firebase.firestore().collection('rooms').doc();
     roomRef
       .set({
         activity: `activities/${activity.id}`,
@@ -101,16 +98,18 @@ export class ActivityPage extends Component<
         <div className="card-container">
           {this.state.activities.map((item, key) => {
             return (
-              <button key={key} onClick={this.createRoom.bind(this, item)}>
-                <div className="card">
-                  <img
-                    className="card-image"
-                    src="../../images/tree.png"
-                    alt=""
-                  />
-                  <h3 className="card-title">{item.name}</h3>
-                </div>
-              </button>
+              <div
+                className="card"
+                key={key}
+                onClick={this.createRoom.bind(this, item)}
+              >
+                <img
+                  className="card-image"
+                  src="../../images/tree.png"
+                  alt=""
+                />
+                <h3 className="card-title">{item.name}</h3>
+              </div>
             );
           })}
         </div>
