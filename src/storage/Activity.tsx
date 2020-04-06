@@ -48,7 +48,7 @@ export class Activity {
       .collection('activities')
       .doc(id)
       .get()
-      .then((activitySnap) => {
+      .then(activitySnap => {
         if (!activitySnap.exists) {
           console.log(`Activity ${id} does not exist.`);
           return callback(undefined);
@@ -65,7 +65,7 @@ export class Activity {
           )
         );
       })
-      .catch((reason) => {
+      .catch(reason => {
         console.log(`Activity ${id} could not be loaded.`, reason);
         return callback(undefined);
       });

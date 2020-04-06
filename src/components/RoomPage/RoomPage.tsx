@@ -62,23 +62,30 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     }, 2000);
   }
 
-  render() {
-    if (this.state.errors.length) {
-      return (
-        <div id="room-page">
-          {this.state.errors.map((errorMsg, i) => {
-            return (
-              <p className="error" key={i}>
-                {errorMsg}
-              </p>
-            );
-          })}
-        </div>
-      );
-    }
-    if (!this.state.room) {
-      return <div id="room-page">Loading...</div>;
-    }
+  begin() {
+    const room: Room = this.state.room!;
+    Room.Begin(room.id);
+  }
+
+  renderError() {
+    return (
+      <div id="room-page">
+        {this.state.errors.map((errorMsg, i) => {
+          return (
+            <p className="error" key={i}>
+              {errorMsg}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
+
+  renderLoading() {
+    return <div id="room-page">Loading...</div>;
+  }
+
+  renderLobby() {
     const room: Room = this.state.room!;
     return (
       <div id="room-page">
@@ -100,12 +107,18 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
                 Copied to clipboard!
               </span>
             </div>
-            <button className="begin-button">Begin Practice</button>
+            <button className="begin-button" onClick={this.begin.bind(this)}>
+              Begin Practice
+            </button>
           </div>
           <div className="participants-container">
             <div className="participant-card">
               <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
               <h4 className="participant-name">Tao Ong</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Sarah Chen</h4>
             </div>
             <div className="participant-card">
               <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
@@ -129,5 +142,30 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
         </div>
       </div>
     );
+  }
+
+  renderActivity() {
+    const room: Room = this.state.room!;
+    return (
+      <div id="room-page">
+        <p className="activity-instructions">{room.activity.instructions}</p>
+        <div id="progress-bar"></div>
+      </div>
+    );
+  }
+
+  render() {
+    const room: Room = this.state.room!;
+    if (this.state.errors.length) {
+      return this.renderError();
+    }
+    if (!room) {
+      return this.renderLoading();
+    }
+    if (!room.startTime) {
+      console.log(room);
+      return this.renderLobby();
+    }
+    return this.renderActivity();
   }
 }

@@ -7,11 +7,18 @@ export class Room {
   readonly id: string;
   readonly activity: Activity;
   readonly attendees: User[];
+  readonly startTime: Date | undefined;
 
-  private constructor(id: string, activity: Activity, attendees: User[]) {
+  private constructor(
+    id: string,
+    activity: Activity,
+    attendees: User[],
+    startTime: Date | undefined
+  ) {
     this.id = id;
     this.activity = activity;
     this.attendees = attendees;
+    this.startTime = startTime;
   }
 
   private save(callback: (room: Room) => void) {
@@ -21,13 +28,26 @@ export class Room {
       .doc(this.id)
       .set({
         activity: this.activity.id,
-        attendees: this.attendees.map(user => user.id),
+        attendees: this.attendees.map((user) => user.id),
       })
-      .then(done => {
+      .then((done) => {
         callback(this);
       })
-      .catch(reason => {
+      .catch((reason) => {
         console.log(`Room ${this.id} could not be created.`, reason);
+      });
+  }
+
+  static Begin(id: string) {
+    firebase
+      .firestore()
+      .collection('rooms')
+      .doc(id)
+      .update({
+        startTime: new Date(),
+      })
+      .catch((reason) => {
+        console.log(`Room ${id} could not be created.`, reason);
       });
   }
 
@@ -37,7 +57,7 @@ export class Room {
       .collection('rooms')
       .doc(id)
       .get()
-      .then(roomSnap => {
+      .then((roomSnap) => {
         if (!roomSnap.exists) {
           console.log(`Room ${id} does not exist.`);
           return callback(undefined);
@@ -48,7 +68,9 @@ export class Room {
         const users = [] as User[];
         function checkFinished() {
           if (!callbacksInFlight) {
-            callback(new Room(roomSnap.id, activity, users));
+            callback(
+              new Room(roomSnap.id, activity, users, roomSnap.data()!.startTime)
+            );
           }
         }
 
@@ -72,18 +94,15 @@ export class Room {
           User.Load(userRef.id, userLoaded);
         }
       })
-      .catch(reason => {
+      .catch((reason) => {
         console.log(`Room ${id} could not be loaded.`, reason);
         return callback(undefined);
       });
   }
 
   static Create(activity: Activity, callback: (room: Room) => void) {
-    const randomId = firebase
-      .firestore()
-      .collection('rooms')
-      .doc().id;
-    const room = new Room(randomId, activity, []);
+    const randomId = firebase.firestore().collection('rooms').doc().id;
+    const room = new Room(randomId, activity, [], undefined);
     room.save(callback);
   }
 }
