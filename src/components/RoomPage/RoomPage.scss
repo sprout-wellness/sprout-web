@@ -1,6 +1,27 @@
 #room-page {
   margin: 5% 10%;
 
+  // Specific activity container styles for each tenet.
+  #compassion {
+    background-color: rgba(191, 137, 245, 0.4);
+  }
+
+  #gratitude {
+    background-color: rgba(255, 190, 92, 0.4);
+  }
+
+  #kindness {
+    background-color: rgba(255, 241, 77, 0.4);
+  }
+
+  #mindfulness {
+    background-color: rgba(53, 88, 230, 0.4);
+  }
+
+  #resilience {
+    background-color: rgba(209, 55, 38, 0.4);
+  }
+
   .activity-container {
     display: flex;
     flex-direction: row;
@@ -109,10 +130,6 @@
         opacity: 0;
       }
     }
-  }
-
-  #gratitude {
-    background-color: rgba(255, 190, 92, 0.4);
   }
 
   .error {
