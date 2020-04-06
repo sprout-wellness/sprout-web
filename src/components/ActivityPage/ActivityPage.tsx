@@ -49,7 +49,7 @@ export class ActivityPage extends Component<
       .collection('activities')
       .where('category', '==', this.state.tenet)
       .get()
-      .then(querySnap => {
+      .then((querySnap) => {
         querySnap.forEach(
           (documentSnap: firebase.firestore.QueryDocumentSnapshot) => {
             this.setState((prevState: ActivityPageState) => {
@@ -66,7 +66,7 @@ export class ActivityPage extends Component<
   }
 
   createRoom(activity: Activity) {
-    Room.Create(activity, room => {
+    Room.Create(activity, (room) => {
       this.setState({
         redirectToRoom: room.id,
       });
@@ -86,7 +86,7 @@ export class ActivityPage extends Component<
         <h1 className="title">
           {this.capitalizeFirstLetter(this.state.tenet)}
         </h1>
-        <div className="card-container">
+        <div className="card-container tight">
           {this.state.activities.map((item, key) => {
             return (
               <div

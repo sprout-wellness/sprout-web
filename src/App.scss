@@ -13,14 +13,15 @@ body {
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
-  margin: auto;
+  margin: auto 4vw;
 
   .card {
     display: flex;
     flex-direction: column;
     margin: 16px 4px;
+    padding: 8px;
     height: 40vh;
-    width: 17vw;
+    width: 15vw;
     min-height: 250px;
     min-width: 170px;
     font-family: Quattrocento;
