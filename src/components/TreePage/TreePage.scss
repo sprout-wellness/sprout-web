@@ -1,5 +1,5 @@
 #tree-page {
-  height: 100vh;
+  height: 80vh;
   width: 100vw;
 
   .title {
@@ -28,5 +28,11 @@
 
   #resilience-card:hover {
     border-color: rgba(209, 55, 38, 0.9);
+  }
+
+  img {
+    width: 80%;
+    height: 80%;
+    margin-left: 10%;
   }
 }

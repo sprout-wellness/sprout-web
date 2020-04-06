@@ -28,12 +28,12 @@ export class Room {
       .doc(this.id)
       .set({
         activity: this.activity.id,
-        attendees: this.attendees.map((user) => user.id),
+        attendees: this.attendees.map(user => user.id),
       })
-      .then((done) => {
+      .then(done => {
         callback(this);
       })
-      .catch((reason) => {
+      .catch(reason => {
         console.log(`Room ${this.id} could not be created.`, reason);
       });
   }
@@ -46,7 +46,7 @@ export class Room {
       .update({
         startTime: new Date(),
       })
-      .catch((reason) => {
+      .catch(reason => {
         console.log(`Room ${id} could not be created.`, reason);
       });
   }
@@ -57,7 +57,7 @@ export class Room {
       .collection('rooms')
       .doc(id)
       .get()
-      .then((roomSnap) => {
+      .then(roomSnap => {
         if (!roomSnap.exists) {
           console.log(`Room ${id} does not exist.`);
           return callback(undefined);
@@ -94,14 +94,17 @@ export class Room {
           User.Load(userRef.id, userLoaded);
         }
       })
-      .catch((reason) => {
+      .catch(reason => {
         console.log(`Room ${id} could not be loaded.`, reason);
         return callback(undefined);
       });
   }
 
   static Create(activity: Activity, callback: (room: Room) => void) {
-    const randomId = firebase.firestore().collection('rooms').doc().id;
+    const randomId = firebase
+      .firestore()
+      .collection('rooms')
+      .doc().id;
     const room = new Room(randomId, activity, [], undefined);
     room.save(callback);
   }
