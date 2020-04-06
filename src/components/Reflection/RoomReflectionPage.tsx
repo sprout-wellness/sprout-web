@@ -3,10 +3,11 @@ import { Reflection } from './Reflection';
 import { firebase } from '../../FirebaseSetup';
 import { Link } from 'react-router-dom';
 
-interface RoomReflectionPageProps {}
+interface RoomReflectionPageProps {
+  roomId: string;
+}
 
 interface RoomReflectionPageState {
-  roomId: string;
   reflections: ReflectionEntry[];
 }
 
@@ -24,7 +25,7 @@ export class RoomReflectionPage extends Component<
 
   constructor(props: RoomReflectionPageProps) {
     super(props);
-    this.state = { roomId: '1mIMXIziHIrPrx4M5Soo', reflections: [] };
+    this.state = { reflections: [] };
   }
 
   componentDidMount() {
@@ -43,33 +44,14 @@ export class RoomReflectionPage extends Component<
 
   componentWillUnmount() {
     // where you put cleanup stuff. You can't modify component state in this lifecycle!
-    //this._unsubscribe();
+    this._unsubscribe();
   }
 
-  private _fetchReflectionsAndUpdateState() {
-    firebase
-      .firestore()
-      .collection('reflections')
-      .where('roomId', '==', this.state.roomId)
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          this.setState((prevState: RoomReflectionPageState) => {
-            return {
-              roomId: prevState.roomId,
-              reflections: [...prevState.reflections, doc.data()],
-            };
-          });
-        });
-      });
-  }
-
-  /** not working */
   private _addReflectionDBListener() {
     this._unsubscribe = firebase
       .firestore()
       .collection('reflections')
-      .where('roomId', '==', this.state.roomId)
+      .where('roomId', '==', this.props.roomId)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
         snapshot.docChanges().forEach((change: any) => {
           if (change.type === 'added') {

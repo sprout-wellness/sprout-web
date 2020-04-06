@@ -11,14 +11,14 @@ interface ReflectionSubmissionPageProps {
 
 interface ReflectionSubmissionPageState {
     reflectionText: string;
-    redirect: boolean;
+    submitted: boolean;
 }
 
 export class ReflectionSubmissionPage extends Component<ReflectionSubmissionPageProps, ReflectionSubmissionPageState> {
     
     constructor(props: ReflectionSubmissionPageProps) {
         super(props);
-        this.state = {reflectionText: '', redirect: false};
+        this.state = {reflectionText: '', submitted: false};
 
         this.handleReflectionInputChange = this.handleReflectionInputChange.bind(this);
         this.handleReflectionInputSubmit = this.handleReflectionInputSubmit.bind(this);
@@ -54,14 +54,14 @@ export class ReflectionSubmissionPage extends Component<ReflectionSubmissionPage
             })
         
             this.setState((prevState:ReflectionSubmissionPageState) => {
-                return {reflectionText: prevState.reflectionText, redirect: true}
+                return {reflectionText: prevState.reflectionText, submitted: true}
             });
     }
 
     render() {
 
-        if (this.state.redirect) {
-            return <Redirect push to='/test-room-reflection'/>;
+        if (this.state.submitted) {
+            return <RoomReflectionPage roomId={this.props.roomId}></RoomReflectionPage>;
         }
 
         return (

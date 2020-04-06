@@ -5,7 +5,6 @@ import { TreePage } from './components/TreePage/TreePage';
 import { ActivityPage } from './components/ActivityPage/ActivityPage';
 import { RoomPage } from './components/RoomPage/RoomPage';
 import { ReflectionSubmissionPage } from './components/Reflection/ReflectionSubmissionPage';
-import { RoomReflectionPage } from './components/Reflection/RoomReflectionPage';
 import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
 
 export const APP = function App() {
@@ -25,11 +24,7 @@ export const APP = function App() {
                           activityId={"1001"}
                         />}
               />
-          <Route
-            exact
-            path="/test-room-reflection"
-            component={RoomReflectionPage}
-          />
+
           <Route component={NotFoundPage} />
         </Switch>
       </div>
