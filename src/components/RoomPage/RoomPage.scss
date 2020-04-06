@@ -1,5 +1,5 @@
 #room-page {
-  margin: 10% 10%;
+  margin: 5% 10%;
 
   .activity-container {
     display: flex;
@@ -31,6 +31,10 @@
         margin: 0 8px;
 
         &:hover {
+          color: rgba(0, 0, 0, 0.7);
+        }
+
+        &:active {
           color: rgba(0, 0, 0, 0.5);
         }
       }
@@ -42,8 +46,24 @@
 
     .begin-button {
       margin-top: 24px;
-      padding: 4px 8px;
-      background-color: white;
+      padding: 8px 16px;
+      background-color: rgba(0, 0, 0, 1);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+
+      &:focus {
+        outline: none;
+      }
     }
 
     .participants-container {

@@ -110,7 +110,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
         <div className="activity-container" id={this.state.activity!.category}>
           <div>
             <h1 className="title">{this.state.activity!.name}</h1>
-            <b>Room link: </b>
+            <b>Invite others to join with this link: </b>
             <div className="room-link-row">
               <p>sproutwellness.com/room/{this.state.id}</p>
               <FontAwesomeIcon
