@@ -7,7 +7,12 @@
     margin: 15vh 0 10vh;
   }
 
-  .tight {
-    margin: auto 20vw;
+  .card-container.tight {
+    margin: auto 10vw;
+  }
+
+  .card.large {
+    width: 22vw;
+    margin: auto 0;
   }
 }

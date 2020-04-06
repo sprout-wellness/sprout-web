@@ -121,10 +121,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             </div>
           </div>
         </div>
-        <p>
-          <b>Duration</b>: {room.activity.time} minutes
-        </p>
-        <p>{room.activity.motivation}</p>
+        <div className="activity-details">
+          <p>
+            <b>Duration</b>: {room.activity.time} minutes
+          </p>
+          <p>{room.activity.motivation}</p>
+        </div>
       </div>
     );
   }

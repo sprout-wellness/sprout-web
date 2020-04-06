@@ -90,7 +90,7 @@ export class ActivityPage extends Component<
           {this.state.activities.map((item, key) => {
             return (
               <div
-                className="card"
+                className="card large"
                 key={key}
                 onClick={this.createRoom.bind(this, item)}
               >
@@ -100,6 +100,7 @@ export class ActivityPage extends Component<
                   alt=""
                 />
                 <h3 className="card-title">{item.name}</h3>
+                <p className="card-content">{item.blurb}</p>
                 <p className="card-subtitle">Duration: {item.time} minutes</p>
               </div>
             );
