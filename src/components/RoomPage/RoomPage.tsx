@@ -144,13 +144,28 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     );
   }
 
+  renderActivity() {
+    const room: Room = this.state.room!;
+    return (
+      <div id="room-page">
+        <p className="activity-instructions">{room.activity.instructions}</p>
+        <div id="progress-bar"></div>
+      </div>
+    );
+  }
+
   render() {
+    const room: Room = this.state.room!;
     if (this.state.errors.length) {
       return this.renderError();
     }
-    if (!this.state.room) {
+    if (!room) {
       return this.renderLoading();
     }
-    return this.renderLobby();
+    if (!room.startTime) {
+      console.log(room);
+      return this.renderLobby();
+    }
+    return this.renderActivity();
   }
 }

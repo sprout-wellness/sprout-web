@@ -68,7 +68,9 @@ export class Room {
         const users = [] as User[];
         function checkFinished() {
           if (!callbacksInFlight) {
-            callback(new Room(roomSnap.id, activity, users, undefined));
+            callback(
+              new Room(roomSnap.id, activity, users, roomSnap.data()!.startTime)
+            );
           }
         }
 
