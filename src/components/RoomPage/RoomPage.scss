@@ -1,9 +1,144 @@
 #room-page {
+  margin: 5% 10%;
+
+  // Specific activity container styles for each tenet.
+  #compassion {
+    background-color: rgba(191, 137, 245, 0.4);
+  }
+
+  #gratitude {
+    background-color: rgba(255, 190, 92, 0.4);
+  }
+
+  #kindness {
+    background-color: rgba(255, 241, 77, 0.4);
+  }
+
+  #mindfulness {
+    background-color: rgba(53, 88, 230, 0.4);
+  }
+
+  #resilience {
+    background-color: rgba(209, 55, 38, 0.4);
+  }
+
+  .activity-container {
+    display: flex;
+    flex-direction: row;
+    min-width: 600px;
+    border-radius: 30px;
+    animation: all 0.2s ease-out;
+    padding: 16px 16px 32px 32px;
+    margin-bottom: 10vh;
+
     .title {
-        color: rgba(38, 166, 91, 1);
+      font-family: Quattrocento;
+      font-weight: 600;
+      text-align: left;
+      letter-spacing: 0.02em;
     }
 
-    .error {
-        color: rgba(230, 40, 50, 1);
+    b {
+      margin-bottom: 0;
     }
+
+    .room-link-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
+
+      svg {
+        margin: 0 8px;
+
+        &:hover {
+          color: rgba(0, 0, 0, 0.7);
+        }
+
+        &:active {
+          color: rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    .begin-button {
+      margin-top: 24px;
+      padding: 8px 16px;
+      background-color: rgba(0, 0, 0, 1);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .participants-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-left: auto;
+
+      .participant-card {
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 1);
+        height: 42px;
+        max-width: 100px;
+        margin: 8px 4px;
+        padding: 8px;
+        border-radius: 8px;
+        text-align: center;
+
+        .participant-name {
+          margin: 4px 0;
+          padding: 0;
+          font-size: 14px;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          display: block;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .copy-tooltip {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      margin-left: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      opacity: 1;
+      transition: all 0.2s ease-out;
+
+      &.hidden {
+        opacity: 0;
+      }
+    }
+  }
+
+  .activity-details {
+    margin: 0 32px;
+    line-height: 2rem;
+    font-size: 20px;
+  }
+
+  .error {
+    color: rgba(230, 40, 50, 1);
+  }
 }

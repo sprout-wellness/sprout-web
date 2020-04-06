@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, MouseEvent } from 'react';
+import copy from 'clipboard-copy';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
+import { Room } from '../../storage/Room';
 import './RoomPage.scss';
-
-import { firebase } from '../../FirebaseSetup';
-import 'firebase/firestore';
 
 interface RoomPageProps {
   match: {
@@ -10,24 +11,19 @@ interface RoomPageProps {
       id: string;
     };
   };
-  location: {
-    search: string;
-  };
 }
 
 interface RoomPageState {
-  id: string;
-  activity?: firebase.firestore.DocumentData;
+  room: Room | undefined;
   errors: string[];
+  showTooltip: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   state = {
-    id: 'Creating new room...',
-    activity: {
-      name: 'Loading...',
-    },
+    room: undefined,
     errors: [] as string[],
+    showTooltip: false,
   };
 
   componentDidMount() {
@@ -44,62 +40,132 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   loadRoom(roomId: string) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(roomId)
-      .get()
-      .then(roomSnap => {
-        if (!roomSnap.exists) {
-          this.appendErrorMsg(`Room ${roomId} not found.`);
-          return;
-        }
-        const activityId = roomSnap.data()!.activity;
-        firebase
-          .firestore()
-          .doc(activityId)
-          .get()
-          .then(activitySnap => {
-            if (!activitySnap.exists) {
-              this.appendErrorMsg(
-                `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
-              );
-              return;
-            }
-            this.setState({
-              id: roomSnap.id,
-              activity: activitySnap.data()! as RoomPageState['activity'],
-              errors: [],
-            });
-          });
+    Room.Load(roomId, (room?) => {
+      if (!room) {
+        this.appendErrorMsg(`Room ${roomId} not found.`);
+        return;
+      }
+      this.setState({
+        room,
+        errors: [],
       });
+    });
+  }
+
+  handleCopy(event: MouseEvent) {
+    const room: Room = this.state.room!;
+    event.preventDefault();
+    copy('sproutwellness.com/room/' + room.id);
+    this.setState({ showTooltip: true });
+    setTimeout(() => {
+      this.setState({ showTooltip: false });
+    }, 2000);
+  }
+
+  begin() {
+    const room: Room = this.state.room!;
+    Room.Begin(room.id);
+  }
+
+  renderError() {
+    return (
+      <div id="room-page">
+        {this.state.errors.map((errorMsg, i) => {
+          return (
+            <p className="error" key={i}>
+              {errorMsg}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
+
+  renderLoading() {
+    return <div id="room-page">Loading...</div>;
+  }
+
+  renderLobby() {
+    const room: Room = this.state.room!;
+    return (
+      <div id="room-page">
+        <div className="activity-container" id={room.activity.category}>
+          <div>
+            <h1 className="title">{room.activity.name}</h1>
+            <b>Invite others to join with this link: </b>
+            <div className="room-link-row">
+              <p>sproutwellness.com/room/{room.id}</p>
+              <FontAwesomeIcon
+                icon={faCopy}
+                onClick={this.handleCopy.bind(this)}
+              ></FontAwesomeIcon>
+              <span
+                className={`copy-tooltip ${
+                  this.state.showTooltip ? '' : 'hidden'
+                }`}
+              >
+                Copied to clipboard!
+              </span>
+            </div>
+            <button className="begin-button" onClick={this.begin.bind(this)}>
+              Begin Practice
+            </button>
+          </div>
+          <div className="participants-container">
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Tao Ong</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Sarah Chen</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Orkun Duman</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Carson Trinh</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Mike You</h4>
+            </div>
+          </div>
+        </div>
+        <div className="activity-details">
+          <p>
+            <b>Duration</b>: {room.activity.time} minutes
+          </p>
+          <p>{room.activity.motivation}</p>
+        </div>
+      </div>
+    );
+  }
+
+  renderActivity() {
+    const room: Room = this.state.room!;
+    return (
+      <div id="room-page">
+        <p className="activity-instructions">{room.activity.instructions}</p>
+        <div id="progress-bar"></div>
+      </div>
+    );
   }
 
   render() {
+    const room: Room = this.state.room!;
     if (this.state.errors.length) {
-      return (
-        <div id="room-page">
-          {this.state.errors.map((errorMsg, i) => {
-            return (
-              <p className="error" key={i}>
-                {errorMsg}
-              </p>
-            );
-          })}
-        </div>
-      );
+      return this.renderError();
     }
-    return (
-      <div id="room-page">
-        <h1 className="title">Room</h1>
-        <p>
-          <b>Room ID</b>: {this.state.id}
-        </p>
-        <p>
-          <b>Activity</b>: {this.state.activity!.name}
-        </p>
-        {/* <p><b>Attendees</b>: {this.state.activity}</p> */}
-      </div>
-    );
+    if (!room) {
+      return this.renderLoading();
+    }
+    if (!room.startTime) {
+      console.log(room);
+      return this.renderLobby();
+    }
+    return this.renderActivity();
   }
 }
