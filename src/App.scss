@@ -41,6 +41,7 @@ body {
     }
 
     .card-title {
+      height: 15%;
       color: rgba(0, 0, 0, 0.8);
       text-align: center;
       font-weight: 500;
@@ -48,6 +49,12 @@ body {
       line-height: 120%;
       letter-spacing: 0.02em;
       transform: translateZ(20px);
+    }
+
+    .card-subtitle {
+      font-family: Nunito, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+      font-size: 14px;
+      text-align: center;
     }
   }
 }
