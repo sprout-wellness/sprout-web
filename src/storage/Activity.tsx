@@ -8,6 +8,7 @@ export class Activity {
   readonly instructions: string;
   readonly motivation: string;
   readonly time: number;
+  readonly blurb: string;
 
   private constructor(
     id: string,
@@ -15,7 +16,8 @@ export class Activity {
     category: string,
     instructions: string,
     motivation: string,
-    time: string
+    time: string,
+    blurb: string
   ) {
     this.id = Number(id);
     this.name = name;
@@ -23,6 +25,7 @@ export class Activity {
     this.instructions = instructions;
     this.motivation = motivation;
     this.time = Number(time);
+    this.blurb = blurb;
   }
 
   static LoadFromSnapshot(
@@ -34,7 +37,8 @@ export class Activity {
       activitySnap.data().category,
       activitySnap.data().instructions,
       activitySnap.data().motivation,
-      activitySnap.data().time
+      activitySnap.data().time,
+      activitySnap.data().blurb
     );
   }
 
@@ -44,7 +48,7 @@ export class Activity {
       .collection('activities')
       .doc(id)
       .get()
-      .then(activitySnap => {
+      .then((activitySnap) => {
         if (!activitySnap.exists) {
           console.log(`Activity ${id} does not exist.`);
           return callback(undefined);
@@ -56,11 +60,12 @@ export class Activity {
             activitySnap.data()!.category,
             activitySnap.data()!.instructions,
             activitySnap.data()!.motivation,
-            activitySnap.data()!.time
+            activitySnap.data()!.time,
+            activitySnap.data()!.blurb
           )
         );
       })
-      .catch(reason => {
+      .catch((reason) => {
         console.log(`Activity ${id} could not be loaded.`, reason);
         return callback(undefined);
       });
