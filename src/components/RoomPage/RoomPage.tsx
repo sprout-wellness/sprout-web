@@ -1,10 +1,9 @@
 import React, { Component, MouseEvent } from 'react';
-import './RoomPage.scss';
-import { firebase } from '../../FirebaseSetup';
-import 'firebase/firestore';
 import copy from 'clipboard-copy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
+import { Room } from '../../storage/Room';
+import './RoomPage.scss';
 
 interface RoomPageProps {
   match: {
@@ -12,27 +11,17 @@ interface RoomPageProps {
       id: string;
     };
   };
-  location: {
-    search: string;
-  };
 }
 
 interface RoomPageState {
-  id: string;
-  activity?: firebase.firestore.DocumentData;
+  room: Room | undefined;
   errors: string[];
   showTooltip: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   state = {
-    id: 'Creating new room...',
-    activity: {
-      name: 'Loading...',
-      motivation: '',
-      time: 0,
-      category: '',
-    },
+    room: undefined,
     errors: [] as string[],
     showTooltip: false,
   };
@@ -51,40 +40,22 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   loadRoom(roomId: string) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(roomId)
-      .get()
-      .then((roomSnap) => {
-        if (!roomSnap.exists) {
-          this.appendErrorMsg(`Room ${roomId} not found.`);
-          return;
-        }
-        const activityId = roomSnap.data()!.activity;
-        firebase
-          .firestore()
-          .doc(activityId)
-          .get()
-          .then((activitySnap) => {
-            if (!activitySnap.exists) {
-              this.appendErrorMsg(
-                `Room ${roomId} is corrupted. Activity ${activityId} does not exist. Please create another room.`
-              );
-              return;
-            }
-            this.setState({
-              id: roomSnap.id,
-              activity: activitySnap.data()! as RoomPageState['activity'],
-              errors: [],
-            });
-          });
+    Room.Load(roomId, (room?) => {
+      if (!room) {
+        this.appendErrorMsg(`Room ${roomId} not found.`);
+        return;
+      }
+      this.setState({
+        room,
+        errors: [],
       });
+    });
   }
 
   handleCopy(event: MouseEvent) {
+    const room: Room = this.state.room!;
     event.preventDefault();
-    copy('sproutwellness.com/room/' + this.state.id);
+    copy('sproutwellness.com/room/' + room.id);
     this.setState({ showTooltip: true });
     setTimeout(() => {
       this.setState({ showTooltip: false });
@@ -105,14 +76,18 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
         </div>
       );
     }
+    if (!this.state.room) {
+      return <div id="room-page">Loading...</div>;
+    }
+    const room: Room = this.state.room!;
     return (
       <div id="room-page">
-        <div className="activity-container" id={this.state.activity!.category}>
+        <div className="activity-container" id={room.activity.category}>
           <div>
-            <h1 className="title">{this.state.activity!.name}</h1>
+            <h1 className="title">{room.activity.name}</h1>
             <b>Invite others to join with this link: </b>
             <div className="room-link-row">
-              <p>sproutwellness.com/room/{this.state.id}</p>
+              <p>sproutwellness.com/room/{room.id}</p>
               <FontAwesomeIcon
                 icon={faCopy}
                 onClick={this.handleCopy.bind(this)}
@@ -147,9 +122,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           </div>
         </div>
         <p>
-          <b>Duration</b>: {this.state.activity!.time} minutes
+          <b>Duration</b>: {room.activity.time} minutes
         </p>
-        <p>{this.state.activity!.motivation}</p>
+        <p>{room.activity.motivation}</p>
       </div>
     );
   }
