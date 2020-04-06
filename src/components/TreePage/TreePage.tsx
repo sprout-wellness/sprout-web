@@ -18,32 +18,52 @@ export class TreePage extends Component<{}, TreePageState> {
         <div className="card-container">
           <Link to="/activities/compassion" style={{ textDecoration: 'none' }}>
             <div className="card" id="compassion-card">
-              <img className="card-image" src="../../images/tree.png" alt="" />
               <h3 className="card-title">Compassion</h3>
+              <img
+                className="card-image"
+                src={require('../../images/avatars/compassion.png')}
+                alt=""
+              />
             </div>
           </Link>
           <Link to="/activities/gratitude" style={{ textDecoration: 'none' }}>
             <div className="card" id="gratitude-card">
-              <img className="card-image" src="../../images/tree.png" alt="" />
               <h3 className="card-title">Gratitude</h3>
+              <img
+                className="card-image"
+                src={require('../../images/avatars/gratitude.png')}
+                alt=""
+              />
             </div>
           </Link>
           <Link to="/activities/kindness" style={{ textDecoration: 'none' }}>
             <div className="card" id="kindness-card">
-              <img className="card-image" src="../../images/tree.png" alt="" />
               <h3 className="card-title">Kindness</h3>
+              <img
+                className="card-image"
+                src={require('../../images/avatars/kindness.png')}
+                alt=""
+              />
             </div>
           </Link>
           <Link to="/activities/mindfulness" style={{ textDecoration: 'none' }}>
             <div className="card" id="mindfulness-card">
-              <img className="card-image" src="../../images/tree.png" alt="" />
               <h3 className="card-title">Mindfulness</h3>
+              <img
+                className="card-image"
+                src={require('../../images/avatars/mindfulness.png')}
+                alt=""
+              />
             </div>
           </Link>
           <Link to="/activities/resilience" style={{ textDecoration: 'none' }}>
             <div className="card" id="resilience-card">
-              <img className="card-image" src="../../images/tree.png" alt="" />
               <h3 className="card-title">Resilience</h3>
+              <img
+                className="card-image"
+                src={require('../../images/avatars/resilience.png')}
+                alt=""
+              />
             </div>
           </Link>
         </div>

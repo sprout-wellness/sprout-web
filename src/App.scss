@@ -13,14 +13,15 @@ body {
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
-  margin: auto;
+  margin: auto 4vw;
 
   .card {
     display: flex;
     flex-direction: column;
     margin: 16px 4px;
+    padding: 8px;
     height: 40vh;
-    width: 17vw;
+    width: 15vw;
     min-height: 250px;
     min-width: 170px;
     font-family: Quattrocento;
@@ -40,6 +41,7 @@ body {
     }
 
     .card-title {
+      height: 15%;
       color: rgba(0, 0, 0, 0.8);
       text-align: center;
       font-weight: 500;
@@ -47,6 +49,18 @@ body {
       line-height: 120%;
       letter-spacing: 0.02em;
       transform: translateZ(20px);
+    }
+
+    .card-subtitle {
+      font-family: Nunito, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .card-content {
+      font-family: Nunito, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+      text-align: justify;
+      margin: 0 16px auto;
     }
   }
 }

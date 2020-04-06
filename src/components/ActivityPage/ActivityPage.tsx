@@ -3,6 +3,8 @@ import { match, Redirect } from 'react-router-dom';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
 import './ActivityPage.scss';
+import { Activity } from '../../storage/Activity';
+import { Room } from '../../storage/Room';
 
 interface DetailParams {
   tenet: string;
@@ -10,15 +12,6 @@ interface DetailParams {
 
 interface ActivityPageProps {
   match?: match<DetailParams>;
-}
-
-interface Activity {
-  id: number;
-  category: string;
-  instructions: string;
-  motivation: string;
-  name: string;
-  time: number;
 }
 
 interface ActivityPageState {
@@ -56,30 +49,28 @@ export class ActivityPage extends Component<
       .collection('activities')
       .where('category', '==', this.state.tenet)
       .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          const activity: Activity = doc.data();
-          activity.id = doc.id;
-          this.setState((prevState: ActivityPageState) => {
-            return {
-              activities: [...prevState.activities, activity],
-            };
-          });
-        });
+      .then(querySnap => {
+        querySnap.forEach(
+          (documentSnap: firebase.firestore.QueryDocumentSnapshot) => {
+            this.setState((prevState: ActivityPageState) => {
+              return {
+                activities: [
+                  ...prevState.activities,
+                  Activity.LoadFromSnapshot(documentSnap),
+                ],
+              };
+            });
+          }
+        );
       });
   }
 
   createRoom(activity: Activity) {
-    const roomRef = firebase.firestore().collection('rooms').doc();
-    roomRef
-      .set({
-        activity: `activities/${activity.id}`,
-      })
-      .then(() => {
-        this.setState({
-          redirectToRoom: roomRef.id,
-        });
+    Room.Create(activity, room => {
+      this.setState({
+        redirectToRoom: room.id,
       });
+    });
   }
 
   capitalizeFirstLetter(s: string) {
@@ -95,11 +86,11 @@ export class ActivityPage extends Component<
         <h1 className="title">
           {this.capitalizeFirstLetter(this.state.tenet)}
         </h1>
-        <div className="card-container">
+        <div className="card-container tight">
           {this.state.activities.map((item, key) => {
             return (
               <div
-                className="card"
+                className="card large"
                 key={key}
                 onClick={this.createRoom.bind(this, item)}
               >
@@ -109,6 +100,8 @@ export class ActivityPage extends Component<
                   alt=""
                 />
                 <h3 className="card-title">{item.name}</h3>
+                <p className="card-content">{item.blurb}</p>
+                <p className="card-subtitle">Duration: {item.time} minutes</p>
               </div>
             );
           })}

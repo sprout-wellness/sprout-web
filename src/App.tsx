@@ -6,6 +6,7 @@ import { ActivityPage } from './components/ActivityPage/ActivityPage';
 import { RoomPage } from './components/RoomPage/RoomPage';
 import { ReflectionPage } from './components/Reflection/ReflectionPage';
 import { RoomReflectionPage } from './components/Reflection/RoomReflectionPage';
+import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
 
 export const APP = function App() {
   return (
@@ -16,7 +17,12 @@ export const APP = function App() {
           <Route exact path="/activities/:tenet" component={ActivityPage} />
           <Route exact path="/room/:id" component={RoomPage} />
           <Route exact path="/test-reflection" component={ReflectionPage} />
-          <Route exact path="/test-room-reflection" component={RoomReflectionPage} />
+          <Route
+            exact
+            path="/test-room-reflection"
+            component={RoomReflectionPage}
+          />
+          <Route component={NotFoundPage} />
         </Switch>
       </div>
     </Router>
