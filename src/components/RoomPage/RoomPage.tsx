@@ -3,6 +3,8 @@ import './RoomPage.scss';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
 import copy from 'clipboard-copy';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 interface RoomPageProps {
   match: {
@@ -108,22 +110,20 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
         <div className="activity-container" id={this.state.activity!.category}>
           <div>
             <h1 className="title">{this.state.activity!.name}</h1>
-            <div className="row">
-              <p>
-                <b>Room link</b>: sproutwellness.com/room/{this.state.id}
-              </p>
-              <div>
-                <button onClick={this.handleCopy.bind(this)}>
-                  Copy room link
-                </button>
-                <span
-                  className={`copy-tooltip ${
-                    this.state.showTooltip ? '' : 'hidden'
-                  }`}
-                >
-                  Copied to clipboard!
-                </span>
-              </div>
+            <b>Room link: </b>
+            <div className="room-link-row">
+              <p>sproutwellness.com/room/{this.state.id}</p>
+              <FontAwesomeIcon
+                icon={faCopy}
+                onClick={this.handleCopy.bind(this)}
+              ></FontAwesomeIcon>
+              <span
+                className={`copy-tooltip ${
+                  this.state.showTooltip ? '' : 'hidden'
+                }`}
+              >
+                Copied to clipboard!
+              </span>
             </div>
           </div>
           <div className="participant-container">

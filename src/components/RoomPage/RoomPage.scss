@@ -4,14 +4,36 @@
   .activity-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     border-radius: 30px;
     animation: all 0.2s ease-out;
-    padding: 8px 32px;
-    margin: 15vh 0 10vh;
+    padding: 16px 32px 32px;
+    margin-bottom: 10vh;
 
-    .row {
+    .title {
+      font-family: Quattrocento;
+      font-weight: 600;
+      text-align: left;
+      letter-spacing: 0.02em;
+    }
+
+    b {
+      margin-bottom: 0;
+    }
+
+    .room-link-row {
       display: flex;
       flex-direction: row;
+      justify-content: left;
+      align-items: center;
+
+      svg {
+        margin: 0 4px;
+      }
+
+      p {
+        margin: 0;
+      }
     }
 
     .participant-container {
@@ -23,6 +45,7 @@
     .copy-tooltip {
       background-color: rgba(0, 0, 0, 0.5);
       color: white;
+      margin-left: 4px;
       padding: 4px 8px;
       font-size: 12px;
       border-radius: 4px;
@@ -37,13 +60,6 @@
 
   #gratitude {
     background-color: rgba(255, 190, 92, 0.4);
-  }
-
-  .title {
-    font-family: Quattrocento;
-    font-weight: 600;
-    text-align: left;
-    letter-spacing: 0.02em;
   }
 
   .error {
