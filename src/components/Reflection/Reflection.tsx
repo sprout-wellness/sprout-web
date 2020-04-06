@@ -18,7 +18,6 @@ export class Reflection extends Component<ReflectionProps, {}> {
     render() {
         return  (
             <div>
-                <h3>Reflection</h3>
                 <p>{this.props.reflectionText}</p>
              </div>
         )
