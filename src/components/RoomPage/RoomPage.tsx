@@ -4,7 +4,7 @@ import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
 import copy from 'clipboard-copy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 
 interface RoomPageProps {
   match: {
@@ -125,16 +125,31 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
                 Copied to clipboard!
               </span>
             </div>
+            <button className="begin-button">Begin Practice</button>
           </div>
-          <div className="participant-container">
-            <h4>Tao Ong</h4>
+          <div className="participants-container">
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Tao Ong</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Orkun Duman</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Carson Trinh</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">Mike You</h4>
+            </div>
           </div>
         </div>
         <p>
           <b>Duration</b>: {this.state.activity!.time} minutes
         </p>
         <p>{this.state.activity!.motivation}</p>
-        {/* <p><b>Attendees</b>: {this.state.activity}</p> */}
       </div>
     );
   }
