@@ -55,7 +55,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   handleCopy(event: MouseEvent) {
     const room: Room = this.state.room!;
     event.preventDefault();
-    copy('sproutwellness.com/room/' + room.id);
+    copy('sprout-wellness.web.app/room/' + room.id);
     this.setState({ showTooltip: true });
     setTimeout(() => {
       this.setState({ showTooltip: false });
