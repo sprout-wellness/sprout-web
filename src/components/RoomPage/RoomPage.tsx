@@ -29,10 +29,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   };
 
   componentDidMount() {
-    if (this.props.match.params.id) {
-      return this.loadRoom(this.props.match.params.id);
+    if (!this.props.match.params.id) {
+      this.appendErrorMsg('Invalid request.');
     }
-    this.appendErrorMsg('Invalid request.');
+    this.loadRoom(this.props.match.params.id);
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
@@ -178,9 +178,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           <div
             id="progress-bar"
             style={{
-              width: `${Math.floor(
-                this.secondsPassed() / (room.activity.time * 0.6)
-              )}%`,
+              width: `${this.secondsPassed() / (room.activity.time * 0.6)}%`,
             }}
           ></div>
         </div>
