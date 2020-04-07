@@ -54,7 +54,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     if (room.startTime === -1) {
       return false;
     }
-    return this.secondsPassed() > room.activity.time;
+    return this.secondsPassed() < room.activity.time * 60;
   }
 
   getProgressBarWidth() {
@@ -194,6 +194,18 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     );
   }
 
+  renderReflectionForm() {
+    const room: Room = this.state.room!;
+    return (
+      <div id="room-page">
+        <h1 className="title">{room.activity.name}</h1>
+        <h3>How did this practice make you feel?</h3>
+        <textarea></textarea>
+        <button>Submit reflection</button>
+      </div>
+    );
+  }
+
   render() {
     const room: Room = this.state.room!;
     if (this.state.errors.length) {
@@ -208,6 +220,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     if (this.activityInSession()) {
       return this.renderActivity();
     }
-    return this.renderActivity();
+    return this.renderReflectionForm();
   }
 }
