@@ -17,6 +17,7 @@ interface RoomPageState {
   room: Room | undefined;
   errors: string[];
   showTooltip: boolean;
+  currentTime: Date;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
@@ -24,13 +25,44 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     room: undefined,
     errors: [] as string[],
     showTooltip: false,
+    currentTime: new Date(),
   };
 
   componentDidMount() {
-    if (this.props.match.params.id) {
-      return this.loadRoom(this.props.match.params.id);
+    if (!this.props.match.params.id) {
+      this.appendErrorMsg('Invalid request.');
     }
-    this.appendErrorMsg('Invalid request.');
+    this.loadRoom(this.props.match.params.id);
+
+    // During the practice, ticking moves along the progress bar.
+    setInterval(() => this.tick(), 1000);
+  }
+
+  tick() {
+    this.setState({
+      currentTime: new Date(),
+    });
+  }
+
+  secondsPassed() {
+    const room: Room = this.state.room!;
+    return (this.state.currentTime.getTime() - room.startTime) / 1000;
+  }
+
+  activityInSession() {
+    const room: Room = this.state.room!;
+    if (room.startTime === -1) {
+      return false;
+    }
+    return this.secondsPassed() > room.activity.time;
+  }
+
+  getProgressBarWidth() {
+    const room: Room = this.state.room!;
+    return `${Math.min(
+      100,
+      this.secondsPassed() / (room.activity.time * 0.6)
+    )}%`;
   }
 
   appendErrorMsg(msg: string) {
@@ -65,6 +97,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   begin() {
     const room: Room = this.state.room!;
     Room.Begin(room.id);
+    this.loadRoom(room.id);
   }
 
   renderError() {
@@ -149,7 +182,14 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return (
       <div id="room-page">
         <p className="activity-instructions">{room.activity.instructions}</p>
-        <div id="progress-bar"></div>
+        <div id="progress-bar-container">
+          <div
+            id="progress-bar"
+            style={{
+              width: this.getProgressBarWidth(),
+            }}
+          ></div>
+        </div>
       </div>
     );
   }
@@ -163,8 +203,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return this.renderLoading();
     }
     if (!room.startTime) {
-      console.log(room);
       return this.renderLobby();
+    }
+    if (this.activityInSession()) {
+      return this.renderActivity();
     }
     return this.renderActivity();
   }

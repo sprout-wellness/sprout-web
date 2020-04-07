@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
-interface ReflectionPageProps {
-}
+interface ReflectionPageProps {}
 
 interface ReflectionPageState {
-    roomId: string
+  roomId: string;
 }
 
-export class ReflectionPage extends Component<ReflectionPageProps, ReflectionPageState> {
-    
-    constructor(props: ReflectionPageProps) {
-        super(props);
-        this.state = {roomId: "1mIMXIziHIrPrx4M5Soo"};
-    }
-
-
-
+export class ReflectionPage extends Component<
+  ReflectionPageProps,
+  ReflectionPageState
+> {
+  constructor(props: ReflectionPageProps) {
+    super(props);
+    this.state = { roomId: '1mIMXIziHIrPrx4M5Soo' };
+  }
 }
