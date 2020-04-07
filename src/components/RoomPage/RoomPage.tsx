@@ -17,6 +17,7 @@ interface RoomPageState {
   room: Room | undefined;
   errors: string[];
   showTooltip: boolean;
+  currentTime: Date;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
@@ -24,6 +25,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     room: undefined,
     errors: [] as string[],
     showTooltip: false,
+    currentTime: new Date(),
   };
 
   componentDidMount() {
@@ -31,6 +33,28 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return this.loadRoom(this.props.match.params.id);
     }
     this.appendErrorMsg('Invalid request.');
+
+    // During the practice, ticking moves along the progress bar.
+    setInterval(() => this.tick(), 1000);
+  }
+
+  tick() {
+    this.setState({
+      currentTime: new Date(),
+    });
+  }
+
+  secondsPassed() {
+    const room: Room = this.state.room!;
+    return (this.state.currentTime.getUTCSeconds() - room.startTime) / 60;
+  }
+
+  activityInSession() {
+    const room: Room = this.state.room!;
+    if (room.startTime === -1) {
+      return false;
+    }
+    return this.secondsPassed() > room.activity.time;
   }
 
   appendErrorMsg(msg: string) {
@@ -150,7 +174,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return (
       <div id="room-page">
         <p className="activity-instructions">{room.activity.instructions}</p>
-        <div id="progress-bar"></div>
+        <div
+          id="progress-bar"
+          style={{ width: this.secondsPassed() / room.activity.time }}
+        ></div>
       </div>
     );
   }
@@ -164,8 +191,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return this.renderLoading();
     }
     if (!room.startTime) {
-      console.log(room);
       return this.renderLobby();
+    }
+    if (this.activityInSession()) {
+      return this.renderActivity();
     }
     return this.renderActivity();
   }
