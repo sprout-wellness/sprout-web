@@ -138,9 +138,15 @@
     font-size: 20px;
   }
 
-  #progress-bar {
+  #progress-bar-container {
+    border: 1px solid black;
     height: 5vh;
-    background-color: black;
+    width: 100%;
+
+    #progress-bar {
+      background-color: black;
+      height: 100%;
+    }
   }
 
   .error {

@@ -46,7 +46,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   secondsPassed() {
     const room: Room = this.state.room!;
-    return (this.state.currentTime.getUTCSeconds() - room.startTime) / 60;
+    return (this.state.currentTime.getTime() - room.startTime) / 1000;
   }
 
   activityInSession() {
@@ -174,10 +174,16 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return (
       <div id="room-page">
         <p className="activity-instructions">{room.activity.instructions}</p>
-        <div
-          id="progress-bar"
-          style={{ width: this.secondsPassed() / room.activity.time }}
-        ></div>
+        <div id="progress-bar-container">
+          <div
+            id="progress-bar"
+            style={{
+              width: `${Math.floor(
+                this.secondsPassed() / (room.activity.time * 0.6)
+              )}%`,
+            }}
+          ></div>
+        </div>
       </div>
     );
   }
