@@ -57,6 +57,14 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return this.secondsPassed() > room.activity.time;
   }
 
+  getProgressBarWidth() {
+    const room: Room = this.state.room!;
+    return `${Math.min(
+      100,
+      this.secondsPassed() / (room.activity.time * 0.6)
+    )}%`;
+  }
+
   appendErrorMsg(msg: string) {
     this.setState({
       errors: [...this.state.errors, msg],
@@ -178,7 +186,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           <div
             id="progress-bar"
             style={{
-              width: `${this.secondsPassed() / (room.activity.time * 0.6)}%`,
+              width: this.getProgressBarWidth(),
             }}
           ></div>
         </div>
