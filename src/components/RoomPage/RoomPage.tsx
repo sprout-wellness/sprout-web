@@ -2,6 +2,9 @@ import React, { Component, MouseEvent } from 'react';
 import copy from 'clipboard-copy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
+import { RoomReflectionPage } from './RoomReflectionPage';
+import { ReflectionPage } from './ReflectionPage';
+import { Reflection } from './Reflection';
 import { Room } from '../../storage/Room';
 import './RoomPage.scss';
 
@@ -196,14 +199,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   renderReflectionForm() {
     const room: Room = this.state.room!;
-    return (
-      <div id="room-page">
-        <h1 className="title">{room.activity.name}</h1>
-        <h3>How did this practice make you feel?</h3>
-        <textarea></textarea>
-        <button>Submit reflection</button>
-      </div>
-    );
+    return <ReflectionPage room={room}></ReflectionPage>;
   }
 
   render() {
