@@ -65,6 +65,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   begin() {
     const room: Room = this.state.room!;
     Room.Begin(room.id);
+    this.loadRoom(room.id);
   }
 
   renderError() {
