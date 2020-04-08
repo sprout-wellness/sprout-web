@@ -40,7 +40,7 @@ export class RoomReflectionPage extends Component<
     firebase
       .firestore()
       .collection('reflections')
-      .where('roomId', '==', this.props.roomId)
+      .where('room', '==', this.props.roomId)
       .get()
       .then(snapshot => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
