@@ -27,7 +27,7 @@ interface RoomPageState {
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
-  reflectionListener: any = undefined;
+  reflectionListener: (() => void) | undefined = undefined;
   state = {
     room: undefined,
     errors: [] as string[],
@@ -46,6 +46,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     this.loadRoom(this.props.match.params.id);
     this.loadUser('B22cmNKy21YdIh7Fga8Y');
 
+    // TODO: make this an async/await operation
     setTimeout(() => {
       // Add listener for new reflections.
       this.addReflectionListener('B22cmNKy21YdIh7Fga8Y');
@@ -53,6 +54,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
+  }
+  componentWillUnmount() {
+    // Unsubscribe the reflection listener.
+    const unsubscribe: () => void = this.reflectionListener!;
+    unsubscribe();
   }
 
   loadRoom(roomId: string) {
@@ -88,13 +94,15 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       .collection('reflections')
       .where('room', '==', room.id)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
-        snapshot.docChanges().forEach((change: any) => {
-          if (change.type === 'added') {
-            if (change.doc.data().user === userId) {
-              this.setState({ reflectionSubmitted: true });
+        snapshot
+          .docChanges()
+          .forEach((change: firebase.firestore.DocumentChange) => {
+            if (change.type === 'added') {
+              if (change.doc.data().user === userId) {
+                this.setState({ reflectionSubmitted: true });
+              }
             }
-          }
-        });
+          });
       });
   }
 

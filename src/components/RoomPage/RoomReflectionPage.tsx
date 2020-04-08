@@ -15,7 +15,7 @@ export class RoomReflectionPage extends Component<
   RoomReflectionPageProps,
   RoomReflectionPageState
 > {
-  _unsubscribe: any = undefined;
+  reflectionListener: (() => void) | undefined = undefined;
 
   constructor(props: RoomReflectionPageProps) {
     super(props);
@@ -23,17 +23,15 @@ export class RoomReflectionPage extends Component<
   }
 
   componentDidMount() {
-    // initiate API calls here. Probably load in all of the reflections for this activityID and groupID
-    // feel free to call setState() here. But best to set state in constructor!
-
-    // update state to represent all relevant reflections
+    // Update state to represent all relevant reflections.
     this._fetchReflectionsAndUpdateState();
-    this._addReflectionDBListener();
+    this.addReflectionListener();
   }
 
   componentWillUnmount() {
-    // where you put cleanup stuff. You can't modify component state in this lifecycle!
-    //this._unsubscribe();
+    // Unsubscribe the reflection listener.
+    const unsubscribe: () => void = this.reflectionListener!;
+    unsubscribe();
   }
 
   private _fetchReflectionsAndUpdateState() {
@@ -53,21 +51,23 @@ export class RoomReflectionPage extends Component<
       });
   }
 
-  private _addReflectionDBListener() {
-    this._unsubscribe = firebase
+  private addReflectionListener() {
+    this.reflectionListener = firebase
       .firestore()
       .collection('reflections')
       .where('roomId', '==', this.props.roomId)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
-        snapshot.docChanges().forEach((change: any) => {
-          if (change.type === 'added') {
-            this.setState((prevState: RoomReflectionPageState) => {
-              return {
-                reflections: [...prevState.reflections, change.doc.data()],
-              };
-            });
-          }
-        });
+        snapshot
+          .docChanges()
+          .forEach((change: firebase.firestore.DocumentData) => {
+            if (change.type === 'added') {
+              this.setState((prevState: RoomReflectionPageState) => {
+                return {
+                  reflections: [...prevState.reflections, change.doc.data()],
+                };
+              });
+            }
+          });
       });
   }
 
