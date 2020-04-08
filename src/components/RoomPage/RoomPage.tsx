@@ -4,8 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 import { RoomReflectionPage } from './RoomReflectionPage';
 import { ReflectionPage } from './ReflectionPage';
-import { Reflection } from './Reflection';
 import { Room } from '../../storage/Room';
+import { User } from '../../storage/User';
+import { firebase } from '../../FirebaseSetup';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -21,24 +22,80 @@ interface RoomPageState {
   errors: string[];
   showTooltip: boolean;
   currentTime: Date;
+  currentUser: User | undefined;
+  reflectionSubmitted: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
+  reflectionListener: any = undefined;
   state = {
     room: undefined,
     errors: [] as string[],
     showTooltip: false,
     currentTime: new Date(),
+    currentUser: undefined,
+    reflectionSubmitted: false,
   };
 
   componentDidMount() {
     if (!this.props.match.params.id) {
       this.appendErrorMsg('Invalid request.');
     }
+
+    // Load room and currently logged in user.
     this.loadRoom(this.props.match.params.id);
+    this.loadUser('B22cmNKy21YdIh7Fga8Y');
+
+    setTimeout(() => {
+      // Add listener for new reflections.
+      this.addReflectionListener('B22cmNKy21YdIh7Fga8Y');
+    }, 2000);
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
+  }
+
+  loadRoom(roomId: string) {
+    Room.Load(roomId, (room?) => {
+      if (!room) {
+        this.appendErrorMsg(`Room ${roomId} not found.`);
+        return;
+      }
+      this.setState({
+        room,
+        errors: [],
+      });
+    });
+  }
+
+  loadUser(userId: string) {
+    User.Load(userId, (user?) => {
+      if (!user) {
+        this.appendErrorMsg(`User ${userId} not found.`);
+        return;
+      }
+      this.setState({
+        currentUser: user,
+        errors: [],
+      });
+    });
+  }
+
+  addReflectionListener(userId: string) {
+    const room: Room = this.state.room!;
+    this.reflectionListener = firebase
+      .firestore()
+      .collection('reflections')
+      .where('room', '==', room.id)
+      .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
+        snapshot.docChanges().forEach((change: any) => {
+          if (change.type === 'added') {
+            if (change.doc.data().user === userId) {
+              this.setState({ reflectionSubmitted: true });
+            }
+          }
+        });
+      });
   }
 
   tick() {
@@ -71,19 +128,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   appendErrorMsg(msg: string) {
     this.setState({
       errors: [...this.state.errors, msg],
-    });
-  }
-
-  loadRoom(roomId: string) {
-    Room.Load(roomId, (room?) => {
-      if (!room) {
-        this.appendErrorMsg(`Room ${roomId} not found.`);
-        return;
-      }
-      this.setState({
-        room,
-        errors: [],
-      });
     });
   }
 
@@ -199,7 +243,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   renderReflectionForm() {
     const room: Room = this.state.room!;
-    return <ReflectionPage room={room}></ReflectionPage>;
+    const user: User = this.state.currentUser!;
+    return <ReflectionPage room={room} user={user}></ReflectionPage>;
+  }
+
+  renderRoomReflectionPage() {
+    return <RoomReflectionPage></RoomReflectionPage>;
   }
 
   render() {
@@ -216,6 +265,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     if (this.activityInSession()) {
       return this.renderActivity();
     }
-    return this.renderReflectionForm();
+    if (!this.state.reflectionSubmitted) {
+      return this.renderReflectionForm();
+    }
+    return this.renderRoomReflectionPage();
   }
 }

@@ -52,7 +52,7 @@ export class RoomReflectionPage extends Component<
       .collection('reflections')
       .where('roomId', '==', this.state.roomId)
       .get()
-      .then((snapshot) => {
+      .then(snapshot => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
           this.setState((prevState: RoomReflectionPageState) => {
             return {
@@ -83,7 +83,7 @@ export class RoomReflectionPage extends Component<
           }
           if (change.type === 'removed') {
             this.setState({
-              reflections: this.state.reflections.filter((reflection) => {
+              reflections: this.state.reflections.filter(reflection => {
                 return reflection.id !== change.doc.id;
               }),
             });

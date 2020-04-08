@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { Room } from '../../storage/Room';
+import { Reflection } from '../../storage/Reflection';
+import { User } from '../../storage/User';
 
 interface ReflectionPageProps {
   room: Room;
+  user: User;
 }
 
 interface ReflectionPageState {
@@ -22,6 +25,17 @@ export class ReflectionPage extends Component<
     this.setState({ reflectionText: e.target.value });
   };
 
+  submitReflection = () => {
+    Reflection.Create(
+      this.props.room,
+      this.props.user,
+      this.state.reflectionText,
+      reflection => {
+        console.log(reflection.id);
+      }
+    );
+  };
+
   render() {
     return (
       <div id="room-page">
@@ -31,7 +45,7 @@ export class ReflectionPage extends Component<
           value={this.state.reflectionText}
           onChange={this.setReflectionText}
         ></textarea>
-        <button>Submit reflection</button>
+        <button onClick={this.submitReflection}>Submit reflection</button>
       </div>
     );
   }
