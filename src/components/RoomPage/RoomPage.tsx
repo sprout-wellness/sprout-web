@@ -248,7 +248,8 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderRoomReflectionPage() {
-    return <RoomReflectionPage></RoomReflectionPage>;
+    const room: Room = this.state.room!;
+    return <RoomReflectionPage roomId={room.id}></RoomReflectionPage>;
   }
 
   render() {
