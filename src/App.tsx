@@ -8,11 +8,17 @@ import { ReflectionPage } from './components/Reflection/ReflectionPage';
 import { RoomReflectionPage } from './components/Reflection/RoomReflectionPage';
 import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
 
+import { SignInPage } from './components/AuthPage/SignInPage';
+import { SignUpPage } from './components/AuthPage/SignUpPage';
+
 export const APP = function App() {
   return (
     <Router>
       <div>
         <Switch>
+          <Route exact path="/signup" component={SignUpPage} />
+          <Route exact path="/signup" component={SignInPage} />
+          
           <Route exact path="/" component={TreePage} />
           <Route exact path="/activities/:tenet" component={ActivityPage} />
           <Route exact path="/room/:id" component={RoomPage} />
