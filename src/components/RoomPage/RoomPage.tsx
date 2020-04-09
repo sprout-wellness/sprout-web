@@ -235,7 +235,8 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   renderActivity() {
     const room: Room = this.state.room!;
     return (
-      <div id="room-page">
+      <div id="in-session-page">
+        <h1 className="activity-title">{room.activity.name}</h1>
         <p className="activity-instructions">{room.activity.instructions}</p>
         <div id="progress-bar-container">
           <div

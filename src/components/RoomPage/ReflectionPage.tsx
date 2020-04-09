@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Room } from '../../storage/Room';
 import { Reflection } from '../../storage/Reflection';
 import { User } from '../../storage/User';
+import './RoomPage.scss';
 
 interface ReflectionPageProps {
   room: Room;
@@ -38,7 +39,7 @@ export class ReflectionPage extends Component<
 
   render() {
     return (
-      <div id="room-page">
+      <div id="reflection-page">
         <h1 className="title">{this.props.room.activity.name}</h1>
         <h3>How did this practice make you feel?</h3>
         <textarea

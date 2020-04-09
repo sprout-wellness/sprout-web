@@ -73,16 +73,20 @@ export class RoomReflectionPage extends Component<
 
   render() {
     return (
-      <div>
-        <h1>Group Reflections</h1>
-        {this.state.reflections.map((item, key) => {
-          return <div key={key}>{item.text}</div>;
-        })}
-        <nav>
-          <Link to="/">
-            <button>Complete Practice</button>
-          </Link>
-        </nav>
+      <div id="room-reflection-page">
+        <h1 className="title">Group Reflections</h1>
+        <div className="reflections-container">
+          {this.state.reflections.map((item, key) => {
+            return (
+              <div key={key} className="reflection">
+                {item.text}
+              </div>
+            );
+          })}
+        </div>
+        <Link to="/">
+          <button>Complete Practice</button>
+        </Link>
       </div>
     );
   }

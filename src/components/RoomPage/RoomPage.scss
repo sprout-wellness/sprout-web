@@ -132,10 +132,36 @@
     }
   }
 
+  .error {
+    color: rgba(230, 40, 50, 1);
+  }
+
   .activity-details {
-    margin: 0 32px;
     line-height: 2rem;
     font-size: 20px;
+  }
+}
+
+#in-session-page {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  height: 80vh;
+  margin: auto;
+  padding: 64px;
+
+  .activity-title {
+    text-align: center;
+    font-family: Quattrocento;
+  }
+
+  .activity-instructions {
+    margin: auto 64px;
+    line-height: 1.5;
+    font-size: 1.8rem;
+    font-weight: 400;
+    font-family: Quattrocento;
+    text-align: justify;
   }
 
   #progress-bar-container {
@@ -156,8 +182,108 @@
       border-radius: 30px;
     }
   }
+}
 
-  .error {
-    color: rgba(230, 40, 50, 1);
+#reflection-page {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 100%;
+  margin: auto;
+  padding: 32px 80px;
+
+  .title {
+    margin-bottom: 10vh;
+    text-align: center;
+    font-family: Quattrocento;
   }
+
+  textarea {
+    padding: 16px;
+    height: 20vh;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  button {
+    margin-top: 24px;
+    padding: 8px 16px;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 1);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    &:active {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+#room-reflection-page {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 100%;
+  margin: auto;
+  padding: 32px 80px;
+
+  .title {
+    font-family: Quattrocento;
+    text-align: center;
+    margin-bottom: 6vh;
+  }
+
+  .reflections-container {
+    margin: 32px 0;
+
+    .reflection {
+      background-color: rgba(0, 0, 0, 0.05);
+      margin-bottom: 32px;
+      border-radius: 8px;
+      padding: 16px;
+      width: 80%;
+    }
+
+    .reflection:nth-child(even) {
+      margin-left: auto;
+    }
+
+    .reflection:nth-child(odd) {
+      margin-right: auto;
+    }
+  }
+
+  button {
+    margin: 24px auto;
+    padding: 8px 16px;
+    width: 180px;
+    background-color: rgba(0, 0, 0, 1);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    &:active {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
 }
