@@ -186,6 +186,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               <FontAwesomeIcon
                 icon={faCopy}
                 onClick={this.handleCopy.bind(this)}
+                className="copy-button"
               ></FontAwesomeIcon>
               <span
                 className={`copy-tooltip ${
