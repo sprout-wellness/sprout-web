@@ -25,31 +25,30 @@ export class Reflection {
     this.text = text;
   }
 
-  private save(callback: (reflection: Reflection) => void) {
-    firebase
-      .firestore()
-      .collection('reflections')
-      .doc(this.id)
-      .set({
-        activity: this.activity.id,
-        room: this.room.id,
-        user: this.user.id,
-        text: this.text,
-      })
-      .then(done => {
-        callback(this);
-      })
-      .catch(reason => {
-        console.log(`Reflection ${this.id} could not be created.`, reason);
-      });
+  private save() {
+    const resultPromise = new Promise<void>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('reflections')
+        .doc(this.id)
+        .set({
+          activity: this.activity.id,
+          room: this.room.id,
+          user: this.user.id,
+          text: this.text,
+        })
+        .then(done => {
+          resolve();
+        })
+        .catch(reason => {
+          console.log(`Reflection ${this.id} could not be created.`, reason);
+          reject();
+        });
+    });
+    return resultPromise;
   }
 
-  static Create(
-    room: Room,
-    user: User,
-    text: string,
-    callback: (reflection: Reflection) => void
-  ) {
+  static async Create(room: Room, user: User, text: string) {
     const randomId = firebase
       .firestore()
       .collection('reflections')
@@ -61,6 +60,32 @@ export class Reflection {
       user,
       text
     );
-    reflection.save(callback);
+    await reflection.save();
+    return reflection;
+  }
+
+  static ReflectionExists(roomId: string, userId: string) {
+    const resultPromise = new Promise<boolean>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('reflections')
+        .where('room', '==', roomId)
+        .where('user', '==', userId)
+        .get()
+        .then(reflectionSnap => {
+          if (!reflectionSnap.size) {
+            resolve(false);
+          }
+          resolve(true);
+        })
+        .catch(reason => {
+          console.log(
+            `Something went wrong when checking existence of a reflection:`,
+            reason
+          );
+          reject(false);
+        });
+    });
+    return resultPromise;
   }
 }
