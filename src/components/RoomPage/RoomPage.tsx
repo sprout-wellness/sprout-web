@@ -135,8 +135,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return <div id="room-page">Loading...</div>;
   }
 
-  renderLobby() {
-    const room: Room = this.state.room!;
+  renderLobby(room: Room) {
     return (
       <div id="room-page">
         <div className="activity-container" id={room.activity.category}>
@@ -194,8 +193,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     );
   }
 
-  renderActivity() {
-    const room: Room = this.state.room!;
+  renderActivity(room: Room) {
     return (
       <div id="in-session-page">
         <h1 className="activity-title">{room.activity.name}</h1>
@@ -221,10 +219,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return this.renderLoading();
     }
     if (!room.startTime) {
-      return this.renderLobby();
+      return this.renderLobby(room);
     }
     if (this.activityInSession()) {
-      return this.renderActivity();
+      return this.renderActivity(room);
     }
     return <Redirect to={`/room/${room.id}/reflection`} />;
   }

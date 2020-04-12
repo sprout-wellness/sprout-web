@@ -141,9 +141,7 @@ export class ReflectionPage extends Component<
     return <h1 className="loading-page">LOADING</h1>;
   }
 
-  renderReflectionForm() {
-    const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
+  renderReflectionForm(room: Room, user: User) {
     if (room && user) {
       return <ReflectionForm room={room} user={user}></ReflectionForm>;
     }
@@ -171,8 +169,13 @@ export class ReflectionPage extends Component<
   }
 
   render() {
+    const room: Room = this.state.room!;
+    const user: User = this.state.currentUser!;
+    if (!room || !user) {
+      return this.renderLoading();
+    }
     if (!this.state.reflectionSubmitted) {
-      return this.renderReflectionForm();
+      return this.renderReflectionForm(room, user);
     }
     return this.renderReflectionPage();
   }
