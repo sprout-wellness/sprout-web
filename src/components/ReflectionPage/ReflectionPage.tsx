@@ -3,21 +3,21 @@ import { Reflection } from '../../storage/Reflection';
 import { firebase } from '../../FirebaseSetup';
 import { Link } from 'react-router-dom';
 
-interface RoomReflectionPageProps {
+interface ReflectionPageProps {
   roomId: string;
 }
 
-interface RoomReflectionPageState {
+interface ReflectionPageState {
   reflections: Reflection[];
 }
 
-export class RoomReflectionPage extends Component<
-  RoomReflectionPageProps,
-  RoomReflectionPageState
+export class ReflectionPage extends Component<
+  ReflectionPageProps,
+  ReflectionPageState
 > {
   reflectionListener: (() => void) | undefined = undefined;
 
-  constructor(props: RoomReflectionPageProps) {
+  constructor(props: ReflectionPageProps) {
     super(props);
     this.state = { reflections: [] };
   }
@@ -42,7 +42,7 @@ export class RoomReflectionPage extends Component<
       .get()
       .then(snapshot => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          this.setState((prevState: RoomReflectionPageState) => {
+          this.setState((prevState: ReflectionPageState) => {
             return {
               reflections: [...prevState.reflections, doc.data()],
             };
@@ -61,7 +61,7 @@ export class RoomReflectionPage extends Component<
           .docChanges()
           .forEach((change: firebase.firestore.DocumentData) => {
             if (change.type === 'added') {
-              this.setState((prevState: RoomReflectionPageState) => {
+              this.setState((prevState: ReflectionPageState) => {
                 return {
                   reflections: [...prevState.reflections, change.doc.data()],
                 };

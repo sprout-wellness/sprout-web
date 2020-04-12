@@ -2,8 +2,8 @@ import React, { Component, MouseEvent } from 'react';
 import copy from 'clipboard-copy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
-import { RoomReflectionPage } from './RoomReflectionPage';
-import { ReflectionPage } from './ReflectionPage';
+import { ReflectionPage } from '../ReflectionPage/ReflectionPage';
+import { ReflectionForm } from '../ReflectionPage/ReflectionForm';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { firebase } from '../../FirebaseSetup';
@@ -253,12 +253,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   renderReflectionForm() {
     const room: Room = this.state.room!;
     const user: User = this.state.currentUser!;
-    return <ReflectionPage room={room} user={user}></ReflectionPage>;
+    return <ReflectionForm room={room} user={user}></ReflectionForm>;
   }
 
   renderRoomReflectionPage() {
     const room: Room = this.state.room!;
-    return <RoomReflectionPage roomId={room.id}></RoomReflectionPage>;
+    return <ReflectionPage roomId={room.id}></ReflectionPage>;
   }
 
   render() {
