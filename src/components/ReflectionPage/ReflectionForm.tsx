@@ -30,10 +30,7 @@ export class ReflectionForm extends Component<
     Reflection.Create(
       this.props.room,
       this.props.user,
-      this.state.reflectionText,
-      reflection => {
-        console.log(reflection.id);
-      }
+      this.state.reflectionText
     );
   };
 
