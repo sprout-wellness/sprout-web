@@ -65,13 +65,12 @@ export class ActivityPage extends Component<
       });
   }
 
-  createRoom(activity: Activity) {
-    Room.Create(activity, room => {
-      this.setState({
-        redirectToRoom: room.id,
-      });
+  createRoom = async (activity: Activity) => {
+    const newRoomId = await Room.Create(activity);
+    this.setState({
+      redirectToRoom: newRoomId,
     });
-  }
+  };
 
   capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);

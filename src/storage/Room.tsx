@@ -21,21 +21,25 @@ export class Room {
     this.startTime = startTime;
   }
 
-  private save(callback: (room: Room) => void) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(this.id)
-      .set({
-        activity: this.activity.id,
-        attendees: this.attendees.map(user => user.id),
-      })
-      .then(done => {
-        callback(this);
-      })
-      .catch(reason => {
-        console.log(`Room ${this.id} could not be created.`, reason);
-      });
+  private async save() {
+    const resultPromise = new Promise<void>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('rooms')
+        .doc(this.id)
+        .set({
+          activity: this.activity.id,
+          attendees: this.attendees.map(user => user.id),
+        })
+        .then(_ => {
+          resolve();
+        })
+        .catch(reason => {
+          console.log(`Room ${this.id} could not be created.`, reason);
+          reject();
+        });
+    });
+    return resultPromise;
   }
 
   static Begin(id: string) {
@@ -88,12 +92,13 @@ export class Room {
     return await resultPromise;
   }
 
-  static Create(activity: Activity, callback: (room: Room) => void) {
+  static async Create(activity: Activity) {
     const randomId = firebase
       .firestore()
       .collection('rooms')
       .doc().id;
     const room = new Room(randomId, activity, [], -1);
-    room.save(callback);
+    await room.save();
+    return room.id;
   }
 }
