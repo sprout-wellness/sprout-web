@@ -63,4 +63,30 @@ export class Reflection {
     );
     reflection.save(callback);
   }
+
+  static ReflectionExists(
+    roomId: string,
+    userId: string,
+    callback: (exists: boolean) => void
+  ) {
+    firebase
+      .firestore()
+      .collection('reflections')
+      .where('room', '==', roomId)
+      .where('user', '==', userId)
+      .get()
+      .then(reflectionSnap => {
+        if (!reflectionSnap.size) {
+          return callback(false);
+        }
+        return callback(true);
+      })
+      .catch(reason => {
+        console.log(
+          `Something went wrong when checking existence of a reflection:`,
+          reason
+        );
+        return callback(false);
+      });
+  }
 }
