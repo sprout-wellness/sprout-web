@@ -1,12 +1,11 @@
 import React, { Component, MouseEvent } from 'react';
 import copy from 'clipboard-copy';
+import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
-import { ReflectionPage } from '../ReflectionPage/ReflectionPage';
-import { ReflectionForm } from '../ReflectionPage/ReflectionForm';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
-import { firebase } from '../../FirebaseSetup';
+import { Reflection } from '../../storage/Reflection';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -27,7 +26,6 @@ interface RoomPageState {
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
-  reflectionListener: (() => void) | undefined = undefined;
   state = {
     room: undefined,
     errors: [] as string[],
@@ -45,18 +43,13 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     // Load room and currently logged in user.
     this.loadRoom(this.props.match.params.id);
     this.loadUser('B22cmNKy21YdIh7Fga8Y');
-    this.addReflectionListener(
+    this.fetchUserReflection(
       this.props.match.params.id,
       'B22cmNKy21YdIh7Fga8Y'
     );
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
-  }
-  componentWillUnmount() {
-    // Unsubscribe the reflection listener.
-    const unsubscribe: () => void = this.reflectionListener!;
-    unsubscribe();
   }
 
   loadRoom = async (roomId: string) => {
@@ -82,23 +75,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     });
   };
 
-  addReflectionListener(roomId: string, userId: string) {
-    this.reflectionListener = firebase
-      .firestore()
-      .collection('reflections')
-      .where('room', '==', roomId)
-      .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
-        snapshot
-          .docChanges()
-          .forEach((change: firebase.firestore.DocumentChange) => {
-            if (change.type === 'added') {
-              if (change.doc.data().user === userId) {
-                this.setState({ reflectionSubmitted: true });
-              }
-            }
-          });
-      });
-  }
+  fetchUserReflection = async (roomId: string, userId: string) => {
+    const reflectionExists = await Reflection.ReflectionExists(roomId, userId);
+    this.setState({ reflectionSubmitted: reflectionExists });
+  };
 
   tick() {
     this.setState({
@@ -244,17 +224,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     );
   }
 
-  renderReflectionForm() {
-    const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
-    return <ReflectionForm room={room} user={user}></ReflectionForm>;
-  }
-
-  renderRoomReflectionPage() {
-    const room: Room = this.state.room!;
-    return <ReflectionPage roomId={room.id}></ReflectionPage>;
-  }
-
   render() {
     const room: Room = this.state.room!;
     if (this.state.errors.length) {
@@ -269,9 +238,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     if (this.activityInSession()) {
       return this.renderActivity();
     }
-    if (!this.state.reflectionSubmitted) {
-      return this.renderReflectionForm();
-    }
-    return this.renderRoomReflectionPage();
+    return <Redirect to={`/room/${room.id}/reflection`} />;
   }
 }

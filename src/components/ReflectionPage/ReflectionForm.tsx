@@ -36,7 +36,7 @@ export class ReflectionForm extends Component<
 
   render() {
     return (
-      <div id="reflection-page">
+      <div id="reflection-form">
         <h1 className="title">{this.props.room.activity.name}</h1>
         <h3>How did this practice make you feel?</h3>
         <textarea
