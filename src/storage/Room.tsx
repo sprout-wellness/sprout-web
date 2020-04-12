@@ -21,7 +21,7 @@ export class Room {
     this.startTime = startTime;
   }
 
-  private async save() {
+  private save() {
     const resultPromise = new Promise<void>((resolve, reject) => {
       firebase
         .firestore()
@@ -55,7 +55,7 @@ export class Room {
       });
   }
 
-  static async Load(id: string) {
+  static Load(id: string) {
     const resultPromise = new Promise<Room | undefined>((resolve, reject) => {
       firebase
         .firestore()
@@ -89,7 +89,7 @@ export class Room {
           reject(undefined);
         });
     });
-    return await resultPromise;
+    return resultPromise;
   }
 
   static async Create(activity: Activity) {

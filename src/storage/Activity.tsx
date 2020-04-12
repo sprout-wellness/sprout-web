@@ -28,7 +28,7 @@ export class Activity {
     this.blurb = blurb;
   }
 
-  static async LoadActivity(id: string): Promise<Activity | undefined> {
+  static LoadActivity(id: string): Promise<Activity | undefined> {
     const resultPromise = new Promise<Activity | undefined>(
       (resolve, reject) => {
         firebase
@@ -59,10 +59,10 @@ export class Activity {
           });
       }
     );
-    return await resultPromise;
+    return resultPromise;
   }
 
-  static async LoadActivitiesInTenet(tenetId: string): Promise<Activity[]> {
+  static LoadActivitiesInTenet(tenetId: string): Promise<Activity[]> {
     const resultPromise = new Promise<Activity[]>((resolve, reject) => {
       let activities: Activity[] = [];
       firebase
@@ -89,6 +89,6 @@ export class Activity {
           resolve(activities);
         });
     });
-    return await resultPromise;
+    return resultPromise;
   }
 }

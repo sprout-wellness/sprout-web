@@ -10,7 +10,7 @@ export class User {
     this.name = name;
   }
 
-  static async Load(id: string): Promise<User | undefined> {
+  static Load(id: string): Promise<User | undefined> {
     const resultPromise = new Promise<User | undefined>((resolve, reject) => {
       firebase
         .firestore()
@@ -29,6 +29,6 @@ export class User {
           reject(undefined);
         });
     });
-    return await resultPromise;
+    return resultPromise;
   }
 }
