@@ -45,12 +45,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     // Load room and currently logged in user.
     this.loadRoom(this.props.match.params.id);
     this.loadUser('B22cmNKy21YdIh7Fga8Y');
-
-    // TODO: make this an async/await operation
-    setTimeout(() => {
-      // Add listener for new reflections.
-      this.addReflectionListener('B22cmNKy21YdIh7Fga8Y');
-    }, 2000);
+    this.addReflectionListener(
+      this.props.match.params.id,
+      'B22cmNKy21YdIh7Fga8Y'
+    );
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
@@ -61,18 +59,20 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     unsubscribe();
   }
 
-  loadRoom(roomId: string) {
+  loadRoom = async (roomId: string): Promise<string> => {
     Room.Load(roomId, (room?) => {
       if (!room) {
         this.appendErrorMsg(`Room ${roomId} not found.`);
-        return;
+        return '';
       }
       this.setState({
         room,
         errors: [],
       });
+      return room.id;
     });
-  }
+    return '';
+  };
 
   loadUser(userId: string) {
     User.Load(userId, (user?) => {
@@ -87,12 +87,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     });
   }
 
-  addReflectionListener(userId: string) {
-    const room: Room = this.state.room!;
+  addReflectionListener(roomId: string, userId: string) {
     this.reflectionListener = firebase
       .firestore()
       .collection('reflections')
-      .where('room', '==', room.id)
+      .where('room', '==', roomId)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
         snapshot
           .docChanges()
