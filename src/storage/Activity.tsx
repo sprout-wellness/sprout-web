@@ -28,37 +28,35 @@ export class Activity {
     this.blurb = blurb;
   }
 
-  static LoadActivity(id: string): Promise<Activity | undefined> {
-    const resultPromise = new Promise<Activity | undefined>(
-      (resolve, reject) => {
-        firebase
-          .firestore()
-          .collection('activities')
-          .doc(id)
-          .get()
-          .then(activitySnap => {
-            if (!activitySnap.exists) {
-              console.log(`Activity ${id} does not exist.`);
-              reject(undefined);
-            }
-            resolve(
-              new Activity(
-                activitySnap.id,
-                activitySnap.data()!.name,
-                activitySnap.data()!.category,
-                activitySnap.data()!.instructions,
-                activitySnap.data()!.motivation,
-                activitySnap.data()!.time,
-                activitySnap.data()!.blurb
-              )
-            );
-          })
-          .catch(reason => {
-            console.log(`Activity ${id} could not be loaded.`, reason);
-            reject(undefined);
-          });
-      }
-    );
+  static LoadActivity(id: string): Promise<Activity> {
+    const resultPromise = new Promise<Activity>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('activities')
+        .doc(id)
+        .get()
+        .then(activitySnap => {
+          if (!activitySnap.exists) {
+            console.log(`Activity ${id} does not exist.`);
+            reject();
+          }
+          resolve(
+            new Activity(
+              activitySnap.id,
+              activitySnap.data()!.name,
+              activitySnap.data()!.category,
+              activitySnap.data()!.instructions,
+              activitySnap.data()!.motivation,
+              activitySnap.data()!.time,
+              activitySnap.data()!.blurb
+            )
+          );
+        })
+        .catch(reason => {
+          console.log(`Activity ${id} could not be loaded.`, reason);
+          reject();
+        });
+    });
     return resultPromise;
   }
 
@@ -87,6 +85,13 @@ export class Activity {
             }
           );
           resolve(activities);
+        })
+        .catch(reason => {
+          console.log(
+            `Activities for tenet ${tenetId} could not be retrieved.`,
+            reason
+          );
+          reject();
         });
     });
     return resultPromise;

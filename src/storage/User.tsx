@@ -10,8 +10,8 @@ export class User {
     this.name = name;
   }
 
-  static Load(id: string): Promise<User | undefined> {
-    const resultPromise = new Promise<User | undefined>((resolve, reject) => {
+  static Load(id: string): Promise<User> {
+    const resultPromise = new Promise<User>((resolve, reject) => {
       firebase
         .firestore()
         .collection('users')
@@ -20,13 +20,13 @@ export class User {
         .then(userSnap => {
           if (!userSnap.exists) {
             console.log(`User ${id} does not exist.`);
-            reject(undefined);
+            reject();
           }
           resolve(new User(userSnap.id, userSnap.data()!.name));
         })
         .catch(reason => {
           console.log(`User ${id} could not be loaded.`, reason);
-          reject(undefined);
+          reject();
         });
     });
     return resultPromise;
