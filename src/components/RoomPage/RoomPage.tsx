@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
-import { Reflection } from '../../storage/Reflection';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -22,7 +21,6 @@ interface RoomPageState {
   showTooltip: boolean;
   currentTime: Date;
   currentUser: User | undefined;
-  reflectionSubmitted: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
@@ -32,7 +30,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     showTooltip: false,
     currentTime: new Date(),
     currentUser: undefined,
-    reflectionSubmitted: false,
   };
 
   componentDidMount() {
@@ -43,10 +40,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     // Load room and currently logged in user.
     this.loadRoom(this.props.match.params.id);
     this.loadUser('B22cmNKy21YdIh7Fga8Y');
-    this.fetchUserReflection(
-      this.props.match.params.id,
-      'B22cmNKy21YdIh7Fga8Y'
-    );
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
@@ -73,11 +66,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       currentUser: user,
       errors: [],
     });
-  };
-
-  fetchUserReflection = async (roomId: string, userId: string) => {
-    const reflectionExists = await Reflection.ReflectionExists(roomId, userId);
-    this.setState({ reflectionSubmitted: reflectionExists });
   };
 
   tick() {
