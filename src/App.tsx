@@ -6,11 +6,13 @@ import { ActivityPage } from './components/ActivityPage/ActivityPage';
 import { RoomPage } from './components/RoomPage/RoomPage';
 import { ReflectionPage } from './components/ReflectionPage/ReflectionPage';
 import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
+import { NavBar } from './components/NavBar/NavBar';
 
 export const APP = function App() {
   return (
     <Router>
       <div>
+        <NavBar />
         <Switch>
           <Route exact path="/" component={TreePage} />
           <Route exact path="/activities/:tenet" component={ActivityPage} />
