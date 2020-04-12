@@ -21,21 +21,25 @@ export class Room {
     this.startTime = startTime;
   }
 
-  private save(callback: (room: Room) => void) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(this.id)
-      .set({
-        activity: this.activity.id,
-        attendees: this.attendees.map(user => user.id),
-      })
-      .then(done => {
-        callback(this);
-      })
-      .catch(reason => {
-        console.log(`Room ${this.id} could not be created.`, reason);
-      });
+  private save() {
+    const resultPromise = new Promise<void>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('rooms')
+        .doc(this.id)
+        .set({
+          activity: this.activity.id,
+          attendees: this.attendees.map(user => user.id),
+        })
+        .then(_ => {
+          resolve();
+        })
+        .catch(reason => {
+          console.log(`Room ${this.id} could not be created.`, reason);
+          reject();
+        });
+    });
+    return resultPromise;
   }
 
   static Begin(id: string) {
@@ -51,61 +55,50 @@ export class Room {
       });
   }
 
-  static Load(id: string, callback: (room?: Room) => void) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(id)
-      .get()
-      .then(roomSnap => {
-        if (!roomSnap.exists) {
-          console.log(`Room ${id} does not exist.`);
-          return callback(undefined);
-        }
-
-        let callbacksInFlight = 1 + roomSnap.data()!.attendees.length;
-        let activity: Activity;
-        const users = [] as User[];
-        function checkFinished() {
-          if (!callbacksInFlight) {
-            callback(
-              new Room(roomSnap.id, activity, users, roomSnap.data()!.startTime)
-            );
+  static Load(id: string) {
+    const resultPromise = new Promise<Room | undefined>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('rooms')
+        .doc(id)
+        .get()
+        .then(async roomSnap => {
+          if (!roomSnap.exists) {
+            console.log(`Room ${id} does not exist.`);
+            reject(undefined);
           }
-        }
 
-        function activityLoaded(act?: Activity) {
-          if (act) {
-            activity = act;
-          }
-          callbacksInFlight--;
-          checkFinished();
-        }
-        Activity.Load(roomSnap.data()!.activity.toString(), activityLoaded);
+          // Fetch room activity.
+          const activity = await Activity.LoadActivity(
+            roomSnap.data()!.activity.toString()
+          );
 
-        function userLoaded(user?: User) {
-          if (user) {
-            users.push(user);
+          // Fetch attendees.
+          const users = [] as User[];
+          for (const userRef of roomSnap.data()!.attendees) {
+            const user = await User.Load(userRef.id);
+            users.push(user!);
           }
-          callbacksInFlight--;
-          checkFinished();
-        }
-        for (const userRef of roomSnap.data()!.attendees) {
-          User.Load(userRef.id, userLoaded);
-        }
-      })
-      .catch(reason => {
-        console.log(`Room ${id} could not be loaded.`, reason);
-        return callback(undefined);
-      });
+
+          resolve(
+            new Room(roomSnap.id, activity!, users, roomSnap.data()!.startTime)
+          );
+        })
+        .catch(reason => {
+          console.log(`Room ${id} could not be loaded.`, reason);
+          reject(undefined);
+        });
+    });
+    return resultPromise;
   }
 
-  static Create(activity: Activity, callback: (room: Room) => void) {
+  static async Create(activity: Activity) {
     const randomId = firebase
       .firestore()
       .collection('rooms')
       .doc().id;
     const room = new Room(randomId, activity, [], -1);
-    room.save(callback);
+    await room.save();
+    return room.id;
   }
 }

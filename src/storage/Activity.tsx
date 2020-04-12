@@ -28,46 +28,67 @@ export class Activity {
     this.blurb = blurb;
   }
 
-  static LoadFromSnapshot(
-    activitySnap: firebase.firestore.QueryDocumentSnapshot
-  ) {
-    return new Activity(
-      activitySnap.id,
-      activitySnap.data().name,
-      activitySnap.data().category,
-      activitySnap.data().instructions,
-      activitySnap.data().motivation,
-      activitySnap.data().time,
-      activitySnap.data().blurb
+  static LoadActivity(id: string): Promise<Activity | undefined> {
+    const resultPromise = new Promise<Activity | undefined>(
+      (resolve, reject) => {
+        firebase
+          .firestore()
+          .collection('activities')
+          .doc(id)
+          .get()
+          .then(activitySnap => {
+            if (!activitySnap.exists) {
+              console.log(`Activity ${id} does not exist.`);
+              reject(undefined);
+            }
+            resolve(
+              new Activity(
+                activitySnap.id,
+                activitySnap.data()!.name,
+                activitySnap.data()!.category,
+                activitySnap.data()!.instructions,
+                activitySnap.data()!.motivation,
+                activitySnap.data()!.time,
+                activitySnap.data()!.blurb
+              )
+            );
+          })
+          .catch(reason => {
+            console.log(`Activity ${id} could not be loaded.`, reason);
+            reject(undefined);
+          });
+      }
     );
+    return resultPromise;
   }
 
-  static Load(id: string, callback: (activity?: Activity) => void) {
-    firebase
-      .firestore()
-      .collection('activities')
-      .doc(id)
-      .get()
-      .then(activitySnap => {
-        if (!activitySnap.exists) {
-          console.log(`Activity ${id} does not exist.`);
-          return callback(undefined);
-        }
-        callback(
-          new Activity(
-            activitySnap.id,
-            activitySnap.data()!.name,
-            activitySnap.data()!.category,
-            activitySnap.data()!.instructions,
-            activitySnap.data()!.motivation,
-            activitySnap.data()!.time,
-            activitySnap.data()!.blurb
-          )
-        );
-      })
-      .catch(reason => {
-        console.log(`Activity ${id} could not be loaded.`, reason);
-        return callback(undefined);
-      });
+  static LoadActivitiesInTenet(tenetId: string): Promise<Activity[]> {
+    const resultPromise = new Promise<Activity[]>((resolve, reject) => {
+      let activities: Activity[] = [];
+      firebase
+        .firestore()
+        .collection('activities')
+        .where('category', '==', tenetId)
+        .get()
+        .then(querySnap => {
+          querySnap.forEach(
+            (activitySnap: firebase.firestore.QueryDocumentSnapshot) => {
+              activities.push(
+                new Activity(
+                  activitySnap.id,
+                  activitySnap.data().name,
+                  activitySnap.data().category,
+                  activitySnap.data().instructions,
+                  activitySnap.data().motivation,
+                  activitySnap.data().time,
+                  activitySnap.data().blurb
+                )
+              );
+            }
+          );
+          resolve(activities);
+        });
+    });
+    return resultPromise;
   }
 }

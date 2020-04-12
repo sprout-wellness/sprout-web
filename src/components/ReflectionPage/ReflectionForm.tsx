@@ -2,22 +2,22 @@ import React, { Component } from 'react';
 import { Room } from '../../storage/Room';
 import { Reflection } from '../../storage/Reflection';
 import { User } from '../../storage/User';
-import './RoomPage.scss';
+import './ReflectionPage.scss';
 
-interface ReflectionPageProps {
+interface ReflectionFormProps {
   room: Room;
   user: User;
 }
 
-interface ReflectionPageState {
+interface ReflectionFormState {
   reflectionText: string;
 }
 
-export class ReflectionPage extends Component<
-  ReflectionPageProps,
-  ReflectionPageState
+export class ReflectionForm extends Component<
+  ReflectionFormProps,
+  ReflectionFormState
 > {
-  constructor(props: ReflectionPageProps) {
+  constructor(props: ReflectionFormProps) {
     super(props);
     this.state = { reflectionText: '' };
   }
@@ -30,10 +30,7 @@ export class ReflectionPage extends Component<
     Reflection.Create(
       this.props.room,
       this.props.user,
-      this.state.reflectionText,
-      reflection => {
-        console.log(reflection.id);
-      }
+      this.state.reflectionText
     );
   };
 
