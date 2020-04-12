@@ -28,20 +28,6 @@ export class Activity {
     this.blurb = blurb;
   }
 
-  static LoadFromSnapshot(
-    activitySnap: firebase.firestore.QueryDocumentSnapshot
-  ) {
-    return new Activity(
-      activitySnap.id,
-      activitySnap.data().name,
-      activitySnap.data().category,
-      activitySnap.data().instructions,
-      activitySnap.data().motivation,
-      activitySnap.data().time,
-      activitySnap.data().blurb
-    );
-  }
-
   static async LoadActivity(id: string): Promise<Activity | undefined> {
     const resultPromise = new Promise<Activity | undefined>(
       (resolve, reject) => {
@@ -73,6 +59,36 @@ export class Activity {
           });
       }
     );
+    return await resultPromise;
+  }
+
+  static async LoadActivitiesInTenet(tenetId: string): Promise<Activity[]> {
+    const resultPromise = new Promise<Activity[]>((resolve, reject) => {
+      let activities: Activity[] = [];
+      firebase
+        .firestore()
+        .collection('activities')
+        .where('category', '==', tenetId)
+        .get()
+        .then(querySnap => {
+          querySnap.forEach(
+            (activitySnap: firebase.firestore.QueryDocumentSnapshot) => {
+              activities.push(
+                new Activity(
+                  activitySnap.id,
+                  activitySnap.data().name,
+                  activitySnap.data().category,
+                  activitySnap.data().instructions,
+                  activitySnap.data().motivation,
+                  activitySnap.data().time,
+                  activitySnap.data().blurb
+                )
+              );
+            }
+          );
+          resolve(activities);
+        });
+    });
     return await resultPromise;
   }
 }
