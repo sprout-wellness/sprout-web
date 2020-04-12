@@ -59,19 +59,15 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     unsubscribe();
   }
 
-  loadRoom = async (roomId: string): Promise<string> => {
-    Room.Load(roomId, (room?) => {
-      if (!room) {
-        this.appendErrorMsg(`Room ${roomId} not found.`);
-        return '';
-      }
-      this.setState({
-        room,
-        errors: [],
-      });
-      return room.id;
+  loadRoom = async (roomId: string) => {
+    const room = await Room.Load(roomId);
+    if (!room) {
+      this.appendErrorMsg(`Room ${roomId} not found.`);
+    }
+    this.setState({
+      room,
+      errors: [],
     });
-    return '';
   };
 
   loadUser = async (userId: string) => {

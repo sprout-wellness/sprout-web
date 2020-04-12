@@ -51,48 +51,41 @@ export class Room {
       });
   }
 
-  static async Load(id: string, callback: (room?: Room) => void) {
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(id)
-      .get()
-      .then(async roomSnap => {
-        if (!roomSnap.exists) {
-          console.log(`Room ${id} does not exist.`);
-          return callback(undefined);
-        }
-
-        let callbacksInFlight = 1 + roomSnap.data()!.attendees.length;
-        let activity: Activity;
-        const users = [] as User[];
-        function checkFinished() {
-          if (!callbacksInFlight) {
-            callback(
-              new Room(roomSnap.id, activity, users, roomSnap.data()!.startTime)
-            );
+  static async Load(id: string) {
+    const resultPromise = new Promise<Room | undefined>((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('rooms')
+        .doc(id)
+        .get()
+        .then(async roomSnap => {
+          if (!roomSnap.exists) {
+            console.log(`Room ${id} does not exist.`);
+            reject(undefined);
           }
-        }
 
-        function activityLoaded(act?: Activity) {
-          if (act) {
-            activity = act;
+          // Fetch room activity.
+          const activity = await Activity.LoadActivity(
+            roomSnap.data()!.activity.toString()
+          );
+
+          // Fetch attendees.
+          const users = [] as User[];
+          for (const userRef of roomSnap.data()!.attendees) {
+            const user = await User.Load(userRef.id);
+            users.push(user!);
           }
-          callbacksInFlight--;
-          checkFinished();
-        }
-        Activity.Load(roomSnap.data()!.activity.toString(), activityLoaded);
 
-        // Fetch users in room.attendees.
-        for (const userRef of roomSnap.data()!.attendees) {
-          const user = await User.Load(userRef.id);
-          users.push(user!);
-        }
-      })
-      .catch(reason => {
-        console.log(`Room ${id} could not be loaded.`, reason);
-        return callback(undefined);
-      });
+          resolve(
+            new Room(roomSnap.id, activity!, users, roomSnap.data()!.startTime)
+          );
+        })
+        .catch(reason => {
+          console.log(`Room ${id} could not be loaded.`, reason);
+          reject(undefined);
+        });
+    });
+    return await resultPromise;
   }
 
   static Create(activity: Activity, callback: (room: Room) => void) {
