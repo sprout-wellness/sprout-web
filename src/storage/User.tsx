@@ -10,6 +10,33 @@ export class User {
     this.name = name;
   }
 
+  private save(callback: (user: User) => void){
+      firebase 
+        .firestore()
+        .collection('users')
+        .doc(this.id)
+        .set({
+          name: this.name
+        })
+        .then(done => {
+          callback(this)
+        })
+        .catch(reason => {
+          console.log(`User ${this.id} could not be created` + reason)
+        })
+  }
+
+  static Create(
+    id: string,
+    name: string,
+    callback: (user: User) => void) {
+      const user = new User(
+        id,
+        name
+      );
+    user.save(callback);
+  }
+
   static Load(id: string, callback: (user?: User) => void) {
     firebase
       .firestore()
