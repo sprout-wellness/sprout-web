@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { match, Redirect } from 'react-router-dom';
-import { firebase } from '../../FirebaseSetup';
-import 'firebase/firestore';
-import './ActivityPage.scss';
 import { Activity } from '../../storage/Activity';
 import { Room } from '../../storage/Room';
+import './ActivityPage.scss';
 
 interface DetailParams {
   tenet: string;
@@ -43,35 +41,19 @@ export class ActivityPage extends Component<
     this.fetchActivities();
   }
 
-  fetchActivities() {
-    firebase
-      .firestore()
-      .collection('activities')
-      .where('category', '==', this.state.tenet)
-      .get()
-      .then(querySnap => {
-        querySnap.forEach(
-          (documentSnap: firebase.firestore.QueryDocumentSnapshot) => {
-            this.setState((prevState: ActivityPageState) => {
-              return {
-                activities: [
-                  ...prevState.activities,
-                  Activity.LoadFromSnapshot(documentSnap),
-                ],
-              };
-            });
-          }
-        );
-      });
-  }
+  fetchActivities = async () => {
+    const activities: Activity[] = await Activity.LoadActivitiesInTenet(
+      this.state.tenet
+    );
+    this.setState({ activities });
+  };
 
-  createRoom(activity: Activity) {
-    Room.Create(activity, room => {
-      this.setState({
-        redirectToRoom: room.id,
-      });
+  createRoom = async (activity: Activity) => {
+    const newRoomId = await Room.Create(activity);
+    this.setState({
+      redirectToRoom: newRoomId,
     });
-  }
+  };
 
   capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);

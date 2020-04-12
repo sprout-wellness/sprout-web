@@ -2,8 +2,8 @@ import React, { Component, MouseEvent } from 'react';
 import copy from 'clipboard-copy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
-import { RoomReflectionPage } from './RoomReflectionPage';
-import { ReflectionPage } from './ReflectionPage';
+import { ReflectionPage } from '../ReflectionPage/ReflectionPage';
+import { ReflectionForm } from '../ReflectionPage/ReflectionForm';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { firebase } from '../../FirebaseSetup';
@@ -45,12 +45,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     // Load room and currently logged in user.
     this.loadRoom(this.props.match.params.id);
     this.loadUser('B22cmNKy21YdIh7Fga8Y');
-
-    // TODO: make this an async/await operation
-    setTimeout(() => {
-      // Add listener for new reflections.
-      this.addReflectionListener('B22cmNKy21YdIh7Fga8Y');
-    }, 2000);
+    this.addReflectionListener(
+      this.props.match.params.id,
+      'B22cmNKy21YdIh7Fga8Y'
+    );
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
@@ -61,38 +59,34 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     unsubscribe();
   }
 
-  loadRoom(roomId: string) {
-    Room.Load(roomId, (room?) => {
-      if (!room) {
-        this.appendErrorMsg(`Room ${roomId} not found.`);
-        return;
-      }
-      this.setState({
-        room,
-        errors: [],
-      });
+  loadRoom = async (roomId: string) => {
+    const room = await Room.Load(roomId);
+    if (!room) {
+      this.appendErrorMsg(`Room ${roomId} not found.`);
+    }
+    this.setState({
+      room,
+      errors: [],
     });
-  }
+  };
 
-  loadUser(userId: string) {
-    User.Load(userId, (user?) => {
-      if (!user) {
-        this.appendErrorMsg(`User ${userId} not found.`);
-        return;
-      }
-      this.setState({
-        currentUser: user,
-        errors: [],
-      });
+  loadUser = async (userId: string) => {
+    const user = await User.Load(userId);
+    if (!user) {
+      this.appendErrorMsg(`User ${userId} not found.`);
+      return;
+    }
+    this.setState({
+      currentUser: user,
+      errors: [],
     });
-  }
+  };
 
-  addReflectionListener(userId: string) {
-    const room: Room = this.state.room!;
+  addReflectionListener(roomId: string, userId: string) {
     this.reflectionListener = firebase
       .firestore()
       .collection('reflections')
-      .where('room', '==', room.id)
+      .where('room', '==', roomId)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
         snapshot
           .docChanges()
@@ -253,12 +247,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   renderReflectionForm() {
     const room: Room = this.state.room!;
     const user: User = this.state.currentUser!;
-    return <ReflectionPage room={room} user={user}></ReflectionPage>;
+    return <ReflectionForm room={room} user={user}></ReflectionForm>;
   }
 
   renderRoomReflectionPage() {
     const room: Room = this.state.room!;
-    return <RoomReflectionPage roomId={room.id}></RoomReflectionPage>;
+    return <ReflectionPage roomId={room.id}></ReflectionPage>;
   }
 
   render() {
