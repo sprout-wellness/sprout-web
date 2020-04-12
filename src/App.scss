@@ -5,7 +5,19 @@ body {
   height: 100%;
   width: 100%;
   font-family: "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+  background-image: url(./images/green-tree-1.jpeg);
+
 }
+
+.title {
+  font-family: Quattrocento;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.02em;
+  margin: 15vh 0 10vh;
+  color: rgba(251, 247, 245, 1);;
+}
+
 
 .card-container {
   display: flex;
@@ -25,14 +37,15 @@ body {
     min-height: 250px;
     min-width: 170px;
     font-family: Quattrocento;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 30px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    border-radius: 24px;
     transform-style: preserve-3d;
     transition: all 0.2s ease-out;
+    background-color: rgba(246, 248, 246, 1);
 
     &:hover {
       box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
-      border: 1px solid #cccccc;
+      border: 4px solid #cccccc;
     }
 
     .card-img {
@@ -49,18 +62,22 @@ body {
       line-height: 120%;
       letter-spacing: 0.02em;
       transform: translateZ(20px);
+      color: rgba(0, 0, 0, 0.8);
     }
 
     .card-subtitle {
       font-family: Nunito, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
       font-size: 14px;
       text-align: center;
+      color: rgba(0, 0, 0, 0.8);
+
     }
 
     .card-content {
       font-family: Nunito, "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
       text-align: justify;
       margin: 0 16px auto;
+      color: rgba(0, 0, 0, 1);
     }
   }
 }

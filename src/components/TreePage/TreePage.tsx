@@ -1,6 +1,8 @@
 import React, { Component } from 'react'; // let's also import Component
 import './TreePage.scss';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 
 // the clock's state has one field: The current time, based upon the
 // JavaScript class Date
@@ -14,7 +16,14 @@ export class TreePage extends Component<{}, TreePageState> {
   render() {
     return (
       <div id="tree-page">
-        <h1 className="title">What will you practice today?</h1>
+        <div>
+          <h1 className="title">What will you practice today?</h1>
+          <FontAwesomeIcon
+                icon={faCopy}
+                // onClick={}
+                className="copy-button"
+          ></FontAwesomeIcon>
+        </div>
         <div className="card-container">
           <Link to="/activities/compassion" style={{ textDecoration: 'none' }}>
             <div className="card" id="compassion-card">
