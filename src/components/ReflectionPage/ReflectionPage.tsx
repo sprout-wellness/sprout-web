@@ -124,7 +124,7 @@ export class ReflectionPage extends Component<
           .docChanges()
           .forEach((change: firebase.firestore.DocumentData) => {
             if (change.type === 'added') {
-              if (change.doc.data().userId === user.id) {
+              if (change.doc.data().user === user.id) {
                 this.setState({ reflectionSubmitted: true });
               }
               this.setState((prevState: ReflectionPageState) => {
@@ -138,7 +138,7 @@ export class ReflectionPage extends Component<
   }
 
   renderLoading() {
-    return <h1 className="loading-page">LOADING</h1>;
+    return <div id="reflection-page">Loading...</div>;
   }
 
   renderReflectionForm(room: Room, user: User) {
