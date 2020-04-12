@@ -1,0 +1,30 @@
+#navbar {
+  ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0 0 3em 0;
+    padding: 0;
+    justify-content: flex-end;
+  }
+
+  ul li {
+    background: tomato;
+    padding: 5px;
+    width: 100px;
+    height: 60px;
+    line-height: 60px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+
+    a:visited {
+      color: white;
+    }
+  }
+
+  ul li#home {
+    margin-right: auto;
+  }
+}
