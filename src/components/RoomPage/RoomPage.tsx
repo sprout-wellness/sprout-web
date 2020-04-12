@@ -74,18 +74,17 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return '';
   };
 
-  loadUser(userId: string) {
-    User.Load(userId, (user?) => {
-      if (!user) {
-        this.appendErrorMsg(`User ${userId} not found.`);
-        return;
-      }
-      this.setState({
-        currentUser: user,
-        errors: [],
-      });
+  loadUser = async (userId: string) => {
+    const user = await User.Load(userId);
+    if (!user) {
+      this.appendErrorMsg(`User ${userId} not found.`);
+      return;
+    }
+    this.setState({
+      currentUser: user,
+      errors: [],
     });
-  }
+  };
 
   addReflectionListener(roomId: string, userId: string) {
     this.reflectionListener = firebase

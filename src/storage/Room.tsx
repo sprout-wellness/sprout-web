@@ -51,13 +51,13 @@ export class Room {
       });
   }
 
-  static Load(id: string, callback: (room?: Room) => void) {
+  static async Load(id: string, callback: (room?: Room) => void) {
     firebase
       .firestore()
       .collection('rooms')
       .doc(id)
       .get()
-      .then(roomSnap => {
+      .then(async roomSnap => {
         if (!roomSnap.exists) {
           console.log(`Room ${id} does not exist.`);
           return callback(undefined);
@@ -83,15 +83,10 @@ export class Room {
         }
         Activity.Load(roomSnap.data()!.activity.toString(), activityLoaded);
 
-        function userLoaded(user?: User) {
-          if (user) {
-            users.push(user);
-          }
-          callbacksInFlight--;
-          checkFinished();
-        }
+        // Fetch users in room.attendees.
         for (const userRef of roomSnap.data()!.attendees) {
-          User.Load(userRef.id, userLoaded);
+          const user = await User.Load(userRef.id);
+          users.push(user!);
         }
       })
       .catch(reason => {
