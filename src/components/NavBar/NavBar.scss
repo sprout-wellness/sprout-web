@@ -15,14 +15,19 @@
     justify-content: flex-end;
 
     li {
-      line-height: 48px;
-      color: black;
+      color: rgba(0, 0, 0, 0.7);
       font-weight: 600;
-      font-size: 1.1em;
-      text-align: center;
+      font-size: 1em;
+      transition: all 200ms ease-out;
+      padding: 14px;
+
+      &:hover {
+        color: rgba(0, 0, 0, 1);
+      }
 
       &#home {
-        margin: 0.65% auto 16px 0;
+        margin-right: auto;
+        padding-top: 8px;
 
         img {
           display: block;
