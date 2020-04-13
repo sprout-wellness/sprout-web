@@ -56,7 +56,7 @@ export class Room {
   }
 
   static Load(id: string) {
-    const resultPromise = new Promise<Room | undefined>((resolve, reject) => {
+    const resultPromise = new Promise<Room>((resolve, reject) => {
       firebase
         .firestore()
         .collection('rooms')
@@ -65,7 +65,7 @@ export class Room {
         .then(async roomSnap => {
           if (!roomSnap.exists) {
             console.log(`Room ${id} does not exist.`);
-            reject(undefined);
+            reject();
           }
 
           // Fetch room activity.
@@ -86,7 +86,7 @@ export class Room {
         })
         .catch(reason => {
           console.log(`Room ${id} could not be loaded.`, reason);
-          reject(undefined);
+          reject();
         });
     });
     return resultPromise;

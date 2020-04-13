@@ -4,7 +4,13 @@
 body {
   height: 100%;
   width: 100%;
+  background-color: rgba(0, 0, 0, 0.01);
   font-family: "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
+}
+
+a:-webkit-any-link {
+  text-decoration: none;
+  color: inherit;
 }
 
 .card-container {
@@ -25,6 +31,7 @@ body {
     min-height: 250px;
     min-width: 170px;
     font-family: Quattrocento;
+    background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 30px;
     transform-style: preserve-3d;

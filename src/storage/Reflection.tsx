@@ -83,7 +83,7 @@ export class Reflection {
             `Something went wrong when checking existence of a reflection:`,
             reason
           );
-          reject(false);
+          reject();
         });
     });
     return resultPromise;

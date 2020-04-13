@@ -19,7 +19,12 @@ export class NavBar extends Component<{}, {}> {
         <div id="navbar">
           <ul>
             <li id="home">
-              <Link to="/">Home</Link>
+              <Link to="/">
+                <img
+                  src={require('../../images/sprout-logo.png')}
+                  alt="Home"
+                ></img>
+              </Link>
             </li>
             <li>
               <Link to="/signin">Sign In</Link>
@@ -32,7 +37,12 @@ export class NavBar extends Component<{}, {}> {
       <div id="navbar">
         <ul>
           <li id="home">
-            <Link to="/">Home</Link>
+            <Link to="/">
+              <img
+                src={require('../../images/sprout-logo.png')}
+                alt="Home"
+              ></img>
+            </Link>
           </li>
           {user.photoURL && (
             <li>
