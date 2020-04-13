@@ -31,8 +31,11 @@
   }
 
   img {
-    width: 80%;
-    height: 80%;
-    margin-left: 10%;
+    display: block;
+    max-width: 70%;
+    max-height: 70%;
+    width: auto;
+    height: auto;
+    margin: 0 auto 16px;
   }
 }
