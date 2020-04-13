@@ -1,37 +1,42 @@
 #navbar {
+  position: fixed;
+  top: 0;
+  height: 48px;
+  width: 100%;
+  background-color: white;
+  border-bottom: rgba(0, 0, 0, 0.05) solid 2px;
+
   ul {
     display: flex;
     flex-direction: row;
     list-style: none;
-    margin: 0 0 3em 0;
-    padding: 0;
+    margin: 0;
+    padding: 0 4%;
     justify-content: flex-end;
-  }
 
-  ul li {
-    background: tomato;
-    padding: 5px;
-    height: 60px;
-    line-height: 60px;
-    color: white;
-    font-weight: bold;
-    font-size: 1.2em;
-    text-align: center;
+    li {
+      line-height: 48px;
+      color: black;
+      font-weight: 600;
+      font-size: 1.1em;
+      text-align: center;
 
-    img {
-      height: 60px;
+      &#home {
+        margin: 0.65% auto 16px 0;
+
+        img {
+          display: block;
+          max-width: 45px;
+          max-height: 30px;
+          width: auto;
+          height: auto;
+          margin: auto 0;
+        }
+      }
+
+      &#welcome {
+        font-size: 0.8em;
+      }
     }
-
-    a:visited {
-      color: white;
-    }
-  }
-
-  ul li#home {
-    margin-right: auto;
-  }
-
-  ul li#welcome {
-    font-size: 0.8em;
   }
 }
