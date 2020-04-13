@@ -3,61 +3,61 @@ import 'firebase/firestore';
 
 export class User {
   readonly id: string;
-  readonly name: string;
+  readonly displayName: string;
+  readonly photoURL: string | null;
+  readonly level: number;
 
-  private constructor(id: string, name: string) {
+  private constructor(
+    id: string,
+    displayName: string,
+    photoURL: string | null,
+    level: number
+  ) {
     this.id = id;
-    this.name = name;
+    this.displayName = displayName;
+    this.photoURL = photoURL;
+    this.level = level;
   }
 
-  private save() {
-    const resultPromise = new Promise<void>((resolve, reject) => {
-      firebase
+  static async Upsert(firebaseUser: firebase.User) {
+    try {
+      await firebase
         .firestore()
         .collection('users')
-        .doc(this.id)
+        .doc(firebaseUser.uid)
+        .update({
+          displayName: firebaseUser.displayName!,
+          photoURL: firebaseUser.photoURL,
+        });
+    } catch (error) {
+      console.log(`Creating new user ${firebaseUser.uid}.`);
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(firebaseUser.uid)
         .set({
-          name: this.name
-        })
-        .then(done => {
-          resolve();
-        })
-        .catch(reason => {
-          console.log(`User ${this.id} could not be created.`, reason);
-          reject();
+          displayName: firebaseUser.displayName!,
+          photoURL: firebaseUser.photoURL,
+          level: 1,
         });
-    });
-    return resultPromise;
+    }
+    return User.Load(firebaseUser.uid);
   }
 
-  static async Create(id: string, name: string) {
-    const user = new User(
+  static async Load(id: string) {
+    const userSnap = await firebase
+      .firestore()
+      .collection('users')
+      .doc(id)
+      .get();
+    if (!userSnap.exists) {
+      throw new Error(`User ${id} does not exist.`);
+    }
+    return new User(
       id,
-      name
+      userSnap.data()!.displayName,
+      userSnap.data()!.photoURL,
+      userSnap.data()!.level
     );
-    await user.save();
-    return user;
-  }
-
-  static Load(id: string): Promise<User | undefined> {
-    const resultPromise = new Promise<User | undefined>((resolve, reject) => {
-      firebase
-        .firestore()
-        .collection('users')
-        .doc(id)
-        .get()
-        .then(userSnap => {
-          if (!userSnap.exists) {
-            console.log(`User ${id} does not exist.`);
-            reject(undefined);
-          }
-          resolve(new User(userSnap.id, userSnap.data()!.name));
-        })
-        .catch(reason => {
-          console.log(`User ${id} could not be loaded.`, reason);
-          reject(undefined);
-        });
-    });
-    return resultPromise;
   }
 }

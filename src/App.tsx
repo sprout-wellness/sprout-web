@@ -6,10 +6,9 @@ import { ActivityPage } from './components/ActivityPage/ActivityPage';
 import { RoomPage } from './components/RoomPage/RoomPage';
 import { ReflectionPage } from './components/ReflectionPage/ReflectionPage';
 import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
-import { AuthPage } from './components/AuthPage/AuthPage';
-import { NavBar } from './components/NavBar/NavBar'
+import { NavBar } from './components/NavBar/NavBar';
 
-import { UserProvider } from './providers/UserProvider'
+import { UserProvider } from './providers/UserProvider';
 import { SignInPage } from './components/SignInPage/SignInPage';
 
 export const APP = function App() {
@@ -18,7 +17,7 @@ export const APP = function App() {
       <Router>
         <NavBar />
         <Switch>
-          <Route exact path="/signup" component={ SignInPage } />
+          <Route exact path="/signin" component={SignInPage} />
           <Route exact path="/" component={TreePage} />
           <Route exact path="/activities/:tenet" component={ActivityPage} />
           <Route exact path="/room/:id" component={RoomPage} />

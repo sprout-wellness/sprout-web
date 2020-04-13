@@ -7,18 +7,17 @@ import { UserContext } from '../../providers/UserProvider';
 import { Redirect } from 'react-router-dom';
 
 interface SignInPageProps {
-  destination: string
+  destination: string;
 }
-
 
 export class SignInPage extends Component<SignInPageProps> {
   static contextType = UserContext;
-  constructor(props: SignInPageProps){
-    super(props)
+  constructor(props: SignInPageProps) {
+    super(props);
   }
   state = {
-    destination: '/'
-  }
+    destination: '/',
+  };
 
   componentDidMount() {
     const uiConfig = {
@@ -42,14 +41,14 @@ export class SignInPage extends Component<SignInPageProps> {
       privacyPolicyUrl: 'https://google.com',
     };
     const ui = new firebaseui.auth.AuthUI(firebase.auth());
-    ui.start('#firebaseui-auth-container', uiConfig);
+    ui.start("#firebaseui-auth-container", uiConfig);
   }
 
   render() {
-    const user = this.context.user as firebase.User | null;
-    if (user !== null) {
-      return <Redirect to="/" />;
-    }
+    // const user = this.context.user as firebase.User | null;
+    // if (user !== null) {
+    //   return <Redirect to="/" />;
+    // }
     return <div id="firebaseui-auth-container"></div>;
   }
 }

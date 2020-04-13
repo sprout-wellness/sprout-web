@@ -1,14 +1,13 @@
 import React, { Component, MouseEvent } from 'react';
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
 import copy from 'clipboard-copy';
+import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
-import { ReflectionPage } from '../ReflectionPage/ReflectionPage';
-import { ReflectionForm } from '../ReflectionPage/ReflectionForm';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { firebase } from '../../FirebaseSetup';
-import { UserContext } from '../../providers/UserProvider'
+import { UserContext } from '../../providers/UserProvider';
 import './RoomPage.scss';
 import { SignInPage } from '../SignInPage/SignInPage';
 
@@ -26,18 +25,15 @@ interface RoomPageState {
   showTooltip: boolean;
   currentTime: Date;
   currentUser: User | null;
-  reflectionSubmitted: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
-  reflectionListener: (() => void) | undefined = undefined;
   state = {
     room: undefined,
     errors: [] as string[],
     showTooltip: false,
     currentTime: new Date(),
     currentUser: null,
-    reflectionSubmitted: false,
   };
 
   static contextType = UserContext;
@@ -49,26 +45,17 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
     const user = this.context.user as User | null;
     this.setState({
-      currentUser: user
-    })
+      currentUser: user,
+    });
 
-    if(this.state.currentUser){
+    if (this.state.currentUser) {
       // Load room and currently logged in user.
       this.loadRoom(this.props.match.params.id);
       this.loadUser('B22cmNKy21YdIh7Fga8Y');
-      this.addReflectionListener(
-        this.props.match.params.id,
-        'B22cmNKy21YdIh7Fga8Y'
-      );
     }
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
-  }
-  componentWillUnmount() {
-    // Unsubscribe the reflection listener.
-    const unsubscribe: () => void = this.reflectionListener!;
-    unsubscribe();
   }
 
   loadRoom = async (roomId: string) => {
@@ -93,24 +80,6 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       errors: [],
     });
   };
-
-  addReflectionListener(roomId: string, userId: string) {
-    this.reflectionListener = firebase
-      .firestore()
-      .collection('reflections')
-      .where('room', '==', roomId)
-      .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
-        snapshot
-          .docChanges()
-          .forEach((change: firebase.firestore.DocumentChange) => {
-            if (change.type === 'added') {
-              if (change.doc.data().user === userId) {
-                this.setState({ reflectionSubmitted: true });
-              }
-            }
-          });
-      });
-  }
 
   tick() {
     this.setState({
@@ -179,8 +148,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return <div id="room-page">Loading...</div>;
   }
 
-  renderLobby() {
-    const room: Room = this.state.room!;
+  renderLobby(room: Room) {
     return (
       <div id="room-page">
         <div className="activity-container" id={room.activity.category}>
@@ -238,8 +206,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     );
   }
 
-  renderActivity() {
-    const room: Room = this.state.room!;
+  renderActivity(room: Room) {
     return (
       <div id="in-session-page">
         <h1 className="activity-title">{room.activity.name}</h1>
@@ -256,24 +223,13 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     );
   }
 
-  renderReflectionForm() {
-    const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
-    return <ReflectionForm room={room} user={user}></ReflectionForm>;
-  }
-
-  renderRoomReflectionPage() {
-    const room: Room = this.state.room!;
-    return <ReflectionPage roomId={room.id}></ReflectionPage>;
-  }
-
   redirectToAuth() {
-    const destination = '/room/' + this.props.match.params.id
+    const destination = '/room/' + this.props.match.params.id;
     return <SignInPage destination={destination}></SignInPage>;
   }
 
   render() {
-    if(this.state.currentUser === null){
+    if (this.state.currentUser === null) {
       return this.redirectToAuth();
     }
     const room: Room = this.state.room!;
@@ -284,14 +240,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return this.renderLoading();
     }
     if (!room.startTime) {
-      return this.renderLobby();
+      return this.renderLobby(room);
     }
     if (this.activityInSession()) {
-      return this.renderActivity();
+      return this.renderActivity(room);
     }
-    if (!this.state.reflectionSubmitted) {
-      return this.renderReflectionForm();
-    }
-    return this.renderRoomReflectionPage();
+    return <Redirect to={`/room/${room.id}/reflection`} />;
   }
 }
