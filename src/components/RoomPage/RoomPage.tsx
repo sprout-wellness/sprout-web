@@ -1,4 +1,5 @@
 import React, { Component, MouseEvent } from 'react';
+import { useLocation } from 'react-router-dom'
 import copy from 'clipboard-copy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +8,9 @@ import { ReflectionForm } from '../ReflectionPage/ReflectionForm';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { firebase } from '../../FirebaseSetup';
+import { UserContext } from '../../providers/UserProvider'
 import './RoomPage.scss';
+import { SignInPage } from '../SignInPage/SignInPage';
 
 interface RoomPageProps {
   match: {
@@ -22,7 +25,7 @@ interface RoomPageState {
   errors: string[];
   showTooltip: boolean;
   currentTime: Date;
-  currentUser: User | undefined;
+  currentUser: User | null;
   reflectionSubmitted: boolean;
 }
 
@@ -33,22 +36,31 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     errors: [] as string[],
     showTooltip: false,
     currentTime: new Date(),
-    currentUser: undefined,
+    currentUser: null,
     reflectionSubmitted: false,
   };
+
+  static contextType = UserContext;
 
   componentDidMount() {
     if (!this.props.match.params.id) {
       this.appendErrorMsg('Invalid request.');
     }
 
-    // Load room and currently logged in user.
-    this.loadRoom(this.props.match.params.id);
-    this.loadUser('B22cmNKy21YdIh7Fga8Y');
-    this.addReflectionListener(
-      this.props.match.params.id,
-      'B22cmNKy21YdIh7Fga8Y'
-    );
+    const user = this.context.user as User | null;
+    this.setState({
+      currentUser: user
+    })
+
+    if(this.state.currentUser){
+      // Load room and currently logged in user.
+      this.loadRoom(this.props.match.params.id);
+      this.loadUser('B22cmNKy21YdIh7Fga8Y');
+      this.addReflectionListener(
+        this.props.match.params.id,
+        'B22cmNKy21YdIh7Fga8Y'
+      );
+    }
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
@@ -255,7 +267,15 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return <ReflectionPage roomId={room.id}></ReflectionPage>;
   }
 
+  redirectToAuth() {
+    const destination = '/room/' + this.props.match.params.id
+    return <SignInPage destination={destination}></SignInPage>;
+  }
+
   render() {
+    if(this.state.currentUser === null){
+      return this.redirectToAuth();
+    }
     const room: Room = this.state.room!;
     if (this.state.errors.length) {
       return this.renderError();

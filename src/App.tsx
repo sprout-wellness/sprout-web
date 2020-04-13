@@ -10,6 +10,7 @@ import { AuthPage } from './components/AuthPage/AuthPage';
 import { NavBar } from './components/NavBar/NavBar'
 
 import { UserProvider } from './providers/UserProvider'
+import { SignInPage } from './components/SignInPage/SignInPage';
 
 export const APP = function App() {
   return (
@@ -17,7 +18,7 @@ export const APP = function App() {
       <Router>
         <NavBar />
         <Switch>
-          <Route exact path="/signup" component={AuthPage} />
+          <Route exact path="/signup" component={ SignInPage } />
           <Route exact path="/" component={TreePage} />
           <Route exact path="/activities/:tenet" component={ActivityPage} />
           <Route exact path="/room/:id" component={RoomPage} />

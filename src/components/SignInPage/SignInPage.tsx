@@ -6,12 +6,23 @@ import { auth } from 'firebase';
 import { UserContext } from '../../providers/UserProvider';
 import { Redirect } from 'react-router-dom';
 
-export class SignInPage extends Component<{}, {}> {
+interface SignInPageProps {
+  destination: string
+}
+
+
+export class SignInPage extends Component<SignInPageProps> {
   static contextType = UserContext;
+  constructor(props: SignInPageProps){
+    super(props)
+  }
+  state = {
+    destination: '/'
+  }
 
   componentDidMount() {
     const uiConfig = {
-      signInSuccessUrl: '/',
+      signInSuccessUrl: this.props.destination,
       signInOptions: [
         {
           provider: auth.GoogleAuthProvider.PROVIDER_ID,
