@@ -64,7 +64,7 @@ export class Activity {
 
   static LoadActivitiesInTenet(tenetId: string): Promise<Activity[]> {
     const resultPromise = new Promise<Activity[]>((resolve, reject) => {
-      let activities: Activity[] = [];
+      const activities: Activity[] = [];
       firebase
         .firestore()
         .collection('activities')
