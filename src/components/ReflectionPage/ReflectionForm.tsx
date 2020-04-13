@@ -37,7 +37,7 @@ export class ReflectionForm extends Component<
   render() {
     return (
       <div id="reflection-page">
-        <h1 className="title">{this.props.room.activity.name}</h1>
+        <h1 className="title title-padding">{this.props.room.activity.name}</h1>
         <h3>How did this practice make you feel?</h3>
         <textarea
           value={this.state.reflectionText}

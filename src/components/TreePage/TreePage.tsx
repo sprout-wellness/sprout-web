@@ -16,8 +16,8 @@ export class TreePage extends Component<{}, TreePageState> {
   render() {
     return (
       <div id="tree-page">
-        <div>
-          <h1 className="title">What will you practice today?</h1>
+        <div className="title-container title-padding">
+          <h1 className="title title-padding">What will you practice today?</h1>
           <FontAwesomeIcon
                 icon={faCopy}
                 // onClick={}

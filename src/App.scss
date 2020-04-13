@@ -14,10 +14,20 @@ body {
   font-weight: 600;
   text-align: center;
   letter-spacing: 0.02em;
-  margin: 15vh 0 10vh;
-  color: rgba(251, 247, 245, 1);;
+  // margin: 15vh 0 10vh;
+  // color: rgba(251, 247, 245, 1);;
 }
 
+.titlePadding {
+  margin: 15vh 0 10vh;
+  color: blue;
+}
+
+#title-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 
 .card-container {
   display: flex;

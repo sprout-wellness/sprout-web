@@ -65,7 +65,7 @@ export class ActivityPage extends Component<
     }
     return (
       <div id="activity-page">
-        <h1 className="title">
+        <h1 className="title title-padding">
           {this.capitalizeFirstLetter(this.state.tenet)}
         </h1>
         <div className="card-container tight">
