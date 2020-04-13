@@ -8,6 +8,14 @@ body {
   font-family: "system-ui", Avenir, Roboto, Helvetica Neue, sans-serif;
 }
 
+.title {
+  font-family: Quattrocento;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.02em;
+  margin: 15vh 0 10vh;
+}
+
 a:-webkit-any-link {
   text-decoration: none;
   color: inherit;
