@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './NavBar.scss';
 import { firebase } from '../../FirebaseSetup';
 import { UserContext } from '../../providers/UserProvider';
+import { User } from '../../storage/User';
 
 export class NavBar extends Component<{}, {}> {
   static contextType = UserContext;
@@ -12,7 +13,7 @@ export class NavBar extends Component<{}, {}> {
   }
 
   render() {
-    const user = this.context.user as firebase.User | null;
+    const user = this.context.user as User | null;
     if (user === null) {
       return (
         <div id="navbar">
@@ -43,7 +44,7 @@ export class NavBar extends Component<{}, {}> {
               ></img>
             </Link>
           </li>
-          {user.photoURL !== null && (
+          {user.photoURL && (
             <li>
               <img src={user.photoURL} alt="Profile." />
             </li>

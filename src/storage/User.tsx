@@ -3,32 +3,61 @@ import 'firebase/firestore';
 
 export class User {
   readonly id: string;
-  readonly name: string;
+  readonly displayName: string;
+  readonly photoURL: string | null;
+  readonly level: number;
 
-  private constructor(id: string, name: string) {
+  private constructor(
+    id: string,
+    displayName: string,
+    photoURL: string | null,
+    level: number
+  ) {
     this.id = id;
-    this.name = name;
+    this.displayName = displayName;
+    this.photoURL = photoURL;
+    this.level = level;
   }
 
-  static Load(id: string): Promise<User> {
-    const resultPromise = new Promise<User>((resolve, reject) => {
-      firebase
+  static async Upsert(firebaseUser: firebase.User) {
+    try {
+      await firebase
         .firestore()
         .collection('users')
-        .doc(id)
-        .get()
-        .then(userSnap => {
-          if (!userSnap.exists) {
-            console.log(`User ${id} does not exist.`);
-            reject();
-          }
-          resolve(new User(userSnap.id, userSnap.data()!.name));
-        })
-        .catch(reason => {
-          console.log(`User ${id} could not be loaded.`, reason);
-          reject();
+        .doc(firebaseUser.uid)
+        .update({
+          displayName: firebaseUser.displayName!,
+          photoURL: firebaseUser.photoURL,
         });
-    });
-    return resultPromise;
+    } catch (error) {
+      console.log(`Creating new user ${firebaseUser.uid}.`);
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(firebaseUser.uid)
+        .set({
+          displayName: firebaseUser.displayName!,
+          photoURL: firebaseUser.photoURL,
+          level: 1,
+        });
+    }
+    return User.Load(firebaseUser.uid);
+  }
+
+  static async Load(id: string) {
+    const userSnap = await firebase
+      .firestore()
+      .collection('users')
+      .doc(id)
+      .get();
+    if (!userSnap.exists) {
+      throw new Error(`User ${id} does not exist.`);
+    }
+    return new User(
+      id,
+      userSnap.data()!.displayName,
+      userSnap.data()!.photoURL,
+      userSnap.data()!.level
+    );
   }
 }
