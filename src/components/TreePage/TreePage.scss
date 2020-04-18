@@ -28,3 +28,32 @@
     margin-left: 10%;
   }
 }
+
+.random-button-container {
+  
+}
+
+.random-button {
+  font-weight: 600;
+  text-align: center;
+  color: rgba(251, 247, 245, 1);
+  cursor: pointer;
+  margin-left: 16px;
+  font-size: 24px;
+}
+
+.random-tooltip {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  margin-left: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+
+.random-button-container:hover .random-tooltip {
+  opacity: 100;
+  transition: all 0.2s ease-in;
+}

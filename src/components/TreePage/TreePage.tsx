@@ -2,7 +2,7 @@ import React, { Component } from 'react'; // let's also import Component
 import './TreePage.scss';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faRandom, faUser } from '@fortawesome/free-solid-svg-icons';
 
 // the clock's state has one field: The current time, based upon the
 // JavaScript class Date
@@ -17,12 +17,17 @@ export class TreePage extends Component<{}, TreePageState> {
     return (
       <div id="tree-page">
         <div className="title-container title-padding">
-          <h1 className="title title-padding">What will you practice today?</h1>
-          <FontAwesomeIcon
-                icon={faCopy}
-                // onClick={}
-                className="copy-button"
-          ></FontAwesomeIcon>
+          <h1 className="title">What will you practice today?</h1>
+          <div className="random-button-container">
+            <FontAwesomeIcon
+                  icon={faRandom}
+                  // onClick={}
+                  className="title random-button"
+            ></FontAwesomeIcon>
+            <span className="random-tooltip">
+                  Choose a random activity!
+            </span>
+          </div>
         </div>
         <div className="card-container">
           <Link to="/activities/compassion" style={{ textDecoration: 'none' }}>
