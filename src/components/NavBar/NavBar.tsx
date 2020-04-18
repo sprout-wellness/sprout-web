@@ -51,7 +51,7 @@ export class NavBar extends Component<{}, {}> {
           )}
           <li id="welcome">Welcome, {user.displayName}!</li>
           <li>
-            <Link to="/">Profile</Link>
+            <Link to="/profile">Profile</Link>
           </li>
           <li>
             <button onClick={() => this.signOutButton()}>Sign Out</button>

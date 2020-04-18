@@ -9,6 +9,7 @@ import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
 import { NavBar } from './components/NavBar/NavBar';
 import { SignInPage } from './components/SignInPage/SignInPage';
 import { UserProvider } from './providers/UserProvider';
+import { ProfilePage } from './components/ProfilePage/ProfilePage';
 
 export const APP = function App() {
   return (
@@ -18,6 +19,7 @@ export const APP = function App() {
         <Switch>
           <Route exact path="/" component={TreePage} />
           <Route exact path="/signin" component={SignInPage} />
+          <Route exact path="/profile" component={ProfilePage} />
           <Route exact path="/activities/:tenet" component={ActivityPage} />
           <Route exact path="/room/:id" component={RoomPage} />
           <Route exact path="/room/:id/reflection" component={ReflectionPage} />

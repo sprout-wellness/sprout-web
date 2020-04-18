@@ -5,6 +5,7 @@ import 'firebaseui/dist/firebaseui.css';
 import { auth } from 'firebase';
 import { UserContext } from '../../providers/UserProvider';
 import { Redirect } from 'react-router-dom';
+import { User } from '../../storage/User';
 
 export class SignInPage extends Component<{}, {}> {
   static contextType = UserContext;
@@ -35,7 +36,7 @@ export class SignInPage extends Component<{}, {}> {
   }
 
   render() {
-    const user = this.context.user as firebase.User | null;
+    const user = this.context.user as User | null;
     if (user !== null) {
       return <Redirect to="/" />;
     }
