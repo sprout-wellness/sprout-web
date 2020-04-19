@@ -55,49 +55,37 @@ export class Room {
       });
   }
 
-  static Load(id: string) {
-    const resultPromise = new Promise<Room>((resolve, reject) => {
-      firebase
-        .firestore()
-        .collection('rooms')
-        .doc(id)
-        .get()
-        .then(async roomSnap => {
-          if (!roomSnap.exists) {
-            console.log(`Room ${id} does not exist.`);
-            reject();
-          }
-
-          // Fetch room activity.
-          const activity = await Activity.LoadActivity(
-            roomSnap.data()!.activity.toString()
-          );
-
-          // Fetch attendees.
-          const users = [] as User[];
-          for (const userRef of roomSnap.data()!.attendees) {
-            const user = await User.Load(userRef.id);
-            users.push(user!);
-          }
-
-          resolve(
-            new Room(roomSnap.id, activity!, users, roomSnap.data()!.startTime)
-          );
-        })
-        .catch(reason => {
-          console.log(`Room ${id} could not be loaded.`, reason);
-          reject();
-        });
-    });
-    return resultPromise;
+  static async Load(id: string): Promise<Room> {
+    const roomSnap = await firebase
+      .firestore()
+      .collection('rooms')
+      .doc(id)
+      .get();
+    if (!roomSnap.exists) {
+      throw Error(`Room ${id} does not exist.`);
+    }
+    return this.LoadFromData(roomSnap);
   }
 
-  static async Create(activity: Activity) {
+  static async LoadFromData(
+    roomSnap: firebase.firestore.DocumentSnapshot
+  ): Promise<Room> {
+    const activity = await Activity.LoadActivity(
+      roomSnap.data()!.activity.toString()
+    );
+    const users = [] as User[];
+    for (const userId of roomSnap.data()!.attendees) {
+      users.push(await User.Load(userId));
+    }
+    return new Room(roomSnap.id, activity!, users, roomSnap.data()!.startTime);
+  }
+
+  static async Create(creator: User, activity: Activity) {
     const randomId = firebase
       .firestore()
       .collection('rooms')
       .doc().id;
-    const room = new Room(randomId, activity, [], -1);
+    const room = new Room(randomId, activity, [creator], -1);
     await room.save();
     return room.id;
   }

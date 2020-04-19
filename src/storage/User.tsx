@@ -1,5 +1,6 @@
 import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
+import { History } from './History';
 
 export class User {
   readonly id: string;
@@ -19,7 +20,11 @@ export class User {
     this.level = level;
   }
 
-  static async Upsert(firebaseUser: firebase.User) {
+  async getHistory() {
+    return History.LoadForUser(this.id);
+  }
+
+  static async Upsert(firebaseUser: firebase.User): Promise<User> {
     try {
       await firebase
         .firestore()
@@ -44,7 +49,7 @@ export class User {
     return User.Load(firebaseUser.uid);
   }
 
-  static async Load(id: string) {
+  static async Load(id: string): Promise<User> {
     const userSnap = await firebase
       .firestore()
       .collection('users')

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
+import { UserContext } from '../../providers/UserProvider';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -24,6 +25,8 @@ interface RoomPageState {
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
+  static contextType = UserContext;
+
   state = {
     room: undefined,
     errors: [] as string[],
