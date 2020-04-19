@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import './NavBar.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { firebase } from '../../FirebaseSetup';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
+import './NavBar.scss';
 
 export class NavBar extends Component<{}, {}> {
   static contextType = UserContext;
@@ -45,18 +47,30 @@ export class NavBar extends Component<{}, {}> {
               ></img>
             </Link>
           </li>
-          {user.photoURL && (
-            <li>
-              <img id="profile-picture" src={user.photoURL} alt="Profile" />
-            </li>
-          )}
           <li className="text">Welcome, {user.displayName}!</li>
-          <li className="text link">
-            <Link to="/profile">Profile</Link>
-          </li>
-          <li className="text link" onClick={() => this.signOut()}>
-            Sign Out
-          </li>
+          <div className="dropdown">
+            {user.photoURL && (
+              <li className="dropbtn">
+                <img id="profile-picture" src={user.photoURL} alt="Profile" />
+              </li>
+            )}
+            {!user.photoURL && (
+              <li className="dropbtn">
+                <FontAwesomeIcon
+                  id="profile-picture"
+                  icon={faUserCircle}
+                ></FontAwesomeIcon>
+              </li>
+            )}
+            <div className="dropdown-content">
+              <li className="text link">
+                <Link to="/profile">Profile</Link>
+              </li>
+              <li className="text link" onClick={() => this.signOut()}>
+                Sign Out
+              </li>
+            </div>
+          </div>
         </ul>
       </div>
     );
