@@ -2,11 +2,12 @@ import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
 import { User } from './User';
 import { Activity } from './Activity';
+import { arraysEqual } from '../utils/primitives';
 
 export class Room {
   readonly id: string;
   readonly activity: Activity;
-  readonly attendees: User[];
+  private attendees: User[];
   private startTime: number;
 
   private constructor(
@@ -19,9 +20,36 @@ export class Room {
     this.activity = activity;
     this.attendees = attendees;
     this.startTime = startTime;
+
+    // Observe real time changes and update object accordingly.
+    firebase
+      .firestore()
+      .collection('rooms')
+      .doc(this.id)
+      .onSnapshot(async roomSnap => {
+        if (
+          !arraysEqual(
+            roomSnap.data()!.attendees,
+            this.attendees.map(user => user.id)
+          )
+        ) {
+          const users = [] as User[];
+          for (const userId of roomSnap.data()!.attendees) {
+            users.push(await User.Load(userId));
+          }
+          this.attendees = users;
+        }
+        if (startTime !== this.startTime) {
+          this.startTime = startTime;
+        }
+      });
   }
 
-  getStartTime() {
+  getAttendees(): User[] {
+    return this.attendees;
+  }
+
+  getStartTime(): number {
     return this.startTime;
   }
 
@@ -81,7 +109,7 @@ export class Room {
     return new Room(roomSnap.id, activity!, users, roomSnap.data()!.startTime);
   }
 
-  static async Create(creator: User, activity: Activity) {
+  static async Create(creator: User, activity: Activity): Promise<string> {
     const randomId = firebase
       .firestore()
       .collection('rooms')

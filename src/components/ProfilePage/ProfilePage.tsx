@@ -43,7 +43,7 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
             <div key={key}>
               <p>Time: {new Date(room.getStartTime()).toString()}</p>
               <p>Acitivity: {room.activity.name}</p>
-              <p>People: {room.attendees.length}</p>
+              <p>People: {room.getAttendees().length}</p>
             </div>
           );
         });

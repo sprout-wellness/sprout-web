@@ -160,26 +160,14 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             </button>
           </div>
           <div className="participants-container">
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Tao Ong</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Sarah Chen</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Orkun Duman</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Carson Trinh</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Mike You</h4>
-            </div>
+            {room.getAttendees().map((user, key) => {
+              return (
+                <div className="participant-card" key={key}>
+                  <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  <h4 className="participant-name">{user.displayName}</h4>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="activity-details">
