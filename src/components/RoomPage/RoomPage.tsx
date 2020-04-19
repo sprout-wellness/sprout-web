@@ -59,7 +59,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   componentDidUpdate(prevState: any){
-    if(this.state.currentUser !== prevState.currentUser && !this.state.currentUser){
+    if(this.state.currentUser !== prevState.currentUser && this.state.currentUser){
       this.loadRoom(this.props.match.params.id);
       this.loadUser('B22cmNKy21YdIh7Fga8Y')
     }

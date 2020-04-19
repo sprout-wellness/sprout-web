@@ -21,7 +21,7 @@ export class SignInPage extends Component<SignInPageProps> {
 
   componentDidMount() {
     const uiConfig = {
-      signInSuccessUrl: this.props.destination,
+      signInSuccessUrl: this.props.destination || '/',
       signInOptions: [
         {
           provider: auth.GoogleAuthProvider.PROVIDER_ID,
@@ -40,7 +40,7 @@ export class SignInPage extends Component<SignInPageProps> {
       tosUrl: 'https://google.com',
       privacyPolicyUrl: 'https://google.com',
     };
-    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
     ui.start("#firebaseui-auth-container", uiConfig);
   }
 
