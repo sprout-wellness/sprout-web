@@ -22,6 +22,32 @@
     background-color: rgba(209, 55, 38, 0.4);
   }
 
+  #invite-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border-radius: 30px;
+    animation: all 0.2s ease-out;
+    padding: 16px;
+    margin-bottom: 5vh;
+
+    #join-button {
+      margin-top: 24px;
+      padding: 8px 16px;
+      background-color: green;
+      color: white;
+      font-size: 22px;
+      border: none;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: greenyellow;
+        outline-width: 3px;
+        outline-color: black;
+      }
+    }
+  }
+
   .activity-container {
     display: flex;
     flex-direction: row;

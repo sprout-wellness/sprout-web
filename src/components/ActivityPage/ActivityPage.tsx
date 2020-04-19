@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { match, Redirect } from 'react-router-dom';
+import { UserContext } from '../../providers/UserProvider';
 import { Activity } from '../../storage/Activity';
 import { Room } from '../../storage/Room';
 import './ActivityPage.scss';
+import { User } from '../../storage/User';
 
 interface DetailParams {
   tenet: string;
@@ -22,6 +24,8 @@ export class ActivityPage extends Component<
   ActivityPageProps,
   ActivityPageState
 > {
+  static contextType = UserContext;
+
   constructor(props: ActivityPageProps) {
     super(props);
 
@@ -49,7 +53,11 @@ export class ActivityPage extends Component<
   };
 
   createRoom = async (activity: Activity) => {
-    const newRoomId = await Room.Create(activity);
+    const user = this.context.user as User | null;
+    if (user === null) {
+      return;
+    }
+    const newRoomId = await Room.Create(user, activity);
     this.setState({
       redirectToRoom: newRoomId,
     });
@@ -60,6 +68,10 @@ export class ActivityPage extends Component<
   }
 
   render() {
+    const user = this.context.user as User | null;
+    if (user === null) {
+      return <Redirect to="/signin" />;
+    }
     if (this.state.redirectToRoom) {
       return <Redirect to={`/room/${this.state.redirectToRoom}`} />;
     }

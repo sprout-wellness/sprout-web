@@ -26,17 +26,16 @@
       }
 
       &#home {
-        margin-right: auto;
-        padding-top: 8px;
+        margin: 0.65% auto 16px 0;
+      }
 
-        img {
-          display: block;
-          max-width: 45px;
-          max-height: 30px;
-          width: auto;
-          height: auto;
-          margin: auto 0;
-        }
+      img {
+        display: block;
+        max-width: 45px;
+        max-height: 30px;
+        width: auto;
+        height: auto;
+        margin: auto 0;
       }
 
       &#welcome {

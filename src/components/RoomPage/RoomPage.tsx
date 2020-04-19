@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
+import { UserContext } from '../../providers/UserProvider';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -20,53 +21,34 @@ interface RoomPageState {
   errors: string[];
   showTooltip: boolean;
   currentTime: Date;
-  currentUser: User | undefined;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
+  static contextType = UserContext;
+
   state = {
     room: undefined,
     errors: [] as string[],
     showTooltip: false,
     currentTime: new Date(),
-    currentUser: undefined,
   };
 
   componentDidMount() {
     if (!this.props.match.params.id) {
       this.appendErrorMsg('Invalid request.');
+      return;
     }
 
-    // Load room and currently logged in user.
-    this.loadRoom(this.props.match.params.id);
-    this.loadUser('B22cmNKy21YdIh7Fga8Y');
+    (async () => {
+      this.setState({
+        room: await Room.Load(this.props.match.params.id),
+        errors: [],
+      });
+    })();
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => this.tick(), 1000);
   }
-
-  loadRoom = async (roomId: string) => {
-    const room = await Room.Load(roomId);
-    if (!room) {
-      this.appendErrorMsg(`Room ${roomId} not found.`);
-    }
-    this.setState({
-      room,
-      errors: [],
-    });
-  };
-
-  loadUser = async (userId: string) => {
-    const user = await User.Load(userId);
-    if (!user) {
-      this.appendErrorMsg(`User ${userId} not found.`);
-      return;
-    }
-    this.setState({
-      currentUser: user,
-      errors: [],
-    });
-  };
 
   tick() {
     this.setState({
@@ -76,12 +58,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   secondsPassed() {
     const room: Room = this.state.room!;
-    return (this.state.currentTime.getTime() - room.startTime) / 1000;
+    return (this.state.currentTime.getTime() - room.getStartTime()) / 1000;
   }
 
   activityInSession() {
     const room: Room = this.state.room!;
-    if (room.startTime === -1) {
+    if (room.getStartTime() === -1) {
       return false;
     }
     return this.secondsPassed() < room.activity.time * 60;
@@ -101,7 +83,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     });
   }
 
-  handleCopy(event: MouseEvent) {
+  copyToClipboard(event: MouseEvent) {
     const room: Room = this.state.room!;
     event.preventDefault();
     copy('sprout-wellness.web.app/room/' + room.id);
@@ -111,10 +93,19 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     }, 2000);
   }
 
-  begin() {
+  async begin() {
     const room: Room = this.state.room!;
-    Room.Begin(room.id);
-    this.loadRoom(room.id);
+    await room.begin();
+  }
+
+  async join() {
+    const user = this.context.user as User | null;
+    if (user === null) {
+      console.log("User is null, can't join room.");
+      return;
+    }
+    const room: Room = this.state.room!;
+    await room.join(user);
   }
 
   renderError() {
@@ -136,8 +127,16 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderLobby(room: Room) {
+    const user = this.context.user as User;
     return (
       <div id="room-page">
+        {!room.userInRoom(user) && (
+          <div id="invite-container">
+            <button id="join-button" onClick={this.join.bind(this)}>
+              Join this room!
+            </button>
+          </div>
+        )}
         <div className="activity-container" id={room.activity.category}>
           <div>
             <h1 className="title">{room.activity.name}</h1>
@@ -146,7 +145,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               <p>sproutwellness.com/room/{room.id}</p>
               <FontAwesomeIcon
                 icon={faCopy}
-                onClick={this.handleCopy.bind(this)}
+                onClick={this.copyToClipboard.bind(this)}
               ></FontAwesomeIcon>
               <span
                 className={`copy-tooltip ${
@@ -156,31 +155,19 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
                 Copied to clipboard!
               </span>
             </div>
-            <button className="begin-button" onClick={this.begin.bind(this)}>
+            <button className="begin-button" onClick={() => this.begin()}>
               Begin Practice
             </button>
           </div>
           <div className="participants-container">
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Tao Ong</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Sarah Chen</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Orkun Duman</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Carson Trinh</h4>
-            </div>
-            <div className="participant-card">
-              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-              <h4 className="participant-name">Mike You</h4>
-            </div>
+            {room.getAttendees().map((user, key) => {
+              return (
+                <div className="participant-card" key={key}>
+                  <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  <h4 className="participant-name">{user.displayName}</h4>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="activity-details">
@@ -218,7 +205,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     if (!room) {
       return this.renderLoading();
     }
-    if (!room.startTime) {
+    if (room.getStartTime() < 0) {
       return this.renderLobby(room);
     }
     if (this.activityInSession()) {
