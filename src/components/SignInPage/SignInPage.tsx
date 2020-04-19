@@ -6,6 +6,7 @@ import { auth } from 'firebase';
 import { UserContext } from '../../providers/UserProvider';
 import { Redirect } from 'react-router-dom';
 import { User } from '../../storage/User';
+import './SignInPage.scss';
 
 export class SignInPage extends Component<{}, {}> {
   static contextType = UserContext;
@@ -40,6 +41,11 @@ export class SignInPage extends Component<{}, {}> {
     if (user !== null) {
       return <Redirect to="/" />;
     }
-    return <div id="firebaseui-auth-container"></div>;
+    return (
+      <div id="signin-page">
+        <h1 className="title">Sign in</h1>
+        <div id="firebaseui-auth-container"></div>
+      </div>
+    );
   }
 }

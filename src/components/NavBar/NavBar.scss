@@ -1,42 +1,105 @@
+// Layout variables
+$navbar-height: 48px;
+$navbar-padding-side: 6%;
+$image-height: 30px;
+
+// Colors
+$border-color: rgb(242.75, 242.75, 242.75);
+$dark-grey: rgb(51, 51, 51);
+$dark-grey-2: rgb(76.5, 76.5, 76.5);
+$sprout-green-dark: #64AF17;
+
 #navbar {
   position: fixed;
   top: 0;
-  height: 48px;
+  height: $navbar-height;
   width: 100%;
   background-color: white;
-  border-bottom: rgba(0, 0, 0, 0.05) solid 2px;
+  border-bottom: $border-color solid 2px;
 
   ul {
+    height: 100%;
     display: flex;
     flex-direction: row;
     list-style: none;
     margin: 0;
-    padding: 0 4%;
+    padding: 0 $navbar-padding-side;
     justify-content: flex-end;
 
     li {
-      line-height: 48px;
-      color: black;
-      font-weight: 600;
-      font-size: 1.1em;
-      text-align: center;
-
       &#home {
-        margin: 0.65% auto 16px 0;
+        margin-top: 9px;
+        margin-right: auto;
+        transition: all 0.2s;
+
+        &:hover {
+          transform: scale(1.08);
+        }
+      }
+
+      &.text {
+        margin: auto 0;
+        color: $dark-grey-2;
+        font-weight: 600;
+        font-size: 0.9em;
+
+        &.link:hover {
+          cursor: pointer;
+        }
+      }
+
+      #profile-picture {
+        margin-left: 16px;
+        width: $image-height;
+        height: $image-height;
+        border: $border-color 2px solid;
+        border-radius: 50%;
+        margin-top: 8px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: $sprout-green-dark;
+          cursor: pointer;
+        }
       }
 
       img {
         display: block;
         max-width: 45px;
-        max-height: 30px;
+        max-height: $image-height;
         width: auto;
         height: auto;
         margin: auto 0;
       }
+    }
 
-      &#welcome {
-        font-size: 0.8em;
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: $navbar-height;
+      right: $navbar-padding-side;
+      min-width: 120px;
+      z-index: 1;
+
+      li {
+        display: block;
+        float: none;
+        text-align: left;
+        background-color: $dark-grey;
+        color: white;
+        padding: 12px 8px;
+        text-decoration: none;
+
+        &:hover {
+          color: white;
+          background-color: $dark-grey-2;
+        }
       }
+    }
+
+    .dropdown:hover .dropdown-content {
+      z-index: 5;
+      display: block;
     }
   }
 }
