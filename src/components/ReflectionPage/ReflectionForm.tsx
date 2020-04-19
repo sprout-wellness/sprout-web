@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Room } from '../../storage/Room';
 import { Reflection } from '../../storage/Reflection';
 import { User } from '../../storage/User';
-import './ReflectionPage.scss';
 
 interface ReflectionFormProps {
   room: Room;

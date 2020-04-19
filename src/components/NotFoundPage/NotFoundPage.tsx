@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 export class NotFoundPage extends Component<{}, {}> {
   render() {
-    return <h1>404 Not Found</h1>;
+    return (
+      <div style={{ margin: '40vh auto', textAlign: 'center' }}>
+        404 Not Found
+      </div>
+    );
   }
 }

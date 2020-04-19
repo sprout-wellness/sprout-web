@@ -34,16 +34,14 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   };
 
   componentDidMount() {
-    if (!this.props.match.params.id) {
-      this.appendErrorMsg('Invalid request.');
-      return;
-    }
-
     (async () => {
-      this.setState({
-        room: await Room.Load(this.props.match.params.id),
-        errors: [],
-      });
+      try {
+        this.setState({
+          room: await Room.Load(this.props.match.params.id),
+        });
+      } catch (e) {
+        this.appendErrorMsg(e.toString());
+      }
     })();
 
     // During the practice, ticking moves along the progress bar.

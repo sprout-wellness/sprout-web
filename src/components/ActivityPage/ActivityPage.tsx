@@ -3,8 +3,8 @@ import { match, Redirect } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import { Activity } from '../../storage/Activity';
 import { Room } from '../../storage/Room';
-import './ActivityPage.scss';
 import { User } from '../../storage/User';
+import './ActivityPage.scss';
 
 interface DetailParams {
   tenet: string;
