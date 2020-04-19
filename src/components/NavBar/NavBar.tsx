@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { firebase } from '../../FirebaseSetup';
+import 'firebase/auth';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
 import './NavBar.scss';

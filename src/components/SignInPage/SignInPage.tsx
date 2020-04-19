@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { firebase } from '../../FirebaseSetup';
+import { auth } from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
-import { auth } from 'firebase';
 import { UserContext } from '../../providers/UserProvider';
 import { Redirect } from 'react-router-dom';
 import { User } from '../../storage/User';
@@ -32,7 +32,9 @@ export class SignInPage extends Component<{}, {}> {
       tosUrl: 'https://google.com',
       privacyPolicyUrl: 'https://google.com',
     };
-    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    const ui =
+      firebaseui.auth.AuthUI.getInstance() ||
+      new firebaseui.auth.AuthUI(firebase.auth());
     ui.start('#firebaseui-auth-container', uiConfig);
   }
 
