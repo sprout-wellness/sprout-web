@@ -1,5 +1,4 @@
 import React, { Component, MouseEvent } from 'react';
-import { useLocation } from 'react-router-dom';
 import copy from 'clipboard-copy';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -58,10 +57,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     setInterval(() => this.tick(), 1000);
   }
 
-  componentDidUpdate(prevState: any){
+  componentDidUpdate(prevProps: any, prevState: any){
     if(this.state.currentUser !== prevState.currentUser && this.state.currentUser){
       this.loadRoom(this.props.match.params.id);
       this.loadUser(this.context.user.id)
+      console.log("Updated", prevProps, prevState)
     }
   }
 

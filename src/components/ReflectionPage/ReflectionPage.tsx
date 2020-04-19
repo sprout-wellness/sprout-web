@@ -6,6 +6,8 @@ import { Reflection } from '../../storage/Reflection';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
+import { UserContext } from '../../providers/UserProvider'
+import { SignInPage } from '../SignInPage/SignInPage'
 
 interface ReflectionPageProps {
   match: {
@@ -18,10 +20,12 @@ interface ReflectionPageProps {
 interface ReflectionPageState {
   reflections: Reflection[];
   room: Room | undefined;
-  currentUser: User | undefined;
+  currentUser: User | null;
   errors: string[];
   reflectionSubmitted: boolean;
 }
+
+
 
 export class ReflectionPage extends Component<
   ReflectionPageProps,
@@ -34,30 +38,50 @@ export class ReflectionPage extends Component<
     this.state = {
       reflections: [],
       room: undefined,
-      currentUser: undefined,
+      currentUser: null,
       errors: [],
       reflectionSubmitted: false,
     };
   }
 
-  componentDidMount = async () => {
-    // Load room and currently logged in user.
-    await this.loadRoom(this.props.match.params.id);
-    await this.loadUser('B22cmNKy21YdIh7Fga8Y');
-    this.fetchUserReflection(
-      this.props.match.params.id,
-      'B22cmNKy21YdIh7Fga8Y'
-    );
+  static contextType = UserContext;
 
-    // Update state to represent all relevant reflections.
-    this.fetchReflectionsAndUpdateState();
-    this.addReflectionListener();
+  componentDidMount = async () => {
+
+    const user = this.context.user as User | null;
+    this.setState({
+      currentUser: user,
+    });
+
+    // Load room and currently logged in user.
+    if (this.state.currentUser) {
+      // Load room and currently logged in user.
+      await this.loadRoom(this.props.match.params.id);
+      await this.loadUser(this.context.user.id);
+      this.fetchUserReflection( 
+        this.props.match.params.id,
+        this.context.user.id
+      );
+  
+      // Update state to represent all relevant reflections.
+      this.fetchReflectionsAndUpdateState();
+      this.addReflectionListener();
+    }
   };
 
-  componentWillUnmount() {
-    // Unsubscribe the reflection listener.
-    const unsubscribe: () => void = this.reflectionListener!;
-    unsubscribe();
+  async componentDidUpdate(prevState: any){
+    if(this.state.currentUser !== prevState.currentUser && this.state.currentUser){
+      await this.loadRoom(this.props.match.params.id);
+      await this.loadUser(this.context.user.id);
+      this.fetchUserReflection( 
+        this.props.match.params.id,
+        this.context.user.id
+      );
+  
+      // Update state to represent all relevant reflections.
+      this.fetchReflectionsAndUpdateState();
+      this.addReflectionListener();
+    }
   }
 
   loadRoom = async (roomId: string) => {
@@ -167,16 +191,26 @@ export class ReflectionPage extends Component<
       </div>
     );
   }
+  redirectToAuth() {
+    const destination = '/room/' + this.props.match.params.id + '/reflection';
+    return <SignInPage destination={destination}></SignInPage>;
+  }
 
   render() {
-    const room: Room = this.state.room!;
+    
     const user: User = this.state.currentUser!;
-    if (!room || !user) {
-      return this.renderLoading();
+    if (user === null) {
+      return this.redirectToAuth();
     }
-    if (!this.state.reflectionSubmitted) {
-      return this.renderReflectionForm(room, user);
+    else{
+      const room: Room = this.state.room!;
+      if (!room || !user) {
+        return this.renderLoading();
+      }
+      if (!this.state.reflectionSubmitted) {
+        return this.renderReflectionForm(room, user);
+      }
+      return this.renderReflectionPage();
     }
-    return this.renderReflectionPage();
   }
 }
