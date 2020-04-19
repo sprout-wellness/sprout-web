@@ -58,6 +58,13 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     setInterval(() => this.tick(), 1000);
   }
 
+  componentDidUpdate(prevState: any){
+    if(this.state.currentUser !== prevState.currentUser && !this.state.currentUser){
+      this.loadRoom(this.props.match.params.id);
+      this.loadUser('B22cmNKy21YdIh7Fga8Y')
+    }
+  }
+
   loadRoom = async (roomId: string) => {
     const room = await Room.Load(roomId);
     if (!room) {
