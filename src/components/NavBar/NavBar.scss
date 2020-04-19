@@ -11,22 +11,41 @@
     flex-direction: row;
     list-style: none;
     margin: 0;
-    padding: 0 4%;
+    padding: 0 6%;
     justify-content: flex-end;
 
     li {
-      color: rgba(0, 0, 0, 0.7);
-      font-weight: 600;
-      font-size: 1em;
-      transition: all 200ms ease-out;
-      padding: 14px;
+      &#home {
+        margin: 9px auto 16px 0;
+        transition: all 0.2s;
 
-      &:hover {
-        color: rgba(0, 0, 0, 1);
+        &:hover {
+          transform: scale(1.08);
+        }
       }
 
-      &#home {
-        margin: 0.65% auto 16px 0;
+      &.text {
+        margin: 14px 32px 0;
+        color: rgba(0, 0, 0, 0.7);
+        font-weight: 600;
+        font-size: 1em;
+        transition: all 200ms ease-out;
+
+        &.link:hover {
+          color: rgba(0, 0, 0, 1);
+          cursor: pointer;
+        }
+      }
+
+      #profile-picture {
+        border: rgba(0, 0, 0, 0.1) 2px solid;
+        border-radius: 50%;
+        margin-top: 8px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: rgba(100, 175, 33, 0.99);
+        }
       }
 
       img {
@@ -36,10 +55,6 @@
         width: auto;
         height: auto;
         margin: auto 0;
-      }
-
-      &#welcome {
-        font-size: 0.8em;
       }
     }
   }

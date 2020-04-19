@@ -8,7 +8,7 @@ import { User } from '../../storage/User';
 export class NavBar extends Component<{}, {}> {
   static contextType = UserContext;
 
-  signOutButton() {
+  signOut() {
     firebase.auth().signOut();
   }
 
@@ -26,7 +26,7 @@ export class NavBar extends Component<{}, {}> {
                 ></img>
               </Link>
             </li>
-            <li>
+            <li className="text">
               <Link to="/signin">Sign In</Link>
             </li>
           </ul>
@@ -39,6 +39,7 @@ export class NavBar extends Component<{}, {}> {
           <li id="home">
             <Link to="/">
               <img
+                id="sprout-logo"
                 src={require('../../images/sprout-logo.png')}
                 alt="Home"
               ></img>
@@ -46,15 +47,15 @@ export class NavBar extends Component<{}, {}> {
           </li>
           {user.photoURL && (
             <li>
-              <img src={user.photoURL} alt="Profile." />
+              <img id="profile-picture" src={user.photoURL} alt="Profile" />
             </li>
           )}
-          <li id="welcome">Welcome, {user.displayName}!</li>
-          <li>
+          <li className="text">Welcome, {user.displayName}!</li>
+          <li className="text link">
             <Link to="/profile">Profile</Link>
           </li>
-          <li>
-            <button onClick={() => this.signOutButton()}>Sign Out</button>
+          <li className="text link" onClick={() => this.signOut()}>
+            Sign Out
           </li>
         </ul>
       </div>
