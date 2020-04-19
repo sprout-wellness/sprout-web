@@ -7,7 +7,7 @@ export class Room {
   readonly id: string;
   readonly activity: Activity;
   readonly attendees: User[];
-  readonly startTime: number;
+  private startTime: number;
 
   private constructor(
     id: string,
@@ -21,38 +21,39 @@ export class Room {
     this.startTime = startTime;
   }
 
-  private save() {
-    const resultPromise = new Promise<void>((resolve, reject) => {
-      firebase
-        .firestore()
-        .collection('rooms')
-        .doc(this.id)
-        .set({
-          activity: this.activity.id,
-          attendees: this.attendees.map(user => user.id),
-        })
-        .then(_ => {
-          resolve();
-        })
-        .catch(reason => {
-          console.log(`Room ${this.id} could not be created.`, reason);
-          reject();
-        });
-    });
-    return resultPromise;
+  getStartTime() {
+    return this.startTime;
   }
 
-  static Begin(id: string) {
-    firebase
+  userInRoom(user: User): boolean {
+    return (
+      this.attendees.filter(attendee => attendee.id === user.id).length > 0
+    );
+  }
+
+  private async save(): Promise<void> {
+    await firebase
       .firestore()
       .collection('rooms')
-      .doc(id)
-      .update({
-        startTime: new Date().getTime(),
-      })
-      .catch(reason => {
-        console.log(`Room ${id} could not be created.`, reason);
+      .doc(this.id)
+      .set({
+        activity: this.activity.id,
+        attendees: this.attendees.map(user => user.id),
+        startTime: this.startTime,
       });
+  }
+
+  async begin(): Promise<void> {
+    this.startTime = new Date().getTime();
+    await this.save();
+  }
+
+  async join(user: User): Promise<void> {
+    if (this.userInRoom(user)) {
+      return;
+    }
+    this.attendees.push(user);
+    await this.save();
   }
 
   static async Load(id: string): Promise<Room> {

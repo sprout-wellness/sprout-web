@@ -41,7 +41,7 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
         historyHtml = history.rooms.map((room, key) => {
           return (
             <div key={key}>
-              <p>Time: {new Date(room.startTime).toString()}</p>
+              <p>Time: {new Date(room.getStartTime()).toString()}</p>
               <p>Acitivity: {room.activity.name}</p>
               <p>People: {room.attendees.length}</p>
             </div>
