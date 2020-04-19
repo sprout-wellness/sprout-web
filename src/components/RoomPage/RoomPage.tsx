@@ -51,7 +51,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     if (this.state.currentUser) {
       // Load room and currently logged in user.
       this.loadRoom(this.props.match.params.id);
-      this.loadUser('B22cmNKy21YdIh7Fga8Y');
+      this.loadUser(this.context.user.id); 
     }
 
     // During the practice, ticking moves along the progress bar.
@@ -61,7 +61,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   componentDidUpdate(prevState: any){
     if(this.state.currentUser !== prevState.currentUser && this.state.currentUser){
       this.loadRoom(this.props.match.params.id);
-      this.loadUser('B22cmNKy21YdIh7Fga8Y')
+      this.loadUser(this.context.user.id)
     }
   }
 
@@ -200,6 +200,10 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             <div className="participant-card">
               <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
               <h4 className="participant-name">Mike You</h4>
+            </div>
+            <div className="participant-card">
+              <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+              <h4 className="participant-name">{this.context.user.displayName}</h4>
             </div>
           </div>
         </div>

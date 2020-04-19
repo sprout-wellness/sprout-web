@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory} from 'react-router-dom';
 import './NavBar.scss';
 import { firebase } from '../../FirebaseSetup';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
+import { faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 
+const history = useHistory
 export class NavBar extends Component<{}, {}> {
   static contextType = UserContext;
 
@@ -44,7 +46,7 @@ export class NavBar extends Component<{}, {}> {
             <Link to="/">Profile</Link>
           </li>
           <li>
-            <button onClick={() => this.signOutButton()}>Sign Out</button>
+          <Link to="/"><button onClick={() => this.signOutButton()}>Sign Out</button></Link>
           </li>
         </ul>
       </div>
