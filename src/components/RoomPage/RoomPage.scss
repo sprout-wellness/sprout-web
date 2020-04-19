@@ -99,6 +99,7 @@
       border-radius: 4px;
 
       &:hover {
+        cursor: pointer;
         background-color: rgba(0, 0, 0, 0.8);
       }
 
@@ -111,6 +112,12 @@
       }
     }
 
+    #copy-icon {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
     .participants-container {
       display: flex;
       flex-direction: row;
@@ -119,14 +126,23 @@
 
       .participant-card {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         background-color: rgba(255, 255, 255, 1);
-        height: 42px;
+        height: 28px;
         max-width: 100px;
         margin: 8px 4px;
         padding: 8px;
         border-radius: 8px;
         text-align: center;
+
+        #profile-picture {
+          margin: auto;
+          margin-right: 4px;
+          width: 20px;
+          height: 20px;
+          border: rgb(242.75, 242.75, 242.75) 2px solid;
+          border-radius: 50%;
+        }
 
         .participant-name {
           margin: 4px 0;

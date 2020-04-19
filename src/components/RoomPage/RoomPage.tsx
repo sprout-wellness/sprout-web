@@ -144,6 +144,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             <div className="room-link-row">
               <p>sproutwellness.com/room/{room.id}</p>
               <FontAwesomeIcon
+                id="copy-icon"
                 icon={faCopy}
                 onClick={this.copyToClipboard.bind(this)}
               ></FontAwesomeIcon>
@@ -163,7 +164,16 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             {room.getAttendees().map((user, key) => {
               return (
                 <div className="participant-card" key={key}>
-                  <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  {user.photoURL && (
+                    <img
+                      id="profile-picture"
+                      src={user.photoURL}
+                      alt="Profile"
+                    />
+                  )}
+                  {!user.photoURL && (
+                    <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  )}
                   <h4 className="participant-name">{user.displayName}</h4>
                 </div>
               );
