@@ -7,6 +7,7 @@ $image-height: 30px;
 $border-color: rgb(242.75, 242.75, 242.75);
 $dark-grey: rgb(51, 51, 51);
 $dark-grey-2: rgb(76.5, 76.5, 76.5);
+$dark-grey-3: rgb(102, 102, 102);
 $sprout-green-dark: #64AF17;
 
 #navbar {
@@ -43,8 +44,15 @@ $sprout-green-dark: #64AF17;
         font-weight: 600;
         font-size: 0.9em;
 
-        &.link:hover {
-          cursor: pointer;
+        &.link {
+          &:hover {
+            color: $dark-grey;
+            cursor: pointer;
+          }
+
+          &:active {
+            color: $dark-grey-3;
+          }
         }
       }
 
@@ -92,6 +100,7 @@ $sprout-green-dark: #64AF17;
         border-radius: 3px;
 
         &:hover {
+          cursor: pointer;
           background-color: $dark-grey-2;
         }
       }
