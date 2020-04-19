@@ -2,13 +2,7 @@ import React, { Component } from 'react'; // let's also import Component
 import './TreePage.scss';
 import { Link } from 'react-router-dom';
 
-// the clock's state has one field: The current time, based upon the
-// JavaScript class Date
-interface TreePageState {
-  time: Date;
-}
-
-export class TreePage extends Component<{}, TreePageState> {
+export class TreePage extends Component<{}> {
   componentDidMount() {}
 
   render() {
