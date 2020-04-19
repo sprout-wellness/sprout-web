@@ -123,7 +123,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderLoading() {
-    return <div id="room-page">Loading...</div>;
+    return <div id="loading">Loading...</div>;
   }
 
   renderLobby(room: Room) {

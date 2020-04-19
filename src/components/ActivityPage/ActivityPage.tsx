@@ -67,6 +67,10 @@ export class ActivityPage extends Component<
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
+  renderLoading() {
+    return <div id="loading">Loading...</div>;
+  }
+
   render() {
     const user = this.context.user as User | null;
     if (user === null) {
@@ -74,6 +78,9 @@ export class ActivityPage extends Component<
     }
     if (this.state.redirectToRoom) {
       return <Redirect to={`/room/${this.state.redirectToRoom}`} />;
+    }
+    if (!this.state.activities.length) {
+      return this.renderLoading();
     }
     return (
       <div id="activity-page">
