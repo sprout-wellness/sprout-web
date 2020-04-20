@@ -57,7 +57,7 @@ export class Room {
     return this.startTime > 0;
   }
 
-  getActivityMinutesPassed(clock: Date): number {
+  getActivitySecondsPassed(clock: Date): number {
     return (clock.getTime() - this.startTime) / 1000;
   }
 
@@ -65,7 +65,7 @@ export class Room {
     if (this.startTime < 0) {
       return false;
     }
-    return this.getActivityMinutesPassed(clock) < this.activity.time * 60;
+    return this.getActivitySecondsPassed(clock) < this.activity.time * 60;
   }
 
   userInRoom(user: User): boolean {

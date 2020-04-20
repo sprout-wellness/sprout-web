@@ -91,10 +91,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   getProgressBarWidth() {
     const room: Room = this.state.room!;
-    const percentComplete = Math.min(
-      room.getActivityMinutesPassed(this.state.currentTime),
-      100
-    );
+    const percentComplete =
+      (100 * room.getActivitySecondsPassed(this.state.currentTime)) /
+      (room.activity.time * 60);
     return `${percentComplete}%`;
   }
 
