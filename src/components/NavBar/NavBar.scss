@@ -7,6 +7,7 @@ $image-height: 30px;
 $border-color: rgb(242.75, 242.75, 242.75);
 $dark-grey: rgb(51, 51, 51);
 $dark-grey-2: rgb(76.5, 76.5, 76.5);
+$dark-grey-3: rgb(102, 102, 102);
 $sprout-green-dark: #64AF17;
 
 #navbar {
@@ -43,8 +44,15 @@ $sprout-green-dark: #64AF17;
         font-weight: 600;
         font-size: 0.9em;
 
-        &.link:hover {
-          cursor: pointer;
+        &.link {
+          &:hover {
+            color: $dark-grey;
+            cursor: pointer;
+          }
+
+          &:active {
+            color: $dark-grey-3;
+          }
         }
       }
 
@@ -55,7 +63,6 @@ $sprout-green-dark: #64AF17;
         border: $border-color 2px solid;
         border-radius: 50%;
         margin-top: 8px;
-        transition: all 0.2s;
 
         &:hover {
           border-color: $sprout-green-dark;
@@ -76,22 +83,24 @@ $sprout-green-dark: #64AF17;
     .dropdown-content {
       display: none;
       position: absolute;
+      background-color: $dark-grey;
       top: $navbar-height;
       right: $navbar-padding-side;
       min-width: 120px;
       z-index: 1;
+      border-radius: 3px;
 
       li {
         display: block;
         float: none;
         text-align: left;
-        background-color: $dark-grey;
-        color: white;
         padding: 12px 8px;
+        color: white;
         text-decoration: none;
+        border-radius: 3px;
 
         &:hover {
-          color: white;
+          cursor: pointer;
           background-color: $dark-grey-2;
         }
       }

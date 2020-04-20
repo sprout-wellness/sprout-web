@@ -37,17 +37,15 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   };
 
   componentDidMount() {
-    if (!this.props.match.params.id) {
-      this.appendErrorMsg('Invalid request.');
-      return;
-    }
-
     // Load room data async.
     (async () => {
-      this.setState({
-        errors: [],
-        room: await Room.Load(this.props.match.params.id),
-      });
+      try {
+        this.setState({
+          room: await Room.Load(this.props.match.params.id),
+        });
+      } catch (e) {
+        this.appendErrorMsg(e.toString());
+      }
     })();
 
     // During the practice, ticking moves along the progress bar.
@@ -93,10 +91,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   getProgressBarWidth() {
     const room: Room = this.state.room!;
-    const percentComplete = Math.min(
-      room.getActivityMinutesPassed(this.state.currentTime),
-      100
-    );
+    const percentComplete =
+      (100 * room.getActivitySecondsPassed(this.state.currentTime)) /
+      (room.activity.time * 60);
     return `${percentComplete}%`;
   }
 
@@ -115,7 +112,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderLoading() {
-    return <div id="room-page">Loading...</div>;
+    return <div id="loading">Loading...</div>;
   }
 
   renderLobby(room: Room) {
@@ -131,12 +128,13 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           </div>
         )}
         <div className="activity-container" id={room.activity.category}>
-          <div>
+          <div className="left-container">
             <h1 className="title">{room.activity.name}</h1>
             <b>Invite others to join with this link: </b>
             <div className="room-link-row">
               <p>sproutwellness.com/room/{room.id}</p>
               <FontAwesomeIcon
+                id="copy-icon"
                 icon={faCopy}
                 onClick={e => this.copyToClipboard(e)}
               ></FontAwesomeIcon>
@@ -159,7 +157,16 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             {room.getAttendees().map((user, key) => {
               return (
                 <div className="participant-card" key={key}>
-                  <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  {user.photoURL && (
+                    <img
+                      id="profile-picture"
+                      src={user.photoURL}
+                      alt="Profile"
+                    />
+                  )}
+                  {!user.photoURL && (
+                    <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  )}
                   <h4 className="participant-name">{user.displayName}</h4>
                 </div>
               );

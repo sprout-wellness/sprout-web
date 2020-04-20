@@ -6,6 +6,7 @@ import { Reflection } from '../../storage/Reflection';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
+import './ReflectionPage.scss';
 
 interface ReflectionPageProps {
   match: {
@@ -153,10 +154,10 @@ export class ReflectionPage extends Component<
       <div id="reflection-page">
         <h1 className="title">Group Reflections</h1>
         <div className="reflections-container">
-          {this.state.reflections.map((item, key) => {
+          {this.state.reflections.map((reflection, key) => {
             return (
               <div key={key} className="reflection">
-                {item.text}
+                {reflection.text}
               </div>
             );
           })}

@@ -8,12 +8,20 @@ import { Redirect } from 'react-router-dom';
 import { User } from '../../storage/User';
 import './SignInPage.scss';
 
+interface SignInPageState {
+  firebaseUi: firebaseui.auth.AuthUI | undefined;
+}
+
 interface SignInPageProps {
   destination: string;
 }
 
-export class SignInPage extends Component<SignInPageProps, {}> {
+export class SignInPage extends Component<SignInPageProps, SignInPageState> {
   static contextType = UserContext;
+
+  state = {
+    firebaseUi: undefined,
+  };
 
   componentDidMount() {
     const uiConfig = {
@@ -40,6 +48,12 @@ export class SignInPage extends Component<SignInPageProps, {}> {
       firebaseui.auth.AuthUI.getInstance() ||
       new firebaseui.auth.AuthUI(firebase.auth());
     ui.start('#firebaseui-auth-container', uiConfig);
+    this.setState({ firebaseUi: ui });
+  }
+
+  componentWillUnmount() {
+    const ui: firebaseui.auth.AuthUI = this.state.firebaseUi!;
+    ui.delete();
   }
 
   render() {

@@ -29,7 +29,7 @@ export class NavBar extends Component<{}, {}> {
                 ></img>
               </Link>
             </li>
-            <li className="text">
+            <li className="text link">
               <Link to="/signin">Sign In</Link>
             </li>
           </ul>
@@ -64,10 +64,10 @@ export class NavBar extends Component<{}, {}> {
               </li>
             )}
             <div className="dropdown-content">
-              <li className="text link">
+              <li className="text">
                 <Link to="/profile">Profile</Link>
               </li>
-              <li className="text link" onClick={() => this.signOut()}>
+              <li className="text" onClick={() => this.signOut()}>
                 Sign Out
               </li>
             </div>
