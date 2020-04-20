@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { firebase } from '../../FirebaseSetup';
+import { auth } from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
-import { auth } from 'firebase';
 import { UserContext } from '../../providers/UserProvider';
 import { Redirect } from 'react-router-dom';
 import { User } from '../../storage/User';
@@ -12,7 +12,11 @@ interface SignInPageState {
   firebaseUi: firebaseui.auth.AuthUI | undefined;
 }
 
-export class SignInPage extends Component<{}, SignInPageState> {
+interface SignInPageProps {
+  destination: string;
+}
+
+export class SignInPage extends Component<SignInPageProps, SignInPageState> {
   static contextType = UserContext;
 
   state = {
@@ -21,7 +25,7 @@ export class SignInPage extends Component<{}, SignInPageState> {
 
   componentDidMount() {
     const uiConfig = {
-      signInSuccessUrl: '/',
+      signInSuccessUrl: this.props.destination || '/',
       signInOptions: [
         {
           provider: auth.GoogleAuthProvider.PROVIDER_ID,
@@ -40,7 +44,9 @@ export class SignInPage extends Component<{}, SignInPageState> {
       tosUrl: 'https://google.com',
       privacyPolicyUrl: 'https://google.com',
     };
-    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    const ui =
+      firebaseui.auth.AuthUI.getInstance() ||
+      new firebaseui.auth.AuthUI(firebase.auth());
     ui.start('#firebaseui-auth-container', uiConfig);
     this.setState({ firebaseUi: ui });
   }

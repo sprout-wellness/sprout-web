@@ -118,6 +118,11 @@
       &:focus {
         outline: none;
       }
+
+      &:disabled {
+        background-color: grey;
+        color: black;
+      }
     }
 
     #copy-icon {

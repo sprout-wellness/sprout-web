@@ -1,6 +1,6 @@
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
-import * as fb from 'firebase/app';
+import fb from 'firebase/app';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBgKAC5vrSSFfZsCxi1wpVdwk3ZbNlYuIo',

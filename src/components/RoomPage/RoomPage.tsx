@@ -7,6 +7,7 @@ import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
 import './RoomPage.scss';
+import { SignInPage } from '../SignInPage/SignInPage';
 
 interface RoomPageProps {
   match: {
@@ -17,23 +18,26 @@ interface RoomPageProps {
 }
 
 interface RoomPageState {
-  room: Room | undefined;
   errors: string[];
-  showTooltip: boolean;
+  room: Room | null;
   currentTime: Date;
+  tooltipVisible: boolean;
+  redirectToSignin: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   static contextType = UserContext;
 
   state = {
-    room: undefined,
     errors: [] as string[],
-    showTooltip: false,
+    room: null,
     currentTime: new Date(),
+    tooltipVisible: false,
+    redirectToSignin: false,
   };
 
   componentDidMount() {
+    // Load room data async.
     (async () => {
       try {
         this.setState({
@@ -45,34 +49,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     })();
 
     // During the practice, ticking moves along the progress bar.
-    setInterval(() => this.tick(), 1000);
-  }
-
-  tick() {
-    this.setState({
-      currentTime: new Date(),
-    });
-  }
-
-  secondsPassed() {
-    const room: Room = this.state.room!;
-    return (this.state.currentTime.getTime() - room.getStartTime()) / 1000;
-  }
-
-  activityInSession() {
-    const room: Room = this.state.room!;
-    if (room.getStartTime() === -1) {
-      return false;
-    }
-    return this.secondsPassed() < room.activity.time * 60;
-  }
-
-  getProgressBarWidth() {
-    const room: Room = this.state.room!;
-    return `${Math.min(
-      100,
-      this.secondsPassed() / (room.activity.time * 0.6)
-    )}%`;
+    setInterval(() => {
+      this.setState({
+        currentTime: new Date(),
+      });
+    }, 1000);
   }
 
   appendErrorMsg(msg: string) {
@@ -85,25 +66,36 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     const room: Room = this.state.room!;
     event.preventDefault();
     copy('sprout-wellness.web.app/room/' + room.id);
-    this.setState({ showTooltip: true });
+    this.setState({ tooltipVisible: true });
     setTimeout(() => {
-      this.setState({ showTooltip: false });
+      this.setState({ tooltipVisible: false });
     }, 2000);
   }
 
-  async begin() {
-    const room: Room = this.state.room!;
-    await room.begin();
-  }
-
-  async join() {
+  async joinRoom() {
     const user = this.context.user as User | null;
     if (user === null) {
-      console.log("User is null, can't join room.");
+      this.setState({
+        redirectToSignin: true,
+      });
       return;
     }
     const room: Room = this.state.room!;
     await room.join(user);
+  }
+
+  async beginActivity() {
+    const room: Room = this.state.room!;
+    await room.begin();
+  }
+
+  getProgressBarWidth() {
+    const room: Room = this.state.room!;
+    const percentComplete = Math.min(
+      room.getActivityMinutesPassed(this.state.currentTime),
+      100
+    );
+    return `${percentComplete}%`;
   }
 
   renderError() {
@@ -125,12 +117,13 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderLobby(room: Room) {
-    const user = this.context.user as User;
+    const user = this.context.user as User | null;
+    const notInRoom = user === null || !room.userInRoom(user);
     return (
       <div id="room-page">
-        {!room.userInRoom(user) && (
+        {notInRoom && (
           <div id="invite-container">
-            <button id="join-button" onClick={this.join.bind(this)}>
+            <button id="join-button" onClick={() => this.joinRoom()}>
               Join this room!
             </button>
           </div>
@@ -144,17 +137,20 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               <FontAwesomeIcon
                 id="copy-icon"
                 icon={faCopy}
-                onClick={this.copyToClipboard.bind(this)}
+                onClick={e => this.copyToClipboard(e)}
               ></FontAwesomeIcon>
               <span
-                className={`copy-tooltip ${
-                  this.state.showTooltip ? '' : 'hidden'
-                }`}
+                className="copy-tooltip"
+                hidden={!this.state.tooltipVisible}
               >
                 Copied to clipboard!
               </span>
             </div>
-            <button className="begin-button" onClick={() => this.begin()}>
+            <button
+              className="begin-button"
+              disabled={notInRoom}
+              onClick={() => this.beginActivity()}
+            >
               Begin Practice
             </button>
           </div>
@@ -206,17 +202,27 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   render() {
-    const room: Room = this.state.room!;
     if (this.state.errors.length) {
       return this.renderError();
     }
-    if (!room) {
+    const room = this.state.room as Room | null;
+    if (room === null) {
       return this.renderLoading();
     }
-    if (room.getStartTime() < 0) {
+    if (this.state.redirectToSignin) {
+      return <SignInPage destination={`/room/${room.id}`} />;
+    }
+    if (!room.activityHasBegun()) {
       return this.renderLobby(room);
     }
-    if (this.activityInSession()) {
+    const user = this.context.user as User | null;
+    if (user === null) {
+      return <SignInPage destination={`/room/${room.id}`} />;
+    }
+    if (!room.userInRoom(user)) {
+      return <div>The activity has already begun, without you.</div>;
+    }
+    if (room.activityIsInSession(this.state.currentTime)) {
       return this.renderActivity(room);
     }
     return <Redirect to={`/room/${room.id}/reflection`} />;

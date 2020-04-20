@@ -53,6 +53,21 @@ export class Room {
     return this.startTime;
   }
 
+  activityHasBegun(): boolean {
+    return this.startTime > 0;
+  }
+
+  getActivityMinutesPassed(clock: Date): number {
+    return (clock.getTime() - this.startTime) / 1000;
+  }
+
+  activityIsInSession(clock: Date): boolean {
+    if (this.startTime < 0) {
+      return false;
+    }
+    return this.getActivityMinutesPassed(clock) < this.activity.time * 60;
+  }
+
   userInRoom(user: User): boolean {
     return (
       this.attendees.filter(attendee => attendee.id === user.id).length > 0
