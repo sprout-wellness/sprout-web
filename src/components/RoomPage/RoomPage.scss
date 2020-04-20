@@ -1,5 +1,5 @@
 #room-page {
-  margin: 6% 10%;
+  margin: calc(48px + 5vh) 10vw;
 
   // Specific activity container styles for each tenet.
   #compassion {
@@ -51,19 +51,25 @@
   .activity-container {
     display: flex;
     flex-direction: row;
-    min-width: 600px;
+    flex-wrap: wrap;
     border-radius: 30px;
     animation: all 0.2s ease-out;
+    margin: 48px auto;
     padding: 16px 16px 32px 32px;
-    margin-bottom: 10vh;
+
+    .left-container {
+      flex-grow: 1;
+    }
 
     .title {
+      max-width: 60vw;
       margin: 24px 0;
       text-align: left;
     }
 
     b {
-      margin-bottom: 0;
+      display: inline-block;
+      max-width: 60vw;
     }
 
     .room-link-row {
@@ -85,7 +91,9 @@
       }
 
       p {
-        margin: 0;
+        margin: 4px 0;
+        max-width: 50vw;
+        word-wrap: break-word;
       }
     }
 
@@ -122,7 +130,6 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      margin-left: auto;
 
       .participant-card {
         display: flex;
@@ -185,10 +192,8 @@
 #in-session-page {
   display: flex;
   flex-direction: column;
-  width: 80vw;
-  height: 80vh;
-  margin: auto;
-  padding: 64px;
+  margin: calc(48px + 2vh) auto;
+  padding: 5vw;
 
   .activity-title {
     text-align: center;
@@ -196,7 +201,7 @@
   }
 
   .activity-instructions {
-    margin: auto 64px;
+    margin: auto 2vw;
     line-height: 1.5;
     font-size: 1.8rem;
     font-weight: 400;

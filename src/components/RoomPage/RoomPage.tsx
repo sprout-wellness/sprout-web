@@ -136,7 +136,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
           </div>
         )}
         <div className="activity-container" id={room.activity.category}>
-          <div>
+          <div className="left-container">
             <h1 className="title">{room.activity.name}</h1>
             <b>Invite others to join with this link: </b>
             <div className="room-link-row">
