@@ -7,6 +7,7 @@ import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
 import './RoomPage.scss';
+import { SignInPage } from '../SignInPage/SignInPage';
 
 interface RoomPageProps {
   match: {
@@ -21,6 +22,7 @@ interface RoomPageState {
   room: Room | null;
   currentTime: Date;
   tooltipVisible: boolean;
+  redirectToSignin: boolean;
 }
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
@@ -31,6 +33,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     room: null,
     currentTime: new Date(),
     tooltipVisible: false,
+    redirectToSignin: false,
   };
 
   componentDidMount() {
@@ -74,7 +77,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   async joinRoom() {
     const user = this.context.user as User | null;
     if (user === null) {
-      // TODO: redirect to signin page.
+      this.setState({
+        redirectToSignin: true,
+      });
       return;
     }
     const room: Room = this.state.room!;
@@ -189,19 +194,22 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   render() {
-    const room = this.state.room as Room | null;
     if (this.state.errors.length) {
       return this.renderError();
     }
+    const room = this.state.room as Room | null;
     if (room === null) {
       return this.renderLoading();
+    }
+    if (this.state.redirectToSignin) {
+      return <SignInPage destination={`/room/${room.id}`} />;
     }
     if (!room.activityHasBegun()) {
       return this.renderLobby(room);
     }
     const user = this.context.user as User | null;
     if (user === null) {
-      return <Redirect to="/signin" />;
+      return <SignInPage destination={`/room/${room.id}`} />;
     }
     if (!room.userInRoom(user)) {
       return <div>The activity has already begun, without you.</div>;
