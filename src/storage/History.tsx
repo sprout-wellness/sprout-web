@@ -17,7 +17,6 @@ export class History {
     userId: string,
     limit: number
   ): Promise<History> {
-    console.log(userId);
     const querySnap = await firebase
       .firestore()
       .collection('reflections')
@@ -25,7 +24,6 @@ export class History {
       .orderBy('datetime', 'desc')
       .limit(limit)
       .get();
-    console.log(querySnap);
     const reflections = [] as Reflection[];
     // Covert all reflection data to reflection objects in parallel.
     await Promise.all(

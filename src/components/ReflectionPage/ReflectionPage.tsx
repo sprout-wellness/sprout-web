@@ -7,6 +7,7 @@ import { Room } from '../../storage/Room';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
+import { SignInPage } from '../SignInPage/SignInPage';
 import './ReflectionPage.scss';
 
 interface ReflectionPageProps {
@@ -22,6 +23,7 @@ interface ReflectionPageState {
   room: Room | undefined;
   errors: string[];
   reflectionSubmitted: boolean | null;
+  redirectToSignin: boolean;
 }
 
 export class ReflectionPage extends Component<
@@ -38,6 +40,7 @@ export class ReflectionPage extends Component<
       room: undefined,
       errors: [],
       reflectionSubmitted: null,
+      redirectToSignin: false,
     };
   }
 
@@ -46,12 +49,17 @@ export class ReflectionPage extends Component<
     await this.loadRoom(this.props.match.params.id);
     const user = this.context.user as User | null;
     if (user === null) {
+      this.setState({
+        redirectToSignin: true,
+      });
       return;
     }
     this.fetchUserReflection(this.state.room!.id, user.id);
 
-    // Update state to represent all relevant reflections.
-    this.fetchReflectionsAndUpdateState();
+    // Load reflection data asynchronously.
+    this.loadReflections(this.state.room!.id);
+
+    // Create listener for new reflections.
     this.addReflectionListener();
   };
 
@@ -62,14 +70,23 @@ export class ReflectionPage extends Component<
   }
 
   loadRoom = async (roomId: string) => {
-    const room = await Room.Load(roomId);
-    if (!room) {
-      this.appendErrorMsg(`Room ${roomId} not found.`);
+    try {
+      this.setState({
+        room: await Room.Load(roomId),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
     }
-    this.setState({
-      room,
-      errors: [],
-    });
+  };
+
+  loadReflections = async (roomId: string) => {
+    try {
+      this.setState({
+        reflections: await Reflection.LoadForRoom(roomId),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
+    }
   };
 
   fetchUserReflection = async (roomId: string, userId: string) => {
@@ -83,24 +100,6 @@ export class ReflectionPage extends Component<
     });
   }
 
-  fetchReflectionsAndUpdateState() {
-    const room: Room = this.state.room!;
-    firebase
-      .firestore()
-      .collection('reflections')
-      .where('roomId', '==', room.id)
-      .get()
-      .then(snapshot => {
-        snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          this.setState((prevState: ReflectionPageState) => {
-            return {
-              reflections: [...prevState.reflections, doc.data()],
-            };
-          });
-        });
-      });
-  }
-
   addReflectionListener() {
     const room: Room = this.state.room!;
     const user = this.context.user as User | null;
@@ -112,20 +111,43 @@ export class ReflectionPage extends Component<
         snapshot
           .docChanges()
           .forEach((change: firebase.firestore.DocumentData) => {
-            console.log(change);
-            console.log('HELLO KITTY');
             if (change.type === 'added') {
+              // Show group reflections if user already submitted.
               if (change.doc.data().userId === user?.id) {
                 this.setState({ reflectionSubmitted: true });
               }
-              this.setState((prevState: ReflectionPageState) => {
-                return {
-                  reflections: [...prevState.reflections, change.doc.data()],
-                };
-              });
+              // Check if reflection already exists in state.
+              var found = false;
+              for (var i = 0; i < this.state.reflections.length; i++) {
+                if (this.state.reflections[i].id === change.doc.id) {
+                  found = true;
+                  break;
+                }
+              }
+              if (!found) {
+                this.setState((prevState: ReflectionPageState) => {
+                  return {
+                    reflections: [...prevState.reflections, change.doc.data()],
+                  };
+                });
+              }
             }
           });
       });
+  }
+
+  renderError() {
+    return (
+      <div id="reflection-page">
+        {this.state.errors.map((errorMsg, i) => {
+          return (
+            <p className="error" key={i}>
+              {errorMsg}
+            </p>
+          );
+        })}
+      </div>
+    );
   }
 
   renderLoading() {
@@ -162,6 +184,12 @@ export class ReflectionPage extends Component<
   render() {
     const room: Room = this.state.room!;
     const user = this.context.user as User | null;
+    if (this.state.errors.length) {
+      return this.renderError();
+    }
+    if (this.state.redirectToSignin) {
+      return <SignInPage destination={`/room/${room.id}`} />;
+    }
     if (!room || !user || this.state.reflectionSubmitted === null) {
       return this.renderLoading();
     }

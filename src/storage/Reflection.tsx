@@ -65,6 +65,22 @@ export class Reflection {
     );
   }
 
+  static async LoadForRoom(roomId: string): Promise<Reflection[]> {
+    const querySnap = await firebase
+      .firestore()
+      .collection('reflections')
+      .where('roomId', '==', roomId)
+      .get();
+    const reflections = [] as Reflection[];
+    // Covert all reflection data to reflection objects in parallel.
+    await Promise.all(
+      querySnap.docs.map(async reflectionSnap => {
+        reflections.push(await Reflection.LoadFromData(reflectionSnap));
+      })
+    );
+    return reflections;
+  }
+
   static async Create(room: Room, user: User, text: string) {
     const randomId = firebase
       .firestore()
