@@ -10,19 +10,22 @@ export class Reflection {
   readonly room: Room;
   readonly user: User;
   readonly text: string;
+  readonly datetime: number;
 
   private constructor(
     id: string,
     activity: Activity,
     room: Room,
     user: User,
-    text: string
+    text: string,
+    datetime: number
   ) {
     this.id = id;
     this.activity = activity;
     this.room = room;
     this.user = user;
     this.text = text;
+    this.datetime = datetime;
   }
 
   private save() {
@@ -36,6 +39,7 @@ export class Reflection {
           room: this.room.id,
           user: this.user.id,
           text: this.text,
+          datetime: this.datetime,
         })
         .then(done => {
           resolve();
@@ -48,6 +52,19 @@ export class Reflection {
     return resultPromise;
   }
 
+  static async LoadFromData(
+    reflectionSnap: firebase.firestore.DocumentSnapshot
+  ): Promise<Reflection> {
+    return new Reflection(
+      reflectionSnap.id,
+      reflectionSnap.data()!.activity,
+      reflectionSnap.data()!.room,
+      reflectionSnap.data()!.user,
+      reflectionSnap.data()!.text,
+      reflectionSnap.data()!.datetime
+    );
+  }
+
   static async Create(room: Room, user: User, text: string) {
     const randomId = firebase
       .firestore()
@@ -58,7 +75,8 @@ export class Reflection {
       room.activity,
       room,
       user,
-      text
+      text,
+      room.getStartTime()
     );
     await reflection.save();
     return reflection;

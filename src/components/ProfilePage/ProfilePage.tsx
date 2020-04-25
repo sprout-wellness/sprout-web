@@ -35,15 +35,15 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     let historyHtml = [<p key="loading">Loading...</p>];
     if (this.state.userHistory != null) {
       const history: History = this.state.userHistory!;
-      if (!history.rooms.length) {
-        historyHtml = [<p key="none">Go try some acitivities!</p>];
+      if (!history.reflections.length) {
+        historyHtml = [<p key="none">Go try some activities!</p>];
       } else {
-        historyHtml = history.rooms.map((room, key) => {
+        historyHtml = history.reflections.map((reflection, key) => {
           return (
             <div key={key}>
-              <p>Time: {new Date(room.getStartTime()).toString()}</p>
-              <p>Acitivity: {room.activity.name}</p>
-              <p>People: {room.getAttendees().length}</p>
+              <p>Time: {new Date(reflection.datetime).toString()}</p>
+              <p>Acitivity: {reflection.activity.name}</p>
+              <p>Reflection: {reflection.text}</p>
             </div>
           );
         });

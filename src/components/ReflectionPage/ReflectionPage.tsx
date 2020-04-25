@@ -4,6 +4,7 @@ import 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { Reflection } from '../../storage/Reflection';
 import { Room } from '../../storage/Room';
+import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
 import './ReflectionPage.scss';
@@ -19,7 +20,6 @@ interface ReflectionPageProps {
 interface ReflectionPageState {
   reflections: Reflection[];
   room: Room | undefined;
-  currentUser: User | undefined;
   errors: string[];
   reflectionSubmitted: boolean;
 }
@@ -28,6 +28,7 @@ export class ReflectionPage extends Component<
   ReflectionPageProps,
   ReflectionPageState
 > {
+  static contextType = UserContext;
   reflectionListener: (() => void) | undefined = undefined;
 
   constructor(props: ReflectionPageProps) {
@@ -35,7 +36,6 @@ export class ReflectionPage extends Component<
     this.state = {
       reflections: [],
       room: undefined,
-      currentUser: undefined,
       errors: [],
       reflectionSubmitted: false,
     };
@@ -44,11 +44,11 @@ export class ReflectionPage extends Component<
   componentDidMount = async () => {
     // Load room and currently logged in user.
     await this.loadRoom(this.props.match.params.id);
-    await this.loadUser('B22cmNKy21YdIh7Fga8Y');
-    this.fetchUserReflection(
-      this.props.match.params.id,
-      'B22cmNKy21YdIh7Fga8Y'
-    );
+    const user = this.context.user as User | null;
+    if (user === null) {
+      return;
+    }
+    this.fetchUserReflection(this.props.match.params.id, user.id);
 
     // Update state to represent all relevant reflections.
     this.fetchReflectionsAndUpdateState();
@@ -68,18 +68,6 @@ export class ReflectionPage extends Component<
     }
     this.setState({
       room,
-      errors: [],
-    });
-  };
-
-  loadUser = async (userId: string) => {
-    const user = await User.Load(userId);
-    if (!user) {
-      this.appendErrorMsg(`User ${userId} not found.`);
-      return;
-    }
-    this.setState({
-      currentUser: user,
       errors: [],
     });
   };
@@ -115,7 +103,7 @@ export class ReflectionPage extends Component<
 
   addReflectionListener() {
     const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
+    const user = this.context.user as User | null;
     this.reflectionListener = firebase
       .firestore()
       .collection('reflections')
@@ -125,7 +113,7 @@ export class ReflectionPage extends Component<
           .docChanges()
           .forEach((change: firebase.firestore.DocumentData) => {
             if (change.type === 'added') {
-              if (change.doc.data().user === user.id) {
+              if (change.doc.data().user === user?.id) {
                 this.setState({ reflectionSubmitted: true });
               }
               this.setState((prevState: ReflectionPageState) => {
@@ -171,7 +159,7 @@ export class ReflectionPage extends Component<
 
   render() {
     const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
+    const user = this.context.user as User | null;
     if (!room || !user) {
       return this.renderLoading();
     }

@@ -1,12 +1,12 @@
 import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
-import { Room } from './Room';
+import { Reflection } from './Reflection';
 
 export class History {
-  readonly rooms: Room[];
+  readonly reflections: Reflection[];
 
-  private constructor(rooms: Room[]) {
-    this.rooms = rooms;
+  private constructor(reflections: Reflection[]) {
+    this.reflections = reflections;
   }
 
   static async LoadForUser(userId: string): Promise<History> {
@@ -17,21 +17,22 @@ export class History {
     userId: string,
     limit: number
   ): Promise<History> {
+    console.log(userId);
     const querySnap = await firebase
       .firestore()
-      .collection('rooms')
-      .where('startTime', '>=', 0)
-      .where('attendees', 'array-contains', userId)
-      .orderBy('startTime', 'desc')
+      .collection('reflections')
+      .where('user', '==', userId)
+      .orderBy('datetime', 'desc')
       .limit(limit)
       .get();
-    const rooms = [] as Room[];
-    // Covert all room data to room objects in parallel.
+    console.log(querySnap);
+    const reflections = [] as Reflection[];
+    // Covert all reflection data to reflection objects in parallel.
     await Promise.all(
-      querySnap.docs.map(async roomSnap => {
-        rooms.push(await Room.LoadFromData(roomSnap));
+      querySnap.docs.map(async reflectionSnap => {
+        reflections.push(await Reflection.LoadFromData(reflectionSnap));
       })
     );
-    return new History(rooms);
+    return new History(reflections);
   }
 }
