@@ -6,8 +6,8 @@ import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
-import './RoomPage.scss';
 import { SignInPage } from '../SignInPage/SignInPage';
+import './RoomPage.scss';
 
 interface RoomPageProps {
   match: {

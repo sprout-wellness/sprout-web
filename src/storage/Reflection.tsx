@@ -10,19 +10,22 @@ export class Reflection {
   readonly room: Room;
   readonly user: User;
   readonly text: string;
+  readonly datetime: number;
 
   private constructor(
     id: string,
     activity: Activity,
     room: Room,
     user: User,
-    text: string
+    text: string,
+    datetime: number
   ) {
     this.id = id;
     this.activity = activity;
     this.room = room;
     this.user = user;
     this.text = text;
+    this.datetime = datetime;
   }
 
   private save() {
@@ -32,10 +35,11 @@ export class Reflection {
         .collection('reflections')
         .doc(this.id)
         .set({
-          activity: this.activity.id,
-          room: this.room.id,
-          user: this.user.id,
+          activityId: this.activity.id,
+          roomId: this.room.id,
+          userId: this.user.id,
           text: this.text,
+          datetime: this.datetime,
         })
         .then(done => {
           resolve();
@@ -48,6 +52,35 @@ export class Reflection {
     return resultPromise;
   }
 
+  static async LoadFromData(
+    reflectionSnap: firebase.firestore.DocumentSnapshot
+  ): Promise<Reflection> {
+    return new Reflection(
+      reflectionSnap.id,
+      reflectionSnap.data()!.activity,
+      reflectionSnap.data()!.room,
+      reflectionSnap.data()!.user,
+      reflectionSnap.data()!.text,
+      reflectionSnap.data()!.datetime
+    );
+  }
+
+  static async LoadForRoom(roomId: string): Promise<Reflection[]> {
+    const querySnap = await firebase
+      .firestore()
+      .collection('reflections')
+      .where('roomId', '==', roomId)
+      .get();
+    const reflections = [] as Reflection[];
+    // Covert all reflection data to reflection objects in parallel.
+    await Promise.all(
+      querySnap.docs.map(async reflectionSnap => {
+        reflections.push(await Reflection.LoadFromData(reflectionSnap));
+      })
+    );
+    return reflections;
+  }
+
   static async Create(room: Room, user: User, text: string) {
     const randomId = firebase
       .firestore()
@@ -58,7 +91,8 @@ export class Reflection {
       room.activity,
       room,
       user,
-      text
+      text,
+      room.getStartTime()
     );
     await reflection.save();
     return reflection;
@@ -69,8 +103,8 @@ export class Reflection {
       firebase
         .firestore()
         .collection('reflections')
-        .where('room', '==', roomId)
-        .where('user', '==', userId)
+        .where('roomId', '==', roomId)
+        .where('userId', '==', userId)
         .get()
         .then(reflectionSnap => {
           if (!reflectionSnap.size) {

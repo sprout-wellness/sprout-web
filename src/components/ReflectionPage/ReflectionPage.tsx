@@ -4,8 +4,10 @@ import 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { Reflection } from '../../storage/Reflection';
 import { Room } from '../../storage/Room';
+import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
+import { SignInPage } from '../SignInPage/SignInPage';
 import './ReflectionPage.scss';
 
 interface ReflectionPageProps {
@@ -19,15 +21,16 @@ interface ReflectionPageProps {
 interface ReflectionPageState {
   reflections: Reflection[];
   room: Room | undefined;
-  currentUser: User | undefined;
   errors: string[];
-  reflectionSubmitted: boolean;
+  reflectionSubmitted: boolean | null;
+  redirectToSignin: boolean;
 }
 
 export class ReflectionPage extends Component<
   ReflectionPageProps,
   ReflectionPageState
 > {
+  static contextType = UserContext;
   reflectionListener: (() => void) | undefined = undefined;
 
   constructor(props: ReflectionPageProps) {
@@ -35,23 +38,28 @@ export class ReflectionPage extends Component<
     this.state = {
       reflections: [],
       room: undefined,
-      currentUser: undefined,
       errors: [],
-      reflectionSubmitted: false,
+      reflectionSubmitted: null,
+      redirectToSignin: false,
     };
   }
 
   componentDidMount = async () => {
     // Load room and currently logged in user.
     await this.loadRoom(this.props.match.params.id);
-    await this.loadUser('B22cmNKy21YdIh7Fga8Y');
-    this.fetchUserReflection(
-      this.props.match.params.id,
-      'B22cmNKy21YdIh7Fga8Y'
-    );
+    const user = this.context.user as User | null;
+    if (user === null) {
+      this.setState({
+        redirectToSignin: true,
+      });
+      return;
+    }
+    this.fetchUserReflection(this.state.room!.id, user.id);
 
-    // Update state to represent all relevant reflections.
-    this.fetchReflectionsAndUpdateState();
+    // Load reflection data asynchronously.
+    this.loadReflections(this.state.room!.id);
+
+    // Create listener for new reflections.
     this.addReflectionListener();
   };
 
@@ -62,26 +70,23 @@ export class ReflectionPage extends Component<
   }
 
   loadRoom = async (roomId: string) => {
-    const room = await Room.Load(roomId);
-    if (!room) {
-      this.appendErrorMsg(`Room ${roomId} not found.`);
+    try {
+      this.setState({
+        room: await Room.Load(roomId),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
     }
-    this.setState({
-      room,
-      errors: [],
-    });
   };
 
-  loadUser = async (userId: string) => {
-    const user = await User.Load(userId);
-    if (!user) {
-      this.appendErrorMsg(`User ${userId} not found.`);
-      return;
+  loadReflections = async (roomId: string) => {
+    try {
+      this.setState({
+        reflections: await Reflection.LoadForRoom(roomId),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
     }
-    this.setState({
-      currentUser: user,
-      errors: [],
-    });
   };
 
   fetchUserReflection = async (roomId: string, userId: string) => {
@@ -95,51 +100,58 @@ export class ReflectionPage extends Component<
     });
   }
 
-  fetchReflectionsAndUpdateState() {
-    const room: Room = this.state.room!;
-    firebase
-      .firestore()
-      .collection('reflections')
-      .where('room', '==', room.id)
-      .get()
-      .then(snapshot => {
-        snapshot.forEach((doc: firebase.firestore.DocumentData) => {
-          this.setState((prevState: ReflectionPageState) => {
-            return {
-              reflections: [...prevState.reflections, doc.data()],
-            };
-          });
-        });
-      });
-  }
-
   addReflectionListener() {
     const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
+    const user = this.context.user as User | null;
     this.reflectionListener = firebase
       .firestore()
       .collection('reflections')
-      .where('room', '==', room.id)
+      .where('roomId', '==', room.id)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
         snapshot
           .docChanges()
           .forEach((change: firebase.firestore.DocumentData) => {
             if (change.type === 'added') {
-              if (change.doc.data().user === user.id) {
+              // Show group reflections if user already submitted.
+              if (change.doc.data().userId === user?.id) {
                 this.setState({ reflectionSubmitted: true });
               }
-              this.setState((prevState: ReflectionPageState) => {
-                return {
-                  reflections: [...prevState.reflections, change.doc.data()],
-                };
-              });
+              // Check if reflection already exists in state.
+              var found = false;
+              for (var i = 0; i < this.state.reflections.length; i++) {
+                if (this.state.reflections[i].id === change.doc.id) {
+                  found = true;
+                  break;
+                }
+              }
+              if (!found) {
+                this.setState((prevState: ReflectionPageState) => {
+                  return {
+                    reflections: [...prevState.reflections, change.doc.data()],
+                  };
+                });
+              }
             }
           });
       });
   }
 
+  renderError() {
+    return (
+      <div id="reflection-page">
+        {this.state.errors.map((errorMsg, i) => {
+          return (
+            <p className="error" key={i}>
+              {errorMsg}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
+
   renderLoading() {
-    return <div id="reflection-page">Loading...</div>;
+    return <div id="loading">Loading...</div>;
   }
 
   renderReflectionForm(room: Room, user: User) {
@@ -171,8 +183,14 @@ export class ReflectionPage extends Component<
 
   render() {
     const room: Room = this.state.room!;
-    const user: User = this.state.currentUser!;
-    if (!room || !user) {
+    const user = this.context.user as User | null;
+    if (this.state.errors.length) {
+      return this.renderError();
+    }
+    if (this.state.redirectToSignin) {
+      return <SignInPage destination={`/room/${room.id}`} />;
+    }
+    if (!room || !user || this.state.reflectionSubmitted === null) {
       return this.renderLoading();
     }
     if (!this.state.reflectionSubmitted) {
