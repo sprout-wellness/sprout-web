@@ -48,7 +48,7 @@ export class ReflectionPage extends Component<
     if (user === null) {
       return;
     }
-    this.fetchUserReflection(this.props.match.params.id, user.id);
+    this.fetchUserReflection(this.state.room!.id, user.id);
 
     // Update state to represent all relevant reflections.
     this.fetchReflectionsAndUpdateState();
@@ -112,8 +112,10 @@ export class ReflectionPage extends Component<
         snapshot
           .docChanges()
           .forEach((change: firebase.firestore.DocumentData) => {
+            console.log(change);
+            console.log('HELLO KITTY');
             if (change.type === 'added') {
-              if (change.doc.data().user === user?.id) {
+              if (change.doc.data().userId === user?.id) {
                 this.setState({ reflectionSubmitted: true });
               }
               this.setState((prevState: ReflectionPageState) => {
