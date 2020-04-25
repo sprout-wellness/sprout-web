@@ -21,7 +21,7 @@ interface ReflectionPageState {
   reflections: Reflection[];
   room: Room | undefined;
   errors: string[];
-  reflectionSubmitted: boolean;
+  reflectionSubmitted: boolean | null;
 }
 
 export class ReflectionPage extends Component<
@@ -37,7 +37,7 @@ export class ReflectionPage extends Component<
       reflections: [],
       room: undefined,
       errors: [],
-      reflectionSubmitted: false,
+      reflectionSubmitted: null,
     };
   }
 
@@ -129,7 +129,7 @@ export class ReflectionPage extends Component<
   }
 
   renderLoading() {
-    return <div id="reflection-page">Loading...</div>;
+    return <div id="loading">Loading...</div>;
   }
 
   renderReflectionForm(room: Room, user: User) {
@@ -162,7 +162,7 @@ export class ReflectionPage extends Component<
   render() {
     const room: Room = this.state.room!;
     const user = this.context.user as User | null;
-    if (!room || !user) {
+    if (!room || !user || this.state.reflectionSubmitted === null) {
       return this.renderLoading();
     }
     if (!this.state.reflectionSubmitted) {
