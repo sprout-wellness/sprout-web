@@ -21,7 +21,7 @@ export class History {
     const querySnap = await firebase
       .firestore()
       .collection('reflections')
-      .where('user', '==', userId)
+      .where('userId', '==', userId)
       .orderBy('datetime', 'desc')
       .limit(limit)
       .get();

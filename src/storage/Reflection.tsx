@@ -35,9 +35,9 @@ export class Reflection {
         .collection('reflections')
         .doc(this.id)
         .set({
-          activity: this.activity.id,
-          room: this.room.id,
-          user: this.user.id,
+          activityId: this.activity.id,
+          roomId: this.room.id,
+          userId: this.user.id,
           text: this.text,
           datetime: this.datetime,
         })
@@ -87,8 +87,8 @@ export class Reflection {
       firebase
         .firestore()
         .collection('reflections')
-        .where('room', '==', roomId)
-        .where('user', '==', userId)
+        .where('roomId', '==', roomId)
+        .where('userId', '==', userId)
         .get()
         .then(reflectionSnap => {
           if (!reflectionSnap.size) {

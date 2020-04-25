@@ -88,7 +88,7 @@ export class ReflectionPage extends Component<
     firebase
       .firestore()
       .collection('reflections')
-      .where('room', '==', room.id)
+      .where('roomId', '==', room.id)
       .get()
       .then(snapshot => {
         snapshot.forEach((doc: firebase.firestore.DocumentData) => {
@@ -107,7 +107,7 @@ export class ReflectionPage extends Component<
     this.reflectionListener = firebase
       .firestore()
       .collection('reflections')
-      .where('room', '==', room.id)
+      .where('roomId', '==', room.id)
       .onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
         snapshot
           .docChanges()
