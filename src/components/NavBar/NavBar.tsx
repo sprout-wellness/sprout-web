@@ -64,9 +64,9 @@ export class NavBar extends Component<{}, {}> {
               </li>
             )}
             <div className="dropdown-content">
-              <li className="text">
-                <Link to="/profile">Profile</Link>
-              </li>
+              <Link to="/profile">
+                <li className="text">Profile</li>
+              </Link>
               <li className="text" onClick={() => this.signOut()}>
                 Sign Out
               </li>
