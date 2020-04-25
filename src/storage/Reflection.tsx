@@ -81,6 +81,27 @@ export class Reflection {
     return reflections;
   }
 
+  static async LoadLatestForUser(
+    userId: string,
+    limit: number
+  ): Promise<Reflection[]> {
+    const querySnap = await firebase
+      .firestore()
+      .collection('reflections')
+      .where('userId', '==', userId)
+      .orderBy('datetime', 'desc')
+      .limit(limit)
+      .get();
+    const reflections = [] as Reflection[];
+    // Covert all reflection data to reflection objects in parallel.
+    await Promise.all(
+      querySnap.docs.map(async reflectionSnap => {
+        reflections.push(await Reflection.LoadFromData(reflectionSnap));
+      })
+    );
+    return reflections;
+  }
+
   static async Create(room: Room, user: User, text: string) {
     const randomId = firebase
       .firestore()

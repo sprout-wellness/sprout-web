@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
-import { History } from '../../storage/History';
+import { Reflection } from '../../storage/Reflection';
 
 interface ProfilePageState {
-  userHistory: History | null;
+  userHistory: Reflection[] | null;
 }
 
 export class ProfilePage extends Component<{}, ProfilePageState> {
@@ -27,27 +27,31 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     })();
   }
 
-  render() {
-    const user = this.context.user as User | null;
-    if (user === null) {
-      return <Redirect to="/signin" />;
-    }
+  renderHistory() {
     let historyHtml = [<p key="loading">Loading...</p>];
     if (this.state.userHistory != null) {
-      const history: History = this.state.userHistory!;
-      if (!history.reflections.length) {
+      const history: Reflection[] = this.state.userHistory!;
+      if (!history.length) {
         historyHtml = [<p key="none">Go try some activities!</p>];
       } else {
-        historyHtml = history.reflections.map((reflection, key) => {
+        historyHtml = history.map((reflection, key) => {
           return (
             <div key={key}>
               <p>Time: {new Date(reflection.datetime).toString()}</p>
-              <p>Acitivity: {reflection.activity.name}</p>
+              <p>Activity: {reflection.activity?.name}</p>
               <p>Reflection: {reflection.text}</p>
             </div>
           );
         });
       }
+    }
+    return historyHtml;
+  }
+
+  render() {
+    const user = this.context.user as User | null;
+    if (user === null) {
+      return <Redirect to="/signin" />;
     }
     return (
       <div>
@@ -65,7 +69,7 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
         <br />
         Level: {user.level}
         <h2>History</h2>
-        {historyHtml}
+        {this.renderHistory()}
       </div>
     );
   }
