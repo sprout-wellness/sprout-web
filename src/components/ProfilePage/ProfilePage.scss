@@ -63,17 +63,18 @@ $sprout-green-dark: #64AF17;
           margin: 4px auto;
         }
 
-        .activity-date {
+        .activity-name {
           color: $dark-grey;
           font-weight: 700;
         }
 
-        .activity-name {
+        .activity-date {
           color: $dark-grey-2;
         }
 
         .activity-reflection {
           display: none;
+          color: $dark-grey-2;
         }
       }
     }

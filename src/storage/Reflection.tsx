@@ -57,9 +57,9 @@ export class Reflection {
   ): Promise<Reflection> {
     return new Reflection(
       reflectionSnap.id,
-      reflectionSnap.data()!.activity,
-      reflectionSnap.data()!.room,
-      reflectionSnap.data()!.user,
+      await Activity.LoadActivity(reflectionSnap.data()!.activityId),
+      await Room.Load(reflectionSnap.data()!.roomId),
+      await User.Load(reflectionSnap.data()!.userId),
       reflectionSnap.data()!.text,
       reflectionSnap.data()!.datetime
     );

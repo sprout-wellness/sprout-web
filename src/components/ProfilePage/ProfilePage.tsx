@@ -55,11 +55,9 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
             <div className="past-activity" key={key}>
               <div className="activity-block"></div>
               <div className="activity-info">
+                <p className="activity-name">{reflection.activity?.name}</p>
                 <p className="activity-date">
                   {this.getFormattedDate(reflection.datetime)}
-                </p>
-                <p className="activity-name">
-                  Activity: {reflection.activity?.name}
                 </p>
                 <p className="activity-reflection">
                   Reflection: {reflection.text}
