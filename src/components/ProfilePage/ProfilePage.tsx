@@ -2,17 +2,20 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
-import { History } from '../../storage/History';
+import { Reflection } from '../../storage/Reflection';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import './ProfilePage.scss';
 
 interface ProfilePageState {
-  userHistory: History | null;
+  pastActivities: Reflection[] | null;
 }
 
 export class ProfilePage extends Component<{}, ProfilePageState> {
   static contextType = UserContext;
 
   state = {
-    userHistory: null,
+    pastActivities: null,
   };
 
   componentDidMount() {
@@ -22,9 +25,53 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     }
     (async () => {
       this.setState({
-        userHistory: await user.getHistory(),
+        pastActivities: await user.getHistory(),
       });
     })();
+  }
+
+  getFormattedDate(datetime: number) {
+    let date = new Date(datetime);
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+
+    return month + '/' + day + '/' + year;
+  }
+
+  renderPastActivities() {
+    let historyHtml = [<p key="loading">Loading...</p>];
+    if (this.state.pastActivities != null) {
+      const history: Reflection[] = this.state.pastActivities!;
+      if (!history.length) {
+        historyHtml = [<p key="none">Go try some activities!</p>];
+      } else {
+        historyHtml = history.map((reflection, key) => {
+          return (
+            <div className="past-activity" key={key}>
+              <div
+                className={'activity-block ' + reflection.activity?.category}
+              ></div>
+              <div className="activity-info">
+                <p className="activity-name">{reflection.activity?.name}</p>
+                <p className="activity-date">
+                  {this.getFormattedDate(reflection.datetime)}
+                </p>
+                <p className="activity-reflection">
+                  <span>Reflection:</span> <br></br>
+                  {reflection.text}
+                </p>
+              </div>
+            </div>
+          );
+        });
+      }
+    }
+    return historyHtml;
   }
 
   render() {
@@ -32,40 +79,26 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     if (user === null) {
       return <Redirect to="/signin" />;
     }
-    let historyHtml = [<p key="loading">Loading...</p>];
-    if (this.state.userHistory != null) {
-      const history: History = this.state.userHistory!;
-      if (!history.reflections.length) {
-        historyHtml = [<p key="none">Go try some activities!</p>];
-      } else {
-        historyHtml = history.reflections.map((reflection, key) => {
-          return (
-            <div key={key}>
-              <p>Time: {new Date(reflection.datetime).toString()}</p>
-              <p>Acitivity: {reflection.activity.name}</p>
-              <p>Reflection: {reflection.text}</p>
-            </div>
-          );
-        });
-      }
-    }
     return (
-      <div>
-        <h2>Profile</h2>
-        <p>ID: {user.id}</p>
-        <p>Display Name: {user.displayName}</p>
-        <p>
-          Profile Picture:{' '}
+      <div id="profile-page">
+        <div id="profile-container">
           {user.photoURL !== null ? (
-            <img src={user.photoURL} alt="profile" height="100px;" />
+            <img id="profile-picture" src={user.photoURL} alt="profile" />
           ) : (
-            'none'
+            <FontAwesomeIcon
+              id="profile-picture"
+              icon={faUserCircle}
+            ></FontAwesomeIcon>
           )}
-        </p>
-        <br />
-        Level: {user.level}
-        <h2>History</h2>
-        {historyHtml}
+          <div id="profile-info">
+            <h3 id="name">{user.displayName}</h3>
+            <p>ID: {user.id}</p>
+            <p>Level: {user.level}</p>
+          </div>
+        </div>
+
+        <h2>Past Activities</h2>
+        <div id="past-activities-container">{this.renderPastActivities()}</div>
       </div>
     );
   }

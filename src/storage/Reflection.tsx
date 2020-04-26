@@ -57,9 +57,9 @@ export class Reflection {
   ): Promise<Reflection> {
     return new Reflection(
       reflectionSnap.id,
-      reflectionSnap.data()!.activity,
-      reflectionSnap.data()!.room,
-      reflectionSnap.data()!.user,
+      await Activity.LoadActivity(reflectionSnap.data()!.activityId),
+      await Room.Load(reflectionSnap.data()!.roomId),
+      await User.Load(reflectionSnap.data()!.userId),
       reflectionSnap.data()!.text,
       reflectionSnap.data()!.datetime
     );
@@ -70,6 +70,27 @@ export class Reflection {
       .firestore()
       .collection('reflections')
       .where('roomId', '==', roomId)
+      .get();
+    const reflections = [] as Reflection[];
+    // Covert all reflection data to reflection objects in parallel.
+    await Promise.all(
+      querySnap.docs.map(async reflectionSnap => {
+        reflections.push(await Reflection.LoadFromData(reflectionSnap));
+      })
+    );
+    return reflections;
+  }
+
+  static async LoadLatestForUser(
+    userId: string,
+    limit: number
+  ): Promise<Reflection[]> {
+    const querySnap = await firebase
+      .firestore()
+      .collection('reflections')
+      .where('userId', '==', userId)
+      .orderBy('datetime', 'desc')
+      .limit(limit)
       .get();
     const reflections = [] as Reflection[];
     // Covert all reflection data to reflection objects in parallel.

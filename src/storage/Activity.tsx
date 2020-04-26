@@ -2,7 +2,7 @@ import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
 
 export class Activity {
-  readonly id: number;
+  readonly id: string;
   readonly name: string;
   readonly category: string;
   readonly instructions: string;
@@ -19,7 +19,7 @@ export class Activity {
     time: string,
     blurb: string
   ) {
-    this.id = Number(id);
+    this.id = id;
     this.name = name;
     this.category = category;
     this.instructions = instructions;

@@ -1,6 +1,6 @@
 import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
-import { History } from './History';
+import { Reflection } from './Reflection';
 
 export class User {
   readonly id: string;
@@ -21,7 +21,7 @@ export class User {
   }
 
   async getHistory() {
-    return History.LoadForUser(this.id);
+    return Reflection.LoadLatestForUser(this.id, 20);
   }
 
   static async Upsert(firebaseUser: firebase.User): Promise<User> {

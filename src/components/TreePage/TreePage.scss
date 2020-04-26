@@ -2,6 +2,10 @@
   height: 80vh;
   width: 100vw;
 
+  .card a {
+    height: 100%;
+  }
+
   #compassion-card:hover {
     border-color: rgba(191, 137, 245, 0.9);
   }
@@ -20,14 +24,5 @@
 
   #resilience-card:hover {
     border-color: rgba(209, 55, 38, 0.9);
-  }
-
-  img {
-    display: block;
-    max-width: 70%;
-    max-height: 70%;
-    width: auto;
-    height: auto;
-    margin: 0 auto 16px;
   }
 }

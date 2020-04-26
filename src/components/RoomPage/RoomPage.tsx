@@ -7,6 +7,7 @@ import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
 import { SignInPage } from '../SignInPage/SignInPage';
+import { LoadingPage } from '../LoadingPage/LoadingPage';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -112,7 +113,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderLoading() {
-    return <div id="loading">Loading...</div>;
+    return <LoadingPage />;
   }
 
   renderLobby(room: Room) {
