@@ -3,16 +3,19 @@ import { Redirect } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
 import { Reflection } from '../../storage/Reflection';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import './ProfilePage.scss';
 
 interface ProfilePageState {
-  userHistory: Reflection[] | null;
+  pastActivities: Reflection[] | null;
 }
 
 export class ProfilePage extends Component<{}, ProfilePageState> {
   static contextType = UserContext;
 
   state = {
-    userHistory: null,
+    pastActivities: null,
   };
 
   componentDidMount() {
@@ -22,21 +25,21 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     }
     (async () => {
       this.setState({
-        userHistory: await user.getHistory(),
+        pastActivities: await user.getHistory(),
       });
     })();
   }
 
-  renderHistory() {
+  renderPastActivities() {
     let historyHtml = [<p key="loading">Loading...</p>];
-    if (this.state.userHistory != null) {
-      const history: Reflection[] = this.state.userHistory!;
+    if (this.state.pastActivities != null) {
+      const history: Reflection[] = this.state.pastActivities!;
       if (!history.length) {
         historyHtml = [<p key="none">Go try some activities!</p>];
       } else {
         historyHtml = history.map((reflection, key) => {
           return (
-            <div key={key}>
+            <div className="past-activity" key={key}>
               <p>Time: {new Date(reflection.datetime).toString()}</p>
               <p>Activity: {reflection.activity?.name}</p>
               <p>Reflection: {reflection.text}</p>
@@ -54,22 +57,25 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
       return <Redirect to="/signin" />;
     }
     return (
-      <div>
-        <h2>Profile</h2>
-        <p>ID: {user.id}</p>
-        <p>Display Name: {user.displayName}</p>
-        <p>
-          Profile Picture:{' '}
+      <div id="profile-page">
+        <div id="profile-container">
           {user.photoURL !== null ? (
-            <img src={user.photoURL} alt="profile" height="100px;" />
+            <img id="profile-picture" src={user.photoURL} alt="profile" />
           ) : (
-            'none'
+            <FontAwesomeIcon
+              id="profile-picture"
+              icon={faUserCircle}
+            ></FontAwesomeIcon>
           )}
-        </p>
-        <br />
-        Level: {user.level}
-        <h2>History</h2>
-        {this.renderHistory()}
+          <div id="profile-info">
+            <h3 id="name">{user.displayName}</h3>
+            <p>ID: {user.id}</p>
+            <p>Level: {user.level}</p>
+          </div>
+        </div>
+
+        <h2>Past Activities</h2>
+        <div id="past-activities-container">{this.renderPastActivities()}</div>
       </div>
     );
   }

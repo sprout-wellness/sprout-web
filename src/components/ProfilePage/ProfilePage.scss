@@ -1,0 +1,48 @@
+// Layout variables
+$image-height: 120px;
+
+// Colors
+$dark-grey: rgb(51, 51, 51);
+$dark-grey-2: rgb(76.5, 76.5, 76.5);
+$sprout-green-dark: #64AF17;
+
+#profile-page {
+  width: 100vw;
+  max-width: 600px;
+  margin: 84px auto 0;
+
+  #profile-container {
+    display: flex;
+    margin: 32px 0;
+
+    #profile-picture {
+      width: 30%;
+      max-width: $image-height;
+      max-height: $image-height;
+      border: 2px $dark-grey-2 solid;
+      border-radius: 50%;
+    }
+
+    #profile-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 16px;
+
+      #name {
+        font-size: 1.5rem;
+        color: $dark-grey;
+      }
+
+      &>* {
+        margin: 8px 0;
+        color: $dark-grey-2;
+      }
+    }
+  }
+
+  #past-activities-container {
+    .past-activity {
+      margin: 16px auto;
+    }
+  }
+}
