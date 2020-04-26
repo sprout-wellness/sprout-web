@@ -62,7 +62,8 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
                   {this.getFormattedDate(reflection.datetime)}
                 </p>
                 <p className="activity-reflection">
-                  Reflection: {reflection.text}
+                  <span>Reflection:</span> <br></br>
+                  {reflection.text}
                 </p>
               </div>
             </div>
