@@ -54,8 +54,27 @@ $sprout-green-dark: #64AF17;
         width: 24px;
         height: 24px;
         margin: 0 16px;
-        background-color: $dark-grey-2;
         border-radius: 8px;
+
+        &.compassion {
+          background-color: rgba(191, 137, 245, 0.9);
+        }
+
+        &.gratitude {
+          background-color: rgba(255, 190, 92, 0.9);
+        }
+
+        &.kindness {
+          background-color: rgba(255, 241, 77, 0.9);
+        }
+
+        &.mindfulness {
+          background-color: rgba(53, 88, 230, 0.9);
+        }
+
+        &.resilience {
+          background-color: rgba(209, 55, 38, 0.9);
+        }
       }
 
       .activity-info {

@@ -53,7 +53,9 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
         historyHtml = history.map((reflection, key) => {
           return (
             <div className="past-activity" key={key}>
-              <div className="activity-block"></div>
+              <div
+                className={'activity-block ' + reflection.activity?.category}
+              ></div>
               <div className="activity-info">
                 <p className="activity-name">{reflection.activity?.name}</p>
                 <p className="activity-date">
