@@ -1,7 +1,7 @@
 import React, { Component, createContext } from 'react';
 import { firebase } from '../FirebaseSetup';
 import { User } from '../storage/User';
-import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader';
+import { LoadingPage } from '../components/LoadingPage/LoadingPage';
 
 interface UserState {
   loading: boolean;
@@ -34,21 +34,7 @@ export class UserProvider extends Component<{}, UserState> {
 
   render() {
     if (this.state.loading) {
-      return (
-        <ClimbingBoxLoader
-          size={15}
-          color={'#64af22'}
-          css={`
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            margin: auto;
-          `}
-          loading={this.state.loading}
-        />
-      );
+      return <LoadingPage />;
     }
     return (
       <UserContext.Provider value={this.state}>

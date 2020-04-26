@@ -4,6 +4,7 @@ import { UserContext } from '../../providers/UserProvider';
 import { Activity } from '../../storage/Activity';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
+import { LoadingPage } from '../LoadingPage/LoadingPage';
 import './ActivityPage.scss';
 
 interface DetailParams {
@@ -68,7 +69,7 @@ export class ActivityPage extends Component<
   }
 
   renderLoading() {
-    return <div id="loading">Loading...</div>;
+    return <LoadingPage />;
   }
 
   render() {

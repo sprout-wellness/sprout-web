@@ -8,6 +8,7 @@ import { UserContext } from '../../providers/UserProvider';
 import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
 import { SignInPage } from '../SignInPage/SignInPage';
+import { LoadingPage } from '../LoadingPage/LoadingPage';
 import './ReflectionPage.scss';
 
 interface ReflectionPageProps {
@@ -151,7 +152,7 @@ export class ReflectionPage extends Component<
   }
 
   renderLoading() {
-    return <div id="loading">Loading...</div>;
+    return <LoadingPage />;
   }
 
   renderReflectionForm(room: Room, user: User) {
