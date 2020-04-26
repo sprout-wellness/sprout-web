@@ -2,7 +2,6 @@ import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
 import { User } from './User';
 import { Activity } from './Activity';
-import { arraysEqual } from '../utils/primitives';
 
 export class Room {
   readonly id: string;
@@ -20,29 +19,6 @@ export class Room {
     this.activity = activity;
     this.attendees = attendees;
     this.startTime = startTime;
-
-    // Observe real time changes and update object accordingly.
-    firebase
-      .firestore()
-      .collection('rooms')
-      .doc(this.id)
-      .onSnapshot(async roomSnap => {
-        if (
-          !arraysEqual(
-            roomSnap.data()!.attendees,
-            this.attendees.map(user => user.id)
-          )
-        ) {
-          const users = [] as User[];
-          for (const userId of roomSnap.data()!.attendees) {
-            users.push(await User.Load(userId));
-          }
-          this.attendees = users;
-        }
-        if (startTime !== this.startTime) {
-          this.startTime = startTime;
-        }
-      });
   }
 
   getAttendees(): User[] {
