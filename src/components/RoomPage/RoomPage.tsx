@@ -1,4 +1,6 @@
 import React, { Component, MouseEvent } from 'react';
+import { firebase } from '../../FirebaseSetup';
+import 'firebase/firestore';
 import copy from 'clipboard-copy';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,6 +30,7 @@ interface RoomPageState {
 
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   static contextType = UserContext;
+  roomListener: (() => void) | undefined = undefined;
 
   state = {
     errors: [] as string[],
@@ -37,17 +40,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     redirectToSignin: false,
   };
 
-  componentDidMount() {
+  componentDidMount = async () => {
     // Load room data async.
-    (async () => {
-      try {
-        this.setState({
-          room: await Room.Load(this.props.match.params.id),
-        });
-      } catch (e) {
-        this.appendErrorMsg(e.toString());
-      }
-    })();
+    await this.getCurrentRoom();
+
+    // Create listener for room updates.
+    this.addRoomListener();
 
     // During the practice, ticking moves along the progress bar.
     setInterval(() => {
@@ -55,6 +53,27 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
         currentTime: new Date(),
       });
     }, 1000);
+  };
+
+  getCurrentRoom = async () => {
+    try {
+      this.setState({
+        room: await Room.Load(this.props.match.params.id),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
+    }
+  };
+
+  addRoomListener() {
+    const room: Room = this.state.room!;
+    this.roomListener = firebase
+      .firestore()
+      .collection('rooms')
+      .doc(room.id)
+      .onSnapshot(async roomSnap => {
+        this.setState({ room: await Room.LoadFromData(roomSnap) });
+      });
   }
 
   appendErrorMsg(msg: string) {
