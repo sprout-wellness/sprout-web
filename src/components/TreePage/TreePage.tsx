@@ -1,13 +1,31 @@
-import React, { Component } from 'react'; // let's also import Component
-import './TreePage.scss';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { LoadingPage } from '../LoadingPage/LoadingPage';
+import './TreePage.scss';
 
-export class TreePage extends Component<{}> {
-  componentDidMount() {}
+interface TreePageState {
+  imagesLoaded: number;
+}
+
+export class TreePage extends Component<{}, TreePageState> {
+  state = {
+    imagesLoaded: 0,
+  };
+
+  imageLoaded() {
+    this.setState(prevState => {
+      return { imagesLoaded: prevState.imagesLoaded + 1 };
+    });
+  }
 
   render() {
     return (
       <div id="tree-page">
+        <div
+          style={{ display: this.state.imagesLoaded === 5 ? 'none' : 'block' }}
+        >
+          <LoadingPage />
+        </div>
         <h1 className="title">What will you practice today?</h1>
         <div className="card-container">
           <div className="card" id="compassion-card">
@@ -19,7 +37,8 @@ export class TreePage extends Component<{}> {
               <img
                 className="card-image"
                 src={require('../../images/avatars/compassion.png')}
-                alt=""
+                alt="compassion"
+                onLoad={() => this.imageLoaded()}
               />
             </Link>
           </div>
@@ -30,7 +49,8 @@ export class TreePage extends Component<{}> {
               <img
                 className="card-image"
                 src={require('../../images/avatars/gratitude.png')}
-                alt=""
+                alt="gratitude"
+                onLoad={() => this.imageLoaded()}
               />
             </Link>
           </div>
@@ -41,7 +61,8 @@ export class TreePage extends Component<{}> {
               <img
                 className="card-image"
                 src={require('../../images/avatars/kindness.png')}
-                alt=""
+                alt="kindness"
+                onLoad={() => this.imageLoaded()}
               />
             </Link>
           </div>
@@ -55,7 +76,8 @@ export class TreePage extends Component<{}> {
               <img
                 className="card-image"
                 src={require('../../images/avatars/mindfulness.png')}
-                alt=""
+                alt="mindfulness"
+                onLoad={() => this.imageLoaded()}
               />
             </Link>
           </div>
@@ -69,7 +91,8 @@ export class TreePage extends Component<{}> {
               <img
                 className="card-image"
                 src={require('../../images/avatars/resilience.png')}
-                alt=""
+                alt="resilience"
+                onLoad={() => this.imageLoaded()}
               />
             </Link>
           </div>
