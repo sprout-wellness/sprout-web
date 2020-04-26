@@ -4,6 +4,7 @@ $image-height: 120px;
 // Colors
 $dark-grey: rgb(51, 51, 51);
 $dark-grey-2: rgb(76.5, 76.5, 76.5);
+$dark-grey-3: rgb(204, 204, 204);
 $sprout-green-dark: #64AF17;
 
 #profile-page {
@@ -42,7 +43,39 @@ $sprout-green-dark: #64AF17;
 
   #past-activities-container {
     .past-activity {
+      display: flex;
+      align-items: center;
       margin: 16px auto;
+      padding: 8px 0;
+      border: 1px $dark-grey-3 solid;
+      border-radius: 8px;
+
+      .activity-block {
+        width: 24px;
+        height: 24px;
+        margin: 0 16px;
+        background-color: $dark-grey-2;
+        border-radius: 8px;
+      }
+
+      .activity-info {
+        &>* {
+          margin: 4px auto;
+        }
+
+        .activity-date {
+          color: $dark-grey;
+          font-weight: 700;
+        }
+
+        .activity-name {
+          color: $dark-grey-2;
+        }
+
+        .activity-reflection {
+          display: none;
+        }
+      }
     }
   }
 }

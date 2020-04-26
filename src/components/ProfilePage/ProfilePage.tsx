@@ -30,6 +30,19 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     })();
   }
 
+  getFormattedDate(datetime: number) {
+    let date = new Date(datetime);
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+
+    return month + '/' + day + '/' + year;
+  }
+
   renderPastActivities() {
     let historyHtml = [<p key="loading">Loading...</p>];
     if (this.state.pastActivities != null) {
@@ -40,9 +53,18 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
         historyHtml = history.map((reflection, key) => {
           return (
             <div className="past-activity" key={key}>
-              <p>Time: {new Date(reflection.datetime).toString()}</p>
-              <p>Activity: {reflection.activity?.name}</p>
-              <p>Reflection: {reflection.text}</p>
+              <div className="activity-block"></div>
+              <div className="activity-info">
+                <p className="activity-date">
+                  {this.getFormattedDate(reflection.datetime)}
+                </p>
+                <p className="activity-name">
+                  Activity: {reflection.activity?.name}
+                </p>
+                <p className="activity-reflection">
+                  Reflection: {reflection.text}
+                </p>
+              </div>
             </div>
           );
         });
