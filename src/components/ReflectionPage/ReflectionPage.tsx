@@ -24,7 +24,6 @@ interface ReflectionPageState {
   room: Room | undefined;
   errors: string[];
   reflectionSubmitted: boolean | null;
-  redirectToSignin: boolean;
 }
 
 export class ReflectionPage extends Component<
@@ -41,7 +40,6 @@ export class ReflectionPage extends Component<
       room: undefined,
       errors: [],
       reflectionSubmitted: null,
-      redirectToSignin: false,
     };
   }
 
@@ -50,9 +48,6 @@ export class ReflectionPage extends Component<
     await this.loadRoom(this.props.match.params.id);
     const user = this.context.user as User | null;
     if (user === null) {
-      this.setState({
-        redirectToSignin: true,
-      });
       return;
     }
     this.fetchUserReflection(this.state.room!.id, user.id);
@@ -176,7 +171,7 @@ export class ReflectionPage extends Component<
           })}
         </div>
         <Link to="/">
-          <button>Complete Practice</button>
+          <button className="button">Complete Practice</button>
         </Link>
       </div>
     );
@@ -188,11 +183,26 @@ export class ReflectionPage extends Component<
     if (this.state.errors.length) {
       return this.renderError();
     }
-    if (this.state.redirectToSignin) {
+    if (!room) {
+      return this.renderLoading();
+    }
+    if (!user) {
       return <SignInPage destination={`/room/${room.id}`} />;
     }
-    if (!room || !user || this.state.reflectionSubmitted === null) {
+    if (this.state.reflectionSubmitted === null) {
       return this.renderLoading();
+    }
+    if (!room.userInRoom(user)) {
+      return (
+        <div className="center">
+          <h1 className="title">
+            Sorry! You can't view this room's reflections.
+          </h1>
+          <Link to="/">
+            <button className="button">Browse activities</button>
+          </Link>
+        </div>
+      );
     }
     if (!this.state.reflectionSubmitted) {
       return this.renderReflectionForm(room, user);
