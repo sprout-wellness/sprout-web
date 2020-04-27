@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.scss';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { TreePage } from './components/TreePage/TreePage';
 import { ActivityPage } from './components/ActivityPage/ActivityPage';
@@ -10,11 +9,14 @@ import { NavBar } from './components/NavBar/NavBar';
 import { SignInPage } from './components/SignInPage/SignInPage';
 import { UserProvider } from './providers/UserProvider';
 import { ProfilePage } from './components/ProfilePage/ProfilePage';
+import { ScrollToTop } from './components/ScrollToTop/ScrollToTop';
+import './App.scss';
 
 export const APP = function App() {
   return (
     <UserProvider>
       <Router>
+        <ScrollToTop />
         <NavBar />
         <Switch>
           <Route exact path="/" component={TreePage} />
