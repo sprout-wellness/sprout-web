@@ -42,7 +42,13 @@ export class ReflectionForm extends Component<
           value={this.state.reflectionText}
           onChange={this.setReflectionText}
         ></textarea>
-        <button onClick={this.submitReflection}>Submit reflection</button>
+        <button
+          className="button"
+          onClick={this.submitReflection}
+          disabled={!this.state.reflectionText}
+        >
+          Submit reflection
+        </button>
       </div>
     );
   }
