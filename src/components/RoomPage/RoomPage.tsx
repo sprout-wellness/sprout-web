@@ -4,7 +4,7 @@ import 'firebase/firestore';
 import copy from 'clipboard-copy';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
@@ -177,15 +177,17 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             {room.getAttendees().map((user, key) => {
               return (
                 <div className="participant-card" key={key}>
-                  {user.photoURL && (
+                  {user.photoURL ? (
                     <img
-                      id="profile-picture"
+                      className="participant-picture"
                       src={user.photoURL}
                       alt="Profile"
                     />
-                  )}
-                  {!user.photoURL && (
-                    <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  ) : (
+                    <FontAwesomeIcon
+                      className="participant-picture"
+                      icon={faUserCircle}
+                    ></FontAwesomeIcon>
                   )}
                   <h4 className="participant-name">{user.displayName}</h4>
                 </div>

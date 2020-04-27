@@ -153,18 +153,17 @@ $sprout-green-dark: #64AF17;
         flex-direction: row;
         background-color: rgba(255, 255, 255, 1);
         height: 28px;
-        max-width: 100px;
+        max-width: 200px;
         margin: 8px 4px;
         padding: 8px;
         border-radius: 8px;
         text-align: center;
 
-        #profile-picture {
+        .participant-picture {
           margin: auto;
-          margin-right: 4px;
+          margin-right: 8px;
           width: 20px;
           height: 20px;
-          border: rgb(242.75, 242.75, 242.75) 2px solid;
           border-radius: 50%;
         }
 
