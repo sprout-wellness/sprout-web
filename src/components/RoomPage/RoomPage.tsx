@@ -31,6 +31,7 @@ interface RoomPageState {
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   static contextType = UserContext;
   roomListener: (() => void) | undefined = undefined;
+  progressBarCounter: number = 0;
 
   state = {
     errors: [] as string[],
@@ -48,12 +49,22 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     this.addRoomListener();
 
     // During the practice, ticking moves along the progress bar.
-    setInterval(() => {
+    this.progressBarCounter = window.setInterval(() => {
       this.setState({
         currentTime: new Date(),
       });
     }, 1000);
   };
+
+  componentWillUnmount() {
+    // Unsubscribe the room listener.
+    if (this.roomListener) {
+      const unsubscribe: () => void = this.roomListener!;
+      unsubscribe();
+    }
+    // Stop the progress bar counter.
+    clearInterval(this.progressBarCounter);
+  }
 
   getCurrentRoom = async () => {
     try {
