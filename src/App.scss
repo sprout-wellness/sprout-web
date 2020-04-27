@@ -16,6 +16,11 @@ body {
   margin: 15vh 8vw 10vh;
 }
 
+a:-webkit-any-link {
+  text-decoration: none;
+  color: inherit;
+}
+
 .button {
   padding: 8px 16px;
   background-color: rgba(0, 0, 0, 1);
@@ -48,9 +53,9 @@ body {
   }
 }
 
-a:-webkit-any-link {
-  text-decoration: none;
-  color: inherit;
+.center {
+  margin: 40vh auto 0;
+  text-align: center;
 }
 
 .card-container {
