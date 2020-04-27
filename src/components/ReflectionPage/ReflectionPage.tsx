@@ -55,7 +55,7 @@ export class ReflectionPage extends Component<
     this.fetchUserReflection(this.state.room!.id, user.id);
 
     // Load reflection data asynchronously.
-    this.loadReflections(this.state.room!.id);
+    await this.loadReflections(this.state.room!.id);
 
     // Create listener for new reflections.
     this.addReflectionListener();
