@@ -37,11 +37,19 @@
     margin: 32px 0;
 
     .reflection {
+      display: flex;
       background-color: rgba(0, 0, 0, 0.05);
       margin-bottom: 32px;
       border-radius: 8px;
       padding: 16px;
       width: 80%;
+
+      .participant-picture {
+        margin-right: 12px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
     }
 
     .reflection:nth-child(even) {

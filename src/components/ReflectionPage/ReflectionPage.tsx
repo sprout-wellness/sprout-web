@@ -9,6 +9,8 @@ import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
 import { SignInPage } from '../SignInPage/SignInPage';
 import { LoadingPage } from '../LoadingPage/LoadingPage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './ReflectionPage.scss';
 
 interface ReflectionPageProps {
@@ -121,11 +123,15 @@ export class ReflectionPage extends Component<
                 }
               }
               if (!found) {
-                this.setState((prevState: ReflectionPageState) => {
-                  return {
-                    reflections: [...prevState.reflections, change.doc.data()],
-                  };
-                });
+                Reflection.LoadFromData(change.doc).then(
+                  (newReflection: Reflection) => {
+                    this.setState((prevState: ReflectionPageState) => {
+                      return {
+                        reflections: [...prevState.reflections, newReflection],
+                      };
+                    });
+                  }
+                );
               }
             }
           });
@@ -165,6 +171,18 @@ export class ReflectionPage extends Component<
           {this.state.reflections.map((reflection, key) => {
             return (
               <div key={key} className="reflection">
+                {reflection.user.photoURL ? (
+                  <img
+                    className="participant-picture"
+                    src={reflection.user.photoURL}
+                    alt="Profile"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    className="participant-picture"
+                    icon={faUserCircle}
+                  ></FontAwesomeIcon>
+                )}
                 {reflection.text}
               </div>
             );
@@ -206,6 +224,9 @@ export class ReflectionPage extends Component<
     }
     if (!this.state.reflectionSubmitted) {
       return this.renderReflectionForm(room, user);
+    }
+    if (!this.state.reflections.length) {
+      return this.renderLoading();
     }
     return this.renderReflectionPage();
   }
