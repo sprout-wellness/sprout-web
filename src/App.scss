@@ -16,6 +16,38 @@ body {
   margin: 15vh 8vw 10vh;
 }
 
+.button {
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 1);
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.1s ease-out;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: no-drop;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 1);
+    }
+  }
+}
+
 a:-webkit-any-link {
   text-decoration: none;
   color: inherit;

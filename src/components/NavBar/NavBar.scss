@@ -17,6 +17,7 @@ $sprout-green-dark: #64AF17;
   width: 100%;
   background-color: white;
   border-bottom: $border-color solid 2px;
+  z-index: 999;
 
   ul {
     height: 100%;
@@ -40,6 +41,7 @@ $sprout-green-dark: #64AF17;
 
       &.text {
         margin: auto 0;
+        padding-left: 12px;
         color: $dark-grey-2;
         font-weight: 600;
         font-size: 0.9em;

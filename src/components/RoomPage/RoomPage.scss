@@ -36,22 +36,10 @@ $sprout-green-dark: #64AF17;
 
     #join-button {
       margin-top: 24px;
-      padding: 8px 16px;
-      background-color: rgba(0, 0, 0, 1);
-      color: white;
       font-size: 20px;
-      border: none;
-      border-radius: 4px;
-      transition: all 0.1s ease-out;
 
       &:hover {
-        cursor: pointer;
-        background-color: rgba(0, 0, 0, 0.8);
         transform: scale(1.1);
-      }
-
-      &:active {
-        background-color: rgba(0, 0, 0, 0.6);
       }
     }
   }
@@ -107,34 +95,7 @@ $sprout-green-dark: #64AF17;
 
     .begin-button {
       margin-top: 24px;
-      padding: 8px 16px;
-      background-color: rgba(0, 0, 0, 1);
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 4px;
-
-      &:hover {
-        cursor: pointer;
-        background-color: rgba(0, 0, 0, 0.8);
-      }
-
-      &:active {
-        background-color: rgba(0, 0, 0, 0.6);
-      }
-
-      &:focus {
-        outline: none;
-      }
-
-      &:disabled {
-        opacity: 0.3;
-        cursor: no-drop;
-
-        &:hover {
-          background-color: rgba(0, 0, 0, 1);
-        }
-      }
+      margin-bottom: 12px;
     }
 
     #copy-icon {
@@ -241,4 +202,9 @@ $sprout-green-dark: #64AF17;
       transition: all 3s ease;
     }
   }
+}
+
+.center {
+  margin: 40vh auto 0;
+  text-align: center;
 }

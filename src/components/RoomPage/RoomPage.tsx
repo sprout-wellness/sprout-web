@@ -2,7 +2,7 @@ import React, { Component, MouseEvent } from 'react';
 import { firebase } from '../../FirebaseSetup';
 import 'firebase/firestore';
 import copy from 'clipboard-copy';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
@@ -142,7 +142,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       <div id="room-page">
         {notInRoom && (
           <div id="invite-container">
-            <button id="join-button" onClick={() => this.joinRoom()}>
+            <button id="button join-button" onClick={() => this.joinRoom()}>
               Join this room!
             </button>
           </div>
@@ -166,7 +166,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               </span>
             </div>
             <button
-              className="begin-button"
+              className="button begin-button"
               disabled={notInRoom}
               onClick={() => this.beginActivity()}
             >
@@ -241,7 +241,14 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return <SignInPage destination={`/room/${room.id}`} />;
     }
     if (!room.userInRoom(user)) {
-      return <div>The activity has already begun, without you.</div>;
+      return (
+        <div className="center">
+          <h1 className="title">Sorry! You can no longer join this room.</h1>
+          <Link to="/">
+            <button className="button">Browse activities</button>
+          </Link>
+        </div>
+      );
     }
     if (room.activityIsInSession(this.state.currentTime)) {
       return this.renderActivity(room);
