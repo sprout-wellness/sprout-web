@@ -8,7 +8,7 @@ $dark-grey-3: rgb(204, 204, 204);
 $sprout-green-dark: #64AF17;
 
 #profile-page {
-  width: 100vw;
+  width: 80vw;
   max-width: 600px;
   margin: 84px auto 0;
 
@@ -17,9 +17,8 @@ $sprout-green-dark: #64AF17;
     margin: 32px 0;
 
     #profile-picture {
-      width: 30%;
-      max-width: $image-height;
-      max-height: $image-height;
+      width: $image-height;
+      height: $image-height;
       border: 2px $dark-grey-2 solid;
       border-radius: 50%;
     }

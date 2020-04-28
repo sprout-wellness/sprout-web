@@ -15,25 +15,7 @@
 
   button {
     margin-top: 24px;
-    padding: 8px 16px;
     width: 200px;
-    background-color: rgba(0, 0, 0, 1);
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-    }
-
-    &:active {
-      background-color: rgba(0, 0, 0, 0.6);
-    }
-
-    &:focus {
-      outline: none;
-    }
   }
 }
 
@@ -55,11 +37,19 @@
     margin: 32px 0;
 
     .reflection {
+      display: flex;
       background-color: rgba(0, 0, 0, 0.05);
       margin-bottom: 32px;
       border-radius: 8px;
       padding: 16px;
       width: 80%;
+
+      .participant-picture {
+        margin-right: 12px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
     }
 
     .reflection:nth-child(even) {
@@ -75,27 +65,7 @@
     width: 180px;
 
     button {
-      width: 100%;
-      padding: 8px 16px;
-      background-color: rgba(0, 0, 0, 1);
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 4px;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.8);
-        cursor: pointer;
-      }
-
-      &:active {
-        background-color: rgba(0, 0, 0, 0.6);
-      }
-
-      &:focus {
-        outline: none;
-      }
+      width: 180px;
     }
   }
-
 }

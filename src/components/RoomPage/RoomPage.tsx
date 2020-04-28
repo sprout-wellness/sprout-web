@@ -4,12 +4,13 @@ import 'firebase/firestore';
 import copy from 'clipboard-copy';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
 import { SignInPage } from '../SignInPage/SignInPage';
 import { LoadingPage } from '../LoadingPage/LoadingPage';
+import { ErrorPage } from '../ErrorPage/ErrorPage';
 import './RoomPage.scss';
 
 interface RoomPageProps {
@@ -31,6 +32,7 @@ interface RoomPageState {
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   static contextType = UserContext;
   roomListener: (() => void) | undefined = undefined;
+  progressBarCounter: number = 0;
 
   state = {
     errors: [] as string[],
@@ -42,28 +44,35 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   componentDidMount = async () => {
     // Load room data async.
-    await this.getCurrentRoom();
-
-    // Create listener for room updates.
-    this.addRoomListener();
-
-    // During the practice, ticking moves along the progress bar.
-    setInterval(() => {
-      this.setState({
-        currentTime: new Date(),
-      });
-    }, 1000);
-  };
-
-  getCurrentRoom = async () => {
     try {
       this.setState({
         room: await Room.Load(this.props.match.params.id),
       });
     } catch (e) {
       this.appendErrorMsg(e.toString());
+      return;
     }
+
+    // Create listener for room updates.
+    this.addRoomListener();
+
+    // During the practice, ticking moves along the progress bar.
+    this.progressBarCounter = window.setInterval(() => {
+      this.setState({
+        currentTime: new Date(),
+      });
+    }, 1000);
   };
+
+  componentWillUnmount() {
+    // Unsubscribe the room listener.
+    if (this.roomListener) {
+      const unsubscribe: () => void = this.roomListener!;
+      unsubscribe();
+    }
+    // Stop the progress bar counter.
+    clearInterval(this.progressBarCounter);
+  }
 
   addRoomListener() {
     const room: Room = this.state.room!;
@@ -142,7 +151,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       <div id="room-page">
         {notInRoom && (
           <div id="invite-container">
-            <button id="join-button" onClick={() => this.joinRoom()}>
+            <button id="button join-button" onClick={() => this.joinRoom()}>
               Join this room!
             </button>
           </div>
@@ -166,7 +175,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
               </span>
             </div>
             <button
-              className="begin-button"
+              className="button begin-button"
               disabled={notInRoom}
               onClick={() => this.beginActivity()}
             >
@@ -177,15 +186,17 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             {room.getAttendees().map((user, key) => {
               return (
                 <div className="participant-card" key={key}>
-                  {user.photoURL && (
+                  {user.photoURL ? (
                     <img
-                      id="profile-picture"
+                      className="participant-picture"
                       src={user.photoURL}
                       alt="Profile"
                     />
-                  )}
-                  {!user.photoURL && (
-                    <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                  ) : (
+                    <FontAwesomeIcon
+                      className="participant-picture"
+                      icon={faUserCircle}
+                    ></FontAwesomeIcon>
                   )}
                   <h4 className="participant-name">{user.displayName}</h4>
                 </div>
@@ -222,7 +233,12 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
   render() {
     if (this.state.errors.length) {
-      return this.renderError();
+      return (
+        <ErrorPage
+          title={'Invalid room ID!'}
+          error={"This room has expired or doesn't exist."}
+        />
+      );
     }
     const room = this.state.room as Room | null;
     if (room === null) {
@@ -239,7 +255,9 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       return <SignInPage destination={`/room/${room.id}`} />;
     }
     if (!room.userInRoom(user)) {
-      return <div>The activity has already begun, without you.</div>;
+      return (
+        <ErrorPage title={'Sorry!'} error={'This room has already started.'} />
+      );
     }
     if (room.activityIsInSession(this.state.currentTime)) {
       return this.renderActivity(room);

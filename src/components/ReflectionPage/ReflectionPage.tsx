@@ -9,6 +9,9 @@ import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
 import { SignInPage } from '../SignInPage/SignInPage';
 import { LoadingPage } from '../LoadingPage/LoadingPage';
+import { ErrorPage } from '../ErrorPage/ErrorPage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './ReflectionPage.scss';
 
 interface ReflectionPageProps {
@@ -24,7 +27,6 @@ interface ReflectionPageState {
   room: Room | undefined;
   errors: string[];
   reflectionSubmitted: boolean | null;
-  redirectToSignin: boolean;
 }
 
 export class ReflectionPage extends Component<
@@ -41,24 +43,28 @@ export class ReflectionPage extends Component<
       room: undefined,
       errors: [],
       reflectionSubmitted: null,
-      redirectToSignin: false,
     };
   }
 
   componentDidMount = async () => {
     // Load room and currently logged in user.
-    await this.loadRoom(this.props.match.params.id);
+    try {
+      this.setState({
+        room: await Room.Load(this.props.match.params.id),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
+      return;
+    }
+
     const user = this.context.user as User | null;
     if (user === null) {
-      this.setState({
-        redirectToSignin: true,
-      });
       return;
     }
     this.fetchUserReflection(this.state.room!.id, user.id);
 
     // Load reflection data asynchronously.
-    this.loadReflections(this.state.room!.id);
+    await this.loadReflections(this.state.room!.id);
 
     // Create listener for new reflections.
     this.addReflectionListener();
@@ -66,19 +72,11 @@ export class ReflectionPage extends Component<
 
   componentWillUnmount() {
     // Unsubscribe the reflection listener.
-    const unsubscribe: () => void = this.reflectionListener!;
-    unsubscribe();
-  }
-
-  loadRoom = async (roomId: string) => {
-    try {
-      this.setState({
-        room: await Room.Load(roomId),
-      });
-    } catch (e) {
-      this.appendErrorMsg(e.toString());
+    if (this.reflectionListener) {
+      const unsubscribe: () => void = this.reflectionListener!;
+      unsubscribe();
     }
-  };
+  }
 
   loadReflections = async (roomId: string) => {
     try {
@@ -126,11 +124,15 @@ export class ReflectionPage extends Component<
                 }
               }
               if (!found) {
-                this.setState((prevState: ReflectionPageState) => {
-                  return {
-                    reflections: [...prevState.reflections, change.doc.data()],
-                  };
-                });
+                Reflection.LoadFromData(change.doc).then(
+                  (newReflection: Reflection) => {
+                    this.setState((prevState: ReflectionPageState) => {
+                      return {
+                        reflections: [...prevState.reflections, newReflection],
+                      };
+                    });
+                  }
+                );
               }
             }
           });
@@ -170,13 +172,25 @@ export class ReflectionPage extends Component<
           {this.state.reflections.map((reflection, key) => {
             return (
               <div key={key} className="reflection">
+                {reflection.user.photoURL ? (
+                  <img
+                    className="participant-picture"
+                    src={reflection.user.photoURL}
+                    alt="Profile"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    className="participant-picture"
+                    icon={faUserCircle}
+                  ></FontAwesomeIcon>
+                )}
                 {reflection.text}
               </div>
             );
           })}
         </div>
         <Link to="/">
-          <button>Complete Practice</button>
+          <button className="button">Complete Practice</button>
         </Link>
       </div>
     );
@@ -186,16 +200,35 @@ export class ReflectionPage extends Component<
     const room: Room = this.state.room!;
     const user = this.context.user as User | null;
     if (this.state.errors.length) {
-      return this.renderError();
+      return (
+        <ErrorPage
+          title={'Invalid room ID!'}
+          error={"This room has expired or doesn't exist."}
+        />
+      );
     }
-    if (this.state.redirectToSignin) {
+    if (!room) {
+      return this.renderLoading();
+    }
+    if (!user) {
       return <SignInPage destination={`/room/${room.id}`} />;
     }
-    if (!room || !user || this.state.reflectionSubmitted === null) {
+    if (this.state.reflectionSubmitted === null) {
       return this.renderLoading();
+    }
+    if (!room.userInRoom(user)) {
+      return (
+        <ErrorPage
+          title={'Sorry!'}
+          error={"You can't view a room's reflections without participating."}
+        />
+      );
     }
     if (!this.state.reflectionSubmitted) {
       return this.renderReflectionForm(room, user);
+    }
+    if (!this.state.reflections.length) {
+      return this.renderLoading();
     }
     return this.renderReflectionPage();
   }

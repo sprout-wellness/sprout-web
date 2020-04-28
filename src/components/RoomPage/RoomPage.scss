@@ -1,3 +1,6 @@
+// Colors
+$sprout-green-dark: #64AF17;
+
 #room-page {
   margin: calc(48px + 5vh) 10vw;
 
@@ -33,17 +36,10 @@
 
     #join-button {
       margin-top: 24px;
-      padding: 8px 16px;
-      background-color: green;
-      color: white;
-      font-size: 22px;
-      border: none;
-      border-radius: 4px;
+      font-size: 20px;
 
       &:hover {
-        background-color: greenyellow;
-        outline-width: 3px;
-        outline-color: black;
+        transform: scale(1.1);
       }
     }
   }
@@ -99,30 +95,7 @@
 
     .begin-button {
       margin-top: 24px;
-      padding: 8px 16px;
-      background-color: rgba(0, 0, 0, 1);
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 4px;
-
-      &:hover {
-        cursor: pointer;
-        background-color: rgba(0, 0, 0, 0.8);
-      }
-
-      &:active {
-        background-color: rgba(0, 0, 0, 0.6);
-      }
-
-      &:focus {
-        outline: none;
-      }
-
-      &:disabled {
-        background-color: grey;
-        color: black;
-      }
+      margin-bottom: 12px;
     }
 
     #copy-icon {
@@ -141,18 +114,17 @@
         flex-direction: row;
         background-color: rgba(255, 255, 255, 1);
         height: 28px;
-        max-width: 100px;
+        max-width: 200px;
         margin: 8px 4px;
         padding: 8px;
         border-radius: 8px;
         text-align: center;
 
-        #profile-picture {
+        .participant-picture {
           margin: auto;
-          margin-right: 4px;
+          margin-right: 8px;
           width: 20px;
           height: 20px;
-          border: rgb(242.75, 242.75, 242.75) 2px solid;
           border-radius: 50%;
         }
 
