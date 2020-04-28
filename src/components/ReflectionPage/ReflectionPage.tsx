@@ -9,6 +9,7 @@ import { User } from '../../storage/User';
 import { ReflectionForm } from './ReflectionForm';
 import { SignInPage } from '../SignInPage/SignInPage';
 import { LoadingPage } from '../LoadingPage/LoadingPage';
+import { ErrorPage } from '../ErrorPage/ErrorPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './ReflectionPage.scss';
@@ -47,7 +48,15 @@ export class ReflectionPage extends Component<
 
   componentDidMount = async () => {
     // Load room and currently logged in user.
-    await this.loadRoom(this.props.match.params.id);
+    try {
+      this.setState({
+        room: await Room.Load(this.props.match.params.id),
+      });
+    } catch (e) {
+      this.appendErrorMsg(e.toString());
+      return;
+    }
+
     const user = this.context.user as User | null;
     if (user === null) {
       return;
@@ -63,19 +72,11 @@ export class ReflectionPage extends Component<
 
   componentWillUnmount() {
     // Unsubscribe the reflection listener.
-    const unsubscribe: () => void = this.reflectionListener!;
-    unsubscribe();
-  }
-
-  loadRoom = async (roomId: string) => {
-    try {
-      this.setState({
-        room: await Room.Load(roomId),
-      });
-    } catch (e) {
-      this.appendErrorMsg(e.toString());
+    if (this.reflectionListener) {
+      const unsubscribe: () => void = this.reflectionListener!;
+      unsubscribe();
     }
-  };
+  }
 
   loadReflections = async (roomId: string) => {
     try {
@@ -199,7 +200,12 @@ export class ReflectionPage extends Component<
     const room: Room = this.state.room!;
     const user = this.context.user as User | null;
     if (this.state.errors.length) {
-      return this.renderError();
+      return (
+        <ErrorPage
+          title={'Invalid room ID!'}
+          error={"This room has expired or doesn't exist."}
+        />
+      );
     }
     if (!room) {
       return this.renderLoading();
@@ -212,14 +218,10 @@ export class ReflectionPage extends Component<
     }
     if (!room.userInRoom(user)) {
       return (
-        <div className="center">
-          <h1 className="title">
-            Sorry! You can't view this room's reflections.
-          </h1>
-          <Link to="/">
-            <button className="button">Browse activities</button>
-          </Link>
-        </div>
+        <ErrorPage
+          title={'Sorry!'}
+          error={"You can't view a room's reflections without participating."}
+        />
       );
     }
     if (!this.state.reflectionSubmitted) {

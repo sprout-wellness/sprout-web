@@ -4,7 +4,7 @@ import { TreePage } from './components/TreePage/TreePage';
 import { ActivityPage } from './components/ActivityPage/ActivityPage';
 import { RoomPage } from './components/RoomPage/RoomPage';
 import { ReflectionPage } from './components/ReflectionPage/ReflectionPage';
-import { NotFoundPage } from './components/NotFoundPage/NotFoundPage';
+import { ErrorPage } from './components/ErrorPage/ErrorPage';
 import { NavBar } from './components/NavBar/NavBar';
 import { SignInPage } from './components/SignInPage/SignInPage';
 import { UserProvider } from './providers/UserProvider';
@@ -25,7 +25,15 @@ export const APP = function App() {
           <Route exact path="/activities/:tenet" component={ActivityPage} />
           <Route exact path="/room/:id" component={RoomPage} />
           <Route exact path="/room/:id/reflection" component={ReflectionPage} />
-          <Route component={NotFoundPage} />
+          <Route
+            render={props => (
+              <ErrorPage
+                {...props}
+                title={'Oops!'}
+                error={"This page doesn't exist!"}
+              />
+            )}
+          />
         </Switch>
       </Router>
     </UserProvider>
