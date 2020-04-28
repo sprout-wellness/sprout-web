@@ -48,7 +48,7 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
     if (this.state.pastActivities != null) {
       const history: Reflection[] = this.state.pastActivities!;
       if (!history.length) {
-        historyHtml = [<p key="none">Go try some activities!</p>];
+        historyHtml = [<p key="none">None so far. Go try some activities!</p>];
       } else {
         historyHtml = history.map((reflection, key) => {
           return (

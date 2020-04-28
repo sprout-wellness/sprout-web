@@ -5,6 +5,7 @@ import copy from 'clipboard-copy';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { Instruction } from '../../storage/Activity';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
@@ -126,6 +127,22 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return `${percentComplete}%`;
   }
 
+  getCurrentInstruction() {
+    const room: Room = this.state.room!;
+    const instructions: Instruction[] = room.activity.instructions;
+    var secondsPassed: number = room.getActivitySecondsPassed(
+      this.state.currentTime
+    );
+    for (let instruction of instructions) {
+      console.log(instruction);
+      secondsPassed -= instruction.duration;
+      if (secondsPassed <= 0) {
+        return instruction.instruction;
+      }
+    }
+    return 'Please wait while the reflection page loads...';
+  }
+
   renderError() {
     return (
       <div id="room-page">
@@ -218,7 +235,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return (
       <div id="in-session-page">
         <h1 className="activity-title">{room.activity.name}</h1>
-        <p className="activity-instructions">{room.activity.instructions}</p>
+        <p className="activity-instructions">{this.getCurrentInstruction()}</p>
         <div id="progress-bar-container">
           <div
             id="progress-bar"
