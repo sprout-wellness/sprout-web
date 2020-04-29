@@ -133,14 +133,27 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     var secondsPassed: number = room.getActivitySecondsPassed(
       this.state.currentTime
     );
+    let emptyInstruction: Instruction = {
+      instruction: 'Please wait...',
+      duration: 600,
+    };
     for (let instruction of instructions) {
-      console.log(instruction);
       secondsPassed -= instruction.duration;
       if (secondsPassed <= 0) {
-        return instruction.instruction;
+        if (
+          secondsPassed >= -2 || // Fade out with 2 seconds left.
+          Math.abs(secondsPassed) + 1 >= instruction.duration // Fade in 1 second after instruction starts.
+        ) {
+          // The negative duration is used as a condition to animate.
+          return {
+            instruction: instruction.instruction,
+            duration: -1,
+          };
+        }
+        return instruction;
       }
     }
-    return 'Please wait while the reflection page loads...';
+    return emptyInstruction;
   }
 
   renderError() {
@@ -232,10 +245,20 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderActivity(room: Room) {
+    let currentInstruction: Instruction = this.getCurrentInstruction();
+
     return (
       <div id="in-session-page">
         <h1 className="activity-title">{room.activity.name}</h1>
-        <p className="activity-instructions">{this.getCurrentInstruction()}</p>
+        <p
+          className={
+            currentInstruction.duration === -1
+              ? 'activity-instructions'
+              : 'activity-instructions active'
+          }
+        >
+          {currentInstruction.instruction}
+        </p>
         <div id="progress-bar-container">
           <div
             id="progress-bar"
