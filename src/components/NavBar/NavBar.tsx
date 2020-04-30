@@ -50,12 +50,11 @@ export class NavBar extends Component<{}, {}> {
           </li>
           <li className="text">Welcome, {user.displayName}!</li>
           <div className="dropdown">
-            {user.photoURL && (
+            {user.photoURL ? (
               <li className="dropbtn">
                 <img id="profile-picture" src={user.photoURL} alt="Profile" />
               </li>
-            )}
-            {!user.photoURL && (
+            ) : (
               <li className="dropbtn">
                 <FontAwesomeIcon
                   id="profile-picture"

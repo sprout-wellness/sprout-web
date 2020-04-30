@@ -169,37 +169,27 @@ $sprout-green-dark: #64AF17;
 #in-session-page {
   display: flex;
   flex-direction: column;
-  margin: calc(48px + 7vh) auto;
-  padding: 0 5vw;
+  justify-content: center;
+  height: calc(100vh - 96px);
+  margin: 48px auto;
+  padding: 0 10vw;
 
-  .activity-title {
-    margin-bottom: 5vh;
-    text-align: center;
-    font-family: Quattrocento;
-  }
+  .participants-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 
-  @keyframes fade-in {
-    0% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes fade-out {
-    0% {
-      opacity: 1;
-    }
-
-    100% {
-      opacity: 0;
+    .participant-picture {
+      width: 20px;
+      height: 20px;
+      margin: 0 8px;
+      border-radius: 50%;
     }
   }
 
   .activity-instructions {
-    margin-top: 8vh;
+    height: 200px;
+    margin-top: 0;
     line-height: 1.5;
     font-size: 1.8rem;
     font-weight: 400;
@@ -209,7 +199,7 @@ $sprout-green-dark: #64AF17;
     transition: all 1.5s;
 
     &.active {
-      margin-top: 12vh;
+      margin-top: 40px;
       opacity: 1;
     }
   }

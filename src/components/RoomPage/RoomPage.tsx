@@ -249,12 +249,31 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
 
     return (
       <div id="in-session-page">
-        <h1 className="activity-title">{room.activity.name}</h1>
+        <div className="participants-container">
+          {room.getAttendees().map((user, key) => {
+            return (
+              <div key={key}>
+                {user.photoURL ? (
+                  <img
+                    className="participant-picture"
+                    src={user.photoURL}
+                    alt="Profile"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    className="participant-picture"
+                    icon={faUserCircle}
+                  ></FontAwesomeIcon>
+                )}
+              </div>
+            );
+          })}
+        </div>
         <p
           className={
-            currentInstruction.duration === -1
-              ? 'activity-instructions'
-              : 'activity-instructions active'
+            currentInstruction.duration !== -1
+              ? 'activity-instructions active'
+              : 'activity-instructions'
           }
         >
           {currentInstruction.instruction}
