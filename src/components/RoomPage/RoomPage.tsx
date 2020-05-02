@@ -181,7 +181,11 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
       <div id="room-page">
         {notInRoom && (
           <div id="invite-container">
-            <button id="button join-button" onClick={() => this.joinRoom()}>
+            <button
+              className="button"
+              id="join-button"
+              onClick={() => this.joinRoom()}
+            >
               Join this room!
             </button>
           </div>
@@ -191,7 +195,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
             <h1 className="title">{room.activity.name}</h1>
             <b>Invite others to join with this link: </b>
             <div className="room-link-row">
-              <p>sproutwellness.com/room/{room.id}</p>
+              <p>https://sproutwellness.com/room/{room.id}</p>
               <FontAwesomeIcon
                 id="copy-icon"
                 icon={faCopy}
