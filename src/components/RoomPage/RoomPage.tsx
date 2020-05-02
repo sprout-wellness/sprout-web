@@ -5,6 +5,7 @@ import copy from 'clipboard-copy';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { Instruction } from '../../storage/Activity';
 import { Room } from '../../storage/Room';
 import { User } from '../../storage/User';
 import { UserContext } from '../../providers/UserProvider';
@@ -126,6 +127,35 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
     return `${percentComplete}%`;
   }
 
+  getCurrentInstruction() {
+    const room: Room = this.state.room!;
+    const instructions: Instruction[] = room.activity.instructions;
+    var secondsPassed: number = room.getActivitySecondsPassed(
+      this.state.currentTime
+    );
+    let emptyInstruction: Instruction = {
+      instruction: 'Please wait...',
+      duration: 600,
+    };
+    for (let instruction of instructions) {
+      secondsPassed -= instruction.duration;
+      if (secondsPassed <= 0) {
+        if (
+          secondsPassed >= -2 || // Fade out with 2 seconds left.
+          Math.abs(secondsPassed) + 1 >= instruction.duration // Fade in 1 second after instruction starts.
+        ) {
+          // The negative duration is used as a condition to animate.
+          return {
+            instruction: instruction.instruction,
+            duration: -1,
+          };
+        }
+        return instruction;
+      }
+    }
+    return emptyInstruction;
+  }
+
   renderError() {
     return (
       <div id="room-page">
@@ -215,10 +245,39 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderActivity(room: Room) {
+    let currentInstruction: Instruction = this.getCurrentInstruction();
+
     return (
       <div id="in-session-page">
-        <h1 className="activity-title">{room.activity.name}</h1>
-        <p className="activity-instructions">{room.activity.instructions}</p>
+        <div className="participants-container">
+          {room.getAttendees().map((user, key) => {
+            return (
+              <div key={key}>
+                {user.photoURL ? (
+                  <img
+                    className="participant-picture"
+                    src={user.photoURL}
+                    alt="Profile"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    className="participant-picture"
+                    icon={faUserCircle}
+                  ></FontAwesomeIcon>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <p
+          className={
+            currentInstruction.duration !== -1
+              ? 'activity-instructions active'
+              : 'activity-instructions'
+          }
+        >
+          {currentInstruction.instruction}
+        </p>
         <div id="progress-bar-container">
           <div
             id="progress-bar"

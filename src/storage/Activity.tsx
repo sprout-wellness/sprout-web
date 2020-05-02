@@ -1,11 +1,16 @@
 import { firebase } from '../FirebaseSetup';
 import 'firebase/firestore';
 
+export interface Instruction {
+  instruction: string;
+  duration: number;
+}
+
 export class Activity {
   readonly id: string;
   readonly name: string;
   readonly category: string;
-  readonly instructions: string;
+  readonly instructions: Instruction[];
   readonly motivation: string;
   readonly time: number;
   readonly blurb: string;
@@ -14,7 +19,7 @@ export class Activity {
     id: string,
     name: string,
     category: string,
-    instructions: string,
+    instructions: Instruction[],
     motivation: string,
     time: string,
     blurb: string
