@@ -4,5 +4,8 @@
     "exclude": [
       "**/*.json"
     ]
+  },
+  "rules": {
+    "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"]
   }
 }

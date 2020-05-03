@@ -2,10 +2,10 @@ import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import './ErrorPage.scss';
 
-type ErrorPageProps = {
+interface ErrorPageProps {
   title: string;
   error?: string;
-};
+}
 
 export const ErrorPage: FunctionComponent<ErrorPageProps> = ({
   title,

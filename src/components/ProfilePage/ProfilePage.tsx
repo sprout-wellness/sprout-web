@@ -31,13 +31,13 @@ export class ProfilePage extends Component<{}, ProfilePageState> {
   }
 
   getFormattedDate(datetime: number) {
-    let date = new Date(datetime);
-    var year = date.getFullYear();
+    const date = new Date(datetime);
+    const year = date.getFullYear();
 
-    var month = (1 + date.getMonth()).toString();
+    let month = (1 + date.getMonth()).toString();
     month = month.length > 1 ? month : '0' + month;
 
-    var day = date.getDate().toString();
+    let day = date.getDate().toString();
     day = day.length > 1 ? day : '0' + day;
 
     return month + '/' + day + '/' + year;
