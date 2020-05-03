@@ -33,7 +33,7 @@ interface RoomPageState {
 export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   static contextType = UserContext;
   roomListener: (() => void) | undefined = undefined;
-  progressBarCounter: number = 0;
+  progressBarCounter = 0;
 
   state = {
     errors: [] as string[],
@@ -130,14 +130,14 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   getCurrentInstruction() {
     const room: Room = this.state.room!;
     const instructions: Instruction[] = room.activity.instructions;
-    var secondsPassed: number = room.getActivitySecondsPassed(
+    let secondsPassed: number = room.getActivitySecondsPassed(
       this.state.currentTime
     );
-    let emptyInstruction: Instruction = {
+    const emptyInstruction: Instruction = {
       instruction: 'Please wait...',
       duration: 600,
     };
-    for (let instruction of instructions) {
+    for (const instruction of instructions) {
       secondsPassed -= instruction.duration;
       if (secondsPassed <= 0) {
         if (
@@ -249,7 +249,7 @@ export class RoomPage extends Component<RoomPageProps, RoomPageState> {
   }
 
   renderActivity(room: Room) {
-    let currentInstruction: Instruction = this.getCurrentInstruction();
+    const currentInstruction: Instruction = this.getCurrentInstruction();
 
     return (
       <div id="in-session-page">

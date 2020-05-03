@@ -116,8 +116,8 @@ export class ReflectionPage extends Component<
                 this.setState({ reflectionSubmitted: true });
               }
               // Check if reflection already exists in state.
-              var found = false;
-              for (var i = 0; i < this.state.reflections.length; i++) {
+              let found = false;
+              for (let i = 0; i < this.state.reflections.length; i++) {
                 if (this.state.reflections[i].id === change.doc.id) {
                   found = true;
                   break;
